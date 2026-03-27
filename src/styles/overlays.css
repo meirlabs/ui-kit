@@ -1,0 +1,115 @@
+/* @meirlabs/ui-kit — Overlays */
+
+/* ── Modal Overlay ── */
+.ml-overlay {
+  position: fixed;
+  inset: 0;
+  background: rgba(0, 0, 0, 0.5);
+  backdrop-filter: blur(4px);
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  z-index: 100;
+}
+
+/* ── Modal ── */
+.ml-modal {
+  background: var(--ml-bg-surface);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-xl);
+  width: min(90vw, 560px);
+  max-height: 85vh;
+  overflow-y: auto;
+  box-shadow: var(--ml-shadow-modal);
+}
+
+.ml-modal-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  padding: var(--ml-space-lg);
+  border-bottom: 1px solid var(--ml-border);
+}
+
+.ml-modal-header h2 {
+  margin: 0;
+  font-size: var(--ml-text-base);
+  font-weight: 600;
+  color: var(--ml-text);
+}
+
+.ml-modal-header button {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--ml-radius-sm);
+  border: none;
+  background: none;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ml-modal-header button:hover {
+  background: var(--ml-bg-elevated);
+  color: var(--ml-text);
+}
+
+.ml-modal-body {
+  padding: var(--ml-space-lg);
+}
+
+.ml-modal-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ml-space-sm);
+  padding: var(--ml-space-lg);
+  border-top: 1px solid var(--ml-border);
+}
+
+/* ── Dropdown ── */
+.ml-dropdown {
+  position: relative;
+  display: inline-block;
+}
+
+.ml-dropdown-menu {
+  position: absolute;
+  top: 100%;
+  left: 0;
+  margin-top: 4px;
+  background: var(--ml-bg-elevated);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  padding: 4px;
+  min-width: 180px;
+  box-shadow: var(--ml-shadow-elevated);
+  z-index: 50;
+}
+
+.ml-dropdown-item {
+  display: block;
+  width: 100%;
+  padding: 6px 12px;
+  border-radius: var(--ml-radius-sm);
+  border: none;
+  background: none;
+  color: var(--ml-text-muted);
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  text-align: left;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ml-dropdown-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ml-text);
+}
+
+.ml-dropdown-item.active {
+  color: var(--ml-color-primary);
+}

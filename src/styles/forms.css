@@ -1,0 +1,64 @@
+/* @meirlabs/ui-kit — Forms */
+
+/* ── Field ── */
+.ml-field {
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ml-field-label {
+  font-size: var(--ml-text-xs);
+  color: var(--ml-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  font-weight: 600;
+}
+
+.ml-field input,
+.ml-field select,
+.ml-field textarea {
+  padding: 8px 12px;
+  border-radius: var(--ml-radius-md);
+  border: 1px solid var(--ml-border);
+  background: var(--ml-bg);
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  transition: border-color 0.15s, outline 0.15s;
+}
+
+.ml-field input:focus,
+.ml-field select:focus,
+.ml-field textarea:focus {
+  outline: 2px solid var(--ml-color-primary-muted);
+  border-color: var(--ml-color-primary);
+}
+
+/* ── Wizard ── */
+.ml-wizard-progress {
+  display: flex;
+  gap: 4px;
+  margin-bottom: var(--ml-space-lg);
+}
+
+.ml-wizard-segment {
+  flex: 1;
+  height: 3px;
+  border-radius: 2px;
+  background: var(--ml-bg-elevated);
+  transition: background 0.2s;
+}
+
+.ml-wizard-segment.filled {
+  background: var(--ml-color-primary);
+}
+
+.ml-wizard-footer {
+  display: flex;
+  justify-content: space-between;
+  align-items: center;
+  padding-top: var(--ml-space-lg);
+  border-top: 1px solid var(--ml-border);
+  margin-top: var(--ml-space-xl);
+}

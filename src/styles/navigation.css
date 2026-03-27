@@ -1,0 +1,66 @@
+/* @meirlabs/ui-kit — Navigation */
+
+/* ── Tabs (underline tab switcher) ── */
+.ml-tabs {
+  display: flex;
+  gap: 0;
+  border-bottom: 1px solid var(--ml-border);
+  margin-bottom: var(--ml-space-lg);
+}
+
+.ml-tabs-btn {
+  display: flex;
+  align-items: center;
+  gap: 6px;
+  padding: 8px 16px;
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  font-weight: 500;
+  color: var(--ml-text-muted);
+  background: none;
+  border: none;
+  border-bottom: 2px solid transparent;
+  margin-bottom: -1px;
+  cursor: pointer;
+  transition: color 0.15s, border-color 0.15s;
+}
+
+.ml-tabs-btn:hover {
+  color: var(--ml-text);
+}
+
+.ml-tabs-btn.active {
+  color: var(--ml-text);
+  border-bottom-color: var(--ml-color-primary);
+}
+
+/* ── Toggle (pill / segmented control) ── */
+.ml-toggle {
+  display: inline-flex;
+  gap: 0;
+  background: var(--ml-bg-elevated);
+  border-radius: var(--ml-radius-pill);
+  padding: 3px;
+}
+
+.ml-toggle button {
+  padding: 4px 14px;
+  border-radius: var(--ml-radius-pill);
+  border: none;
+  background: none;
+  font-family: inherit;
+  font-size: var(--ml-text-xs);
+  font-weight: 600;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+}
+
+.ml-toggle button:hover {
+  color: var(--ml-text);
+}
+
+.ml-toggle button.active {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+}

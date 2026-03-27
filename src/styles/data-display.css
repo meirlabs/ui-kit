@@ -1,0 +1,33 @@
+/* @meirlabs/ui-kit — Data Display */
+
+/* ── Stat Card ── */
+.ml-stat-card {
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  padding: var(--ml-space-md) var(--ml-space-lg);
+  background: var(--ml-bg-surface);
+}
+
+.ml-stat-card-value {
+  font-size: var(--ml-text-xl);
+  font-weight: 700;
+  display: block;
+  margin-bottom: 2px;
+  color: var(--ml-text);
+}
+
+.ml-stat-card-label {
+  font-size: var(--ml-text-xs);
+  color: var(--ml-text-muted);
+  margin: 0;
+}
+
+/* ── Empty State ── */
+.ml-empty-state {
+  border: 1px dashed var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  padding: var(--ml-space-2xl);
+  text-align: center;
+  color: var(--ml-text-muted);
+  font-size: var(--ml-text-sm);
+}
