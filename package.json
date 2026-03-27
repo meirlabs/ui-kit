@@ -14,8 +14,14 @@
     "./styles.css": "./dist/styles.css",
     "./compat.css": "./dist/compat.css"
   },
-  "files": ["dist", "AGENTS.md"],
-  "sideEffects": ["./dist/styles.css", "./dist/compat.css"],
+  "files": [
+    "dist",
+    "AGENTS.md"
+  ],
+  "sideEffects": [
+    "./dist/styles.css",
+    "./dist/compat.css"
+  ],
   "scripts": {
     "build": "tsup && postcss src/styles/index.css -o dist/styles.css && postcss src/styles/compat.css -o dist/compat.css",
     "dev": "concurrently \"tsup --watch\" \"postcss src/styles/index.css -o dist/styles.css --watch\" \"postcss src/styles/compat.css -o dist/compat.css --watch\"",
@@ -33,19 +39,21 @@
     "tailwind-merge": "^3.0.0"
   },
   "devDependencies": {
-    "tsup": "^8.0.0",
-    "typescript": "^5.7.0",
+    "@storybook/react-vite": "^10.3.3",
+    "@testing-library/jest-dom": "^6.0.0",
+    "@testing-library/react": "^16.0.0",
     "@types/react": "^19.0.0",
+    "concurrently": "^9.0.0",
+    "jsdom": "^25.0.0",
     "postcss": "^8.5.0",
     "postcss-cli": "^11.0.0",
     "postcss-import": "^16.0.0",
-    "concurrently": "^9.0.0",
-    "vitest": "^3.0.0",
-    "jsdom": "^25.0.0",
-    "@testing-library/react": "^16.0.0",
-    "@testing-library/jest-dom": "^6.0.0",
     "react": "^19.1.0",
-    "react-dom": "^19.1.0"
+    "react-dom": "^19.1.0",
+    "storybook": "^10.3.3",
+    "tsup": "^8.0.0",
+    "typescript": "^5.7.0",
+    "vitest": "^3.0.0"
   },
   "license": "MIT",
   "repository": {
