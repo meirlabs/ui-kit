@@ -1,0 +1,151 @@
+/* @meirlabs/ui-kit — Layout Components */
+
+/* ── Shell ── */
+.ml-shell {
+  display: flex;
+  width: 100%;
+  min-height: 100vh;
+}
+
+.ml-shell-sidebar {
+  flex-shrink: 0;
+}
+
+.ml-shell-main {
+  flex: 1;
+  overflow-y: auto;
+}
+
+/* ── Sidebar ── */
+.ml-sidebar {
+  display: flex;
+  flex-direction: column;
+  height: 100%;
+}
+
+.ml-sidebar-section {
+  margin-bottom: var(--ml-space-sm);
+}
+
+.ml-sidebar-item {
+  display: flex;
+  align-items: center;
+  gap: 10px;
+  padding: var(--ml-space-sm) var(--ml-space-lg);
+  font-family: inherit;
+  font-size: 0.82rem;
+  font-weight: 500;
+  color: var(--ml-text-muted);
+  background: none;
+  border: none;
+  border-radius: var(--ml-radius-md);
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  width: 100%;
+  text-align: left;
+}
+
+.ml-sidebar-item:hover {
+  background: rgba(255, 255, 255, 0.04);
+  color: var(--ml-text);
+}
+
+.ml-sidebar-item.active {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+}
+
+.ml-sidebar-spacer {
+  flex: 1;
+}
+
+/* ── Top Bar ── */
+.ml-top-bar {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-lg);
+  padding: 0 var(--ml-space-xl);
+  height: 56px;
+  border-bottom: 1px solid var(--ml-border);
+  background: var(--ml-bg-surface);
+}
+
+/* ── Page Header ── */
+.ml-page-header {
+  margin-bottom: var(--ml-space-xl);
+}
+
+.ml-page-title {
+  font-size: var(--ml-text-2xl);
+  font-weight: 700;
+  letter-spacing: -0.03em;
+}
+
+.ml-page-subtitle {
+  font-size: 0.82rem;
+  color: var(--ml-text-muted);
+  margin-top: var(--ml-space-xs);
+}
+
+/* ── Card ── */
+.ml-card {
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-xl);
+  padding: var(--ml-space-lg);
+  background: var(--ml-bg-surface);
+}
+
+/* ── Grid ── */
+.ml-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+  gap: var(--ml-space-md);
+}
+
+/* ── Section ── */
+.ml-section {
+  margin-bottom: var(--ml-space-xl);
+}
+
+.ml-section-title {
+  font-size: var(--ml-text-xs);
+  font-weight: 600;
+  color: var(--ml-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+  margin-bottom: var(--ml-space-md);
+}
+
+/* ── Detail List ── */
+.ml-detail-list {
+  display: grid;
+  grid-template-columns: 1fr 1fr;
+  gap: var(--ml-space-sm) var(--ml-space-xl);
+}
+
+.ml-detail-list dt {
+  font-size: var(--ml-text-xs);
+  color: var(--ml-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+}
+
+.ml-detail-list dd {
+  font-size: var(--ml-text-sm);
+  color: var(--ml-text);
+}
+
+/* ── Danger Zone ── */
+.ml-danger-zone {
+  border: 1px solid var(--ml-color-danger-muted);
+  border-radius: var(--ml-radius-lg);
+  padding: var(--ml-space-lg);
+  margin-top: var(--ml-space-xl);
+}
+
+.ml-danger-zone-title {
+  font-size: var(--ml-text-sm);
+  font-weight: 600;
+  color: var(--ml-color-danger);
+  margin-bottom: var(--ml-space-sm);
+}
