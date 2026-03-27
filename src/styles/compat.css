@@ -1,1 +1,242 @@
-/* @meirlabs/ui-kit compat layer */
+/* @meirlabs/ui-kit — Compatibility Layer (DEPRECATED)
+ * Maps legacy .tt-* / .pg-* / .tag / .status-pill / .metric-* class names
+ * and legacy --token names to their --ml-* equivalents.
+ * Import this temporarily during migration: import "@meirlabs/ui-kit/compat.css"
+ * Remove once all consumers have migrated to ml-* names.
+ */
+
+/* ── Token Bridge ── */
+[data-meirlabs-theme="dark"] {
+  --primary: var(--ml-color-primary);
+  --primary-muted: var(--ml-color-primary-muted);
+  --success: var(--ml-color-success);
+  --success-muted: var(--ml-color-success-muted);
+  --danger: var(--ml-color-danger);
+  --danger-muted: var(--ml-color-danger-muted);
+  --warning: var(--ml-color-warning);
+  --warning-muted: var(--ml-color-warning-muted);
+  --purple: var(--ml-color-purple);
+  --purple-muted: var(--ml-color-purple-muted);
+  --bg: var(--ml-bg);
+  --bg-surface: var(--ml-bg-surface);
+  --bg-card: var(--ml-bg-card);
+  --bg-elevated: var(--ml-bg-elevated);
+  --border: var(--ml-border);
+  --border-subtle: var(--ml-border-subtle);
+  --text: var(--ml-text);
+  --text-muted: var(--ml-text-muted);
+  --text-faint: var(--ml-text-faint);
+  --space-xs: var(--ml-space-xs);
+  --space-sm: var(--ml-space-sm);
+  --space-md: var(--ml-space-md);
+  --space-lg: var(--ml-space-lg);
+  --space-xl: var(--ml-space-xl);
+  --space-2xl: var(--ml-space-2xl);
+  --radius-sm: var(--ml-radius-sm);
+  --radius-md: var(--ml-radius-md);
+  --radius-lg: var(--ml-radius-lg);
+  --radius-xl: var(--ml-radius-xl);
+  --radius-pill: var(--ml-radius-pill);
+  --shadow-card: var(--ml-shadow-card);
+  --shadow-elevated: var(--ml-shadow-elevated);
+  --shadow-modal: var(--ml-shadow-modal);
+  --shadow-glow: var(--ml-shadow-glow);
+  --glass-bg: var(--ml-glass-bg);
+  --glass-blur: var(--ml-glass-blur);
+  --glass-border: var(--ml-glass-border);
+  --font-sans: var(--ml-font-sans);
+  --font-mono: var(--ml-font-mono);
+  --text-xs: var(--ml-text-xs);
+  --text-sm: var(--ml-text-sm);
+  --text-base: var(--ml-text-base);
+  --text-lg: var(--ml-text-lg);
+  --text-xl: var(--ml-text-xl);
+  --text-2xl: var(--ml-text-2xl);
+  --text-3xl: var(--ml-text-3xl);
+}
+
+/* ── Class Aliases: Table ── */
+.tt-wrap {
+  background: var(--ml-bg-surface);
+  border: 1px solid var(--ml-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.tt-wrap--flush {
+  margin-top: var(--ml-space-md);
+}
+
+.tt {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.tt thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.tt th {
+  text-align: left;
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--ml-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.4);
+}
+
+.tt td {
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  vertical-align: middle;
+}
+
+.tt tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.tt tbody tr:hover {
+  background: rgba(88, 166, 255, 0.04);
+}
+
+.tt tbody tr:not(:last-child) td {
+  border-bottom: 1px solid rgba(48, 54, 61, 0.25);
+}
+
+.tt th.tt-r,
+.tt td.tt-r {
+  text-align: right;
+}
+
+.tt-row-link {
+  cursor: pointer;
+}
+
+.tt-avatar {
+  width: 40px;
+  padding-right: 0;
+}
+
+.tt-chevron-col {
+  width: 32px;
+}
+
+.tt-chevron {
+  color: transparent;
+  transition: color 0.15s ease;
+  text-align: right;
+  padding-right: 14px;
+  vertical-align: middle;
+  line-height: 0;
+}
+
+.tt-row-link:hover .tt-chevron {
+  color: var(--ml-text-muted);
+}
+
+.tt-primary { font-weight: 600; }
+.tt-secondary { margin-top: 2px; font-size: var(--ml-text-xs); color: var(--ml-text-muted); }
+.tt-time {
+  white-space: nowrap;
+  color: var(--ml-text-muted);
+  font-family: var(--ml-font-mono);
+  font-size: var(--ml-text-xs);
+}
+.tt-truncate {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .tt td.tt-r { text-align: left; }
+}
+
+/* ── Class Aliases: Pagination ── */
+.pg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 14px 12px;
+}
+
+.pg-arrow,
+.pg-num {
+  min-width: 28px;
+  height: 28px;
+  border-radius: var(--ml-radius-sm);
+  font-size: var(--ml-text-xs);
+  font-weight: 500;
+  color: var(--ml-text-muted);
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--ml-font-sans);
+}
+
+.pg-arrow:hover:not(:disabled),
+.pg-num:hover:not(.active) {
+  background: var(--ml-bg-elevated);
+  color: var(--ml-text);
+}
+
+.pg-num.active {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+  font-weight: 600;
+}
+
+.pg-arrow:disabled {
+  color: var(--ml-text-faint);
+  cursor: default;
+}
+
+/* ── Class Aliases: Tags & Status Pills ── */
+.tag,
+.status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: var(--ml-radius-pill);
+  font-size: var(--ml-text-xs);
+  font-weight: 600;
+}
+
+.tag {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ml-text-muted);
+}
+
+.status-pill-good {
+  background: var(--ml-color-success-muted);
+  color: var(--ml-color-success);
+}
+
+.status-pill-warn {
+  background: var(--ml-color-warning-muted);
+  color: var(--ml-color-warning);
+}
+
+.status-pill-neutral {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+}
+
+.chip-row {
+  margin-top: var(--ml-space-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ml-space-xs);
+}
+
+.metric-positive { color: var(--ml-color-success); }
+.metric-negative { color: var(--ml-color-danger); }

@@ -1,0 +1,43 @@
+/* @meirlabs/ui-kit — Pagination */
+.ml-pg {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: 4px;
+  padding: 10px 14px 12px;
+}
+
+.ml-pg-arrow,
+.ml-pg-num {
+  min-width: 28px;
+  height: 28px;
+  border-radius: var(--ml-radius-sm);
+  font-size: var(--ml-text-xs);
+  font-weight: 500;
+  color: var(--ml-text-muted);
+  background: none;
+  border: none;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+  transition: background 0.15s, color 0.15s;
+  font-family: var(--ml-font-sans);
+}
+
+.ml-pg-arrow:hover:not(:disabled),
+.ml-pg-num:hover:not(.active) {
+  background: var(--ml-bg-elevated);
+  color: var(--ml-text);
+}
+
+.ml-pg-num.active {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+  font-weight: 600;
+}
+
+.ml-pg-arrow:disabled {
+  color: var(--ml-text-faint);
+  cursor: default;
+}

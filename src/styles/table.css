@@ -1,0 +1,99 @@
+/* @meirlabs/ui-kit — Data Table */
+.ml-dt-wrap {
+  background: var(--ml-bg-surface);
+  border: 1px solid var(--ml-border);
+  border-radius: 12px;
+  overflow: hidden;
+}
+
+.ml-dt-wrap--flush {
+  margin-top: var(--ml-space-md);
+}
+
+.ml-dt {
+  width: 100%;
+  border-collapse: collapse;
+}
+
+.ml-dt thead {
+  background: rgba(255, 255, 255, 0.03);
+}
+
+.ml-dt th {
+  text-align: left;
+  font-size: 0.62rem;
+  font-weight: 500;
+  color: var(--ml-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  padding: 8px 14px;
+  border-bottom: 1px solid rgba(48, 54, 61, 0.4);
+}
+
+.ml-dt td {
+  padding: 8px 14px;
+  font-size: 0.78rem;
+  vertical-align: middle;
+}
+
+.ml-dt tbody tr {
+  transition: background-color 0.15s ease;
+}
+
+.ml-dt tbody tr:hover {
+  background: rgba(88, 166, 255, 0.04);
+}
+
+.ml-dt tbody tr:not(:last-child) td {
+  border-bottom: 1px solid rgba(48, 54, 61, 0.25);
+}
+
+.ml-dt th.ml-dt-r,
+.ml-dt td.ml-dt-r {
+  text-align: right;
+}
+
+.ml-dt-row-link {
+  cursor: pointer;
+}
+
+.ml-dt-avatar {
+  width: 40px;
+  padding-right: 0;
+}
+
+.ml-dt-chevron-col {
+  width: 32px;
+}
+
+.ml-dt-chevron {
+  color: transparent;
+  transition: color 0.15s ease;
+  text-align: right;
+  padding-right: 14px;
+  vertical-align: middle;
+  line-height: 0;
+}
+
+.ml-dt-row-link:hover .ml-dt-chevron {
+  color: var(--ml-text-muted);
+}
+
+.ml-dt-primary { font-weight: 600; }
+.ml-dt-secondary { margin-top: 2px; font-size: var(--ml-text-xs); color: var(--ml-text-muted); }
+.ml-dt-time {
+  white-space: nowrap;
+  color: var(--ml-text-muted);
+  font-family: var(--ml-font-mono);
+  font-size: var(--ml-text-xs);
+}
+.ml-dt-truncate {
+  max-width: 300px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+@media (max-width: 720px) {
+  .ml-dt td.ml-dt-r { text-align: left; }
+}

@@ -1,0 +1,41 @@
+/* @meirlabs/ui-kit — Tags & Status Pills */
+.ml-tag,
+.ml-status-pill {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  padding: 3px 10px;
+  border-radius: var(--ml-radius-pill);
+  font-size: var(--ml-text-xs);
+  font-weight: 600;
+}
+
+.ml-tag {
+  background: rgba(255, 255, 255, 0.06);
+  color: var(--ml-text-muted);
+}
+
+.ml-status-pill-good {
+  background: var(--ml-color-success-muted);
+  color: var(--ml-color-success);
+}
+
+.ml-status-pill-warn {
+  background: var(--ml-color-warning-muted);
+  color: var(--ml-color-warning);
+}
+
+.ml-status-pill-neutral {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+}
+
+.ml-chip-row {
+  margin-top: var(--ml-space-sm);
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ml-space-xs);
+}
+
+.ml-metric-positive { color: var(--ml-color-success); }
+.ml-metric-negative { color: var(--ml-color-danger); }

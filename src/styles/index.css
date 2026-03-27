@@ -1,1 +1,4 @@
-/* @meirlabs/ui-kit styles */
+@import "./tokens.css";
+@import "./table.css";
+@import "./pagination.css";
+@import "./tags.css";
