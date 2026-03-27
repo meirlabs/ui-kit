@@ -1,0 +1,162 @@
+/* @meirlabs/ui-kit — Component Styles */
+
+/* ── Button ── */
+.ml-btn {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  padding: 8px 16px;
+  border-radius: var(--ml-radius-pill);
+  border: none;
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  font-weight: 600;
+  cursor: pointer;
+  transition: opacity 0.15s, border-color 0.15s, color 0.15s;
+}
+
+.ml-btn:disabled {
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ml-btn-primary {
+  background: var(--ml-color-success);
+  color: #ffffff;
+}
+
+.ml-btn-primary:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+.ml-btn-ghost {
+  padding: 6px 14px;
+  border: 1px solid var(--ml-border);
+  background: transparent;
+  color: var(--ml-text-muted);
+  font-weight: 500;
+}
+
+.ml-btn-ghost:hover:not(:disabled) {
+  border-color: var(--ml-text-muted);
+  color: var(--ml-text);
+}
+
+.ml-btn-danger {
+  background: var(--ml-color-danger-muted);
+  color: var(--ml-color-danger);
+}
+
+.ml-btn-danger:hover:not(:disabled) {
+  opacity: 0.85;
+}
+
+/* ── Badge ── */
+.ml-badge {
+  display: inline-flex;
+  align-items: center;
+  padding: 2px 8px;
+  border-radius: var(--ml-radius-pill);
+  font-size: var(--ml-text-xs);
+  font-weight: 600;
+  line-height: 1.4;
+}
+
+.ml-badge-good {
+  background: var(--ml-color-success-muted);
+  color: var(--ml-color-success);
+}
+
+.ml-badge-warn {
+  background: var(--ml-color-warning-muted);
+  color: var(--ml-color-warning);
+}
+
+.ml-badge-danger {
+  background: var(--ml-color-danger-muted);
+  color: var(--ml-color-danger);
+}
+
+.ml-badge-neutral {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+}
+
+/* ── Avatar ── */
+.ml-avatar {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ml-radius-md);
+  background: var(--ml-bg-elevated);
+  border: 1px solid var(--ml-border);
+  overflow: hidden;
+  flex-shrink: 0;
+  font-size: var(--ml-text-xs);
+  font-weight: 600;
+  color: var(--ml-text-muted);
+}
+
+.ml-avatar-sm {
+  width: 24px;
+  height: 24px;
+  font-size: 0.58rem;
+}
+
+.ml-avatar-lg {
+  width: 40px;
+  height: 40px;
+  font-size: var(--ml-text-sm);
+}
+
+.ml-avatar-round {
+  border-radius: 50%;
+}
+
+.ml-avatar img {
+  width: 100%;
+  height: 100%;
+  object-fit: cover;
+}
+
+/* ── Label (eyebrow) ── */
+.ml-label {
+  font-size: 0.62rem;
+  font-weight: 600;
+  color: var(--ml-text-faint);
+  text-transform: uppercase;
+  letter-spacing: 0.05em;
+}
+
+/* ── Divider ── */
+.ml-divider {
+  border: none;
+  border-top: 1px solid var(--ml-border);
+  margin: var(--ml-space-lg) 0;
+}
+
+/* ── Banner ── */
+.ml-banner {
+  padding: 8px 14px;
+  border-radius: var(--ml-radius-md);
+  font-size: var(--ml-text-sm);
+  font-weight: 500;
+}
+
+.ml-banner-warning {
+  background: var(--ml-color-warning-muted);
+  color: var(--ml-color-warning);
+}
+
+.ml-banner-error {
+  background: var(--ml-color-danger-muted);
+  color: var(--ml-color-danger);
+}
+
+.ml-banner-info {
+  background: var(--ml-color-primary-muted);
+  color: var(--ml-color-primary);
+}
