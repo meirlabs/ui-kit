@@ -222,7 +222,7 @@ function App() {
       <nav className="preview-sidebar">
         <div className="preview-sidebar-toolbar">
           <img src="./meirlabs-logo.png" alt="meirlabs" className="preview-logo" />
-          <span className="preview-title">@meirlabs/ui-kit</span>
+          <span className="preview-title">@meir-labs/ui-kit</span>
         </div>
         <input
           className="preview-search"

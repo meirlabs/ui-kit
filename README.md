@@ -1,17 +1,17 @@
-# @meirlabs/ui-kit
+# @meir-labs/ui-kit
 
-Dark-themed presentational component library for React.
+Themeable presentational component library for React — light and dark out of the box.
 
 Provides design tokens, data-table CSS classes, and a handful of ready-made components so every MeirLabs project shares the same visual language without duplicating styles.
 
 ## Install
 
 ```bash
-pnpm add @meirlabs/ui-kit
+pnpm add @meir-labs/ui-kit
 # or
-npm install @meirlabs/ui-kit
+npm install @meir-labs/ui-kit
 # or
-yarn add @meirlabs/ui-kit
+yarn add @meir-labs/ui-kit
 ```
 
 For local development with a sibling project, use the `file:` protocol in `package.json`:
@@ -19,7 +19,7 @@ For local development with a sibling project, use the `file:` protocol in `packa
 ```json
 {
   "dependencies": {
-    "@meirlabs/ui-kit": "file:../packages/ui-kit"
+    "@meir-labs/ui-kit": "file:../packages/ui-kit"
   }
 }
 ```
@@ -29,7 +29,7 @@ If the consuming project uses **Next.js**, add the package to transpilation in `
 ```js
 /** @type {import('next').NextConfig} */
 const nextConfig = {
-  transpilePackages: ["@meirlabs/ui-kit"],
+  transpilePackages: ["@meir-labs/ui-kit"],
 };
 ```
 
@@ -38,7 +38,7 @@ const nextConfig = {
 1. Import the stylesheet **once** in your root layout or entry point:
 
    ```tsx
-   import "@meirlabs/ui-kit/styles.css";
+   import "@meir-labs/ui-kit/styles.css";
    ```
 
 2. Activate the theme by adding the `data-meirlabs-theme` attribute:
@@ -56,7 +56,7 @@ That's it -- design tokens and all component styles are now available globally.
 Renders page numbers with previous/next arrows. Hides itself when there is only one page.
 
 ```tsx
-import { Pagination, usePagination } from "@meirlabs/ui-kit";
+import { Pagination, usePagination } from "@meir-labs/ui-kit";
 
 function ItemList({ items }: { items: Item[] }) {
   const { page, pageIndex, pageCount, setPage } = usePagination(items, 12);
@@ -85,7 +85,7 @@ function ItemList({ items }: { items: Item[] }) {
 A small colored pill for status indicators.
 
 ```tsx
-import { StatusPill } from "@meirlabs/ui-kit";
+import { StatusPill } from "@meir-labs/ui-kit";
 
 <StatusPill tone="good">Active</StatusPill>
 <StatusPill tone="warn">Pending</StatusPill>
@@ -102,7 +102,7 @@ import { StatusPill } from "@meirlabs/ui-kit";
 A simple badge for labels and categories.
 
 ```tsx
-import { Tag } from "@meirlabs/ui-kit";
+import { Tag } from "@meir-labs/ui-kit";
 
 <Tag>Crypto</Tag>
 <Tag>Polymarket</Tag>
@@ -113,7 +113,7 @@ import { Tag } from "@meirlabs/ui-kit";
 A flex container for multiple `Tag` elements with proper spacing.
 
 ```tsx
-import { Tag, ChipRow } from "@meirlabs/ui-kit";
+import { Tag, ChipRow } from "@meir-labs/ui-kit";
 
 <ChipRow>
   <Tag>BTC</Tag>
@@ -127,7 +127,7 @@ import { Tag, ChipRow } from "@meirlabs/ui-kit";
 Displays a number with automatic positive/negative coloring.
 
 ```tsx
-import { MetricValue } from "@meirlabs/ui-kit";
+import { MetricValue } from "@meir-labs/ui-kit";
 
 <MetricValue value={12.5} formatter={(v) => `${v > 0 ? "+" : ""}${v.toFixed(1)}%`} />
 // renders: <span class="ml-metric-positive">+12.5%</span>
@@ -150,7 +150,7 @@ so the row never shifts. The thumb fill / inverted label use `--ml-text` /
 `--ml-bg`, so the "dark-when-selected" treatment flips correctly per theme.
 
 ```tsx
-import { SegmentedControl } from "@meirlabs/ui-kit";
+import { SegmentedControl } from "@meir-labs/ui-kit";
 
 <SegmentedControl
   aria-label="Wisdom view"
@@ -342,8 +342,8 @@ The compatibility layer (`compat.css`) is **not** covered by semver and will be 
 If your project uses the legacy `.tt-*`, `.pg-*`, `.tag`, `.status-pill-*`, or `.metric-*` class names, you can import the compatibility layer to keep them working while you migrate:
 
 ```tsx
-import "@meirlabs/ui-kit/styles.css";
-import "@meirlabs/ui-kit/compat.css"; // temporary — remove after migration
+import "@meir-labs/ui-kit/styles.css";
+import "@meir-labs/ui-kit/compat.css"; // temporary — remove after migration
 ```
 
 ### Class Mapping

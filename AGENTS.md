@@ -1,15 +1,15 @@
-# @meirlabs/ui-kit -- Agent Reference
+# @meir-labs/ui-kit -- Agent Reference
 
 ## Package
 
-- **Name:** @meirlabs/ui-kit
+- **Name:** @meir-labs/ui-kit
 - **Version:** 0.1.0
 - **Location:** ~/Documents/business/meirlabs/ui-kit/
-- **Purpose:** Dark-themed presentational component library for React
-- **Install:** `pnpm add @meirlabs/ui-kit` or `"@meirlabs/ui-kit": "file:../meirlabs/ui-kit"` for local dev
-- **CSS:** `import "@meirlabs/ui-kit/styles.css"` in root layout
-- **Theme:** Add `data-meirlabs-theme="dark"` to a wrapper element (typically `<html>`)
-- **Next.js:** Add `transpilePackages: ["@meirlabs/ui-kit"]` to next.config
+- **Purpose:** Themeable presentational component library for React (light & dark)
+- **Install:** `pnpm add @meir-labs/ui-kit` or `"@meir-labs/ui-kit": "file:../meirlabs/ui-kit"` for local dev
+- **CSS:** `import "@meir-labs/ui-kit/styles.css"` in root layout
+- **Theme:** Add `data-meirlabs-theme="light"` or `="dark"` to a wrapper element (typically `<html>`)
+- **Next.js:** Add `transpilePackages: ["@meir-labs/ui-kit"]` to next.config
 
 ## Exports
 
@@ -174,7 +174,7 @@ All tokens are CSS custom properties scoped under `[data-meirlabs-theme="dark"]`
 
 ## Rules
 
-- ALWAYS prefer @meirlabs/ui-kit components over writing custom table/pagination/pill CSS.
+- ALWAYS prefer @meir-labs/ui-kit components over writing custom table/pagination/pill CSS.
 - When adding a table, use the `.ml-dt-*` class system.
 - When displaying a status, use `<StatusPill>` not a custom span.
 - When showing positive/negative numbers, use `<MetricValue>` or `.ml-metric-*` classes.

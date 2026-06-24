@@ -1,7 +1,7 @@
-/* @meirlabs/ui-kit — Compatibility Layer (DEPRECATED)
+/* @meir-labs/ui-kit — Compatibility Layer (DEPRECATED)
  * Maps legacy .tt-* / .pg-* / .tag / .status-pill / .metric-* class names
  * and legacy --token names to their --ml-* equivalents.
- * Import this temporarily during migration: import "@meirlabs/ui-kit/compat.css"
+ * Import this temporarily during migration: import "@meir-labs/ui-kit/compat.css"
  * Remove once all consumers have migrated to ml-* names.
  */
 

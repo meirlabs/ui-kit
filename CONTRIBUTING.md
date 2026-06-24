@@ -1,4 +1,4 @@
-# Contributing to @meirlabs/ui-kit
+# Contributing to @meir-labs/ui-kit
 
 Thanks for your interest in contributing! Here's how to get started.
 

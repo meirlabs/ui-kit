@@ -1,4 +1,4 @@
-/* @meirlabs/ui-kit — Design Tokens */
+/* @meir-labs/ui-kit — Design Tokens */
 :root[data-meirlabs-theme="dark"],
 [data-meirlabs-theme="dark"] {
   --ml-bg: #0d1117;
