@@ -63,10 +63,10 @@
   "license": "MIT",
   "repository": {
     "type": "git",
-    "url": "https://github.com/xmeir-dev/ui-kit.git"
+    "url": "https://github.com/meirlabs/ui-kit.git"
   },
-  "homepage": "https://github.com/xmeir-dev/ui-kit#readme",
-  "bugs": "https://github.com/xmeir-dev/ui-kit/issues",
+  "homepage": "https://github.com/meirlabs/ui-kit#readme",
+  "bugs": "https://github.com/meirlabs/ui-kit/issues",
   "publishConfig": {
     "access": "public"
   }
