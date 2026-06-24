@@ -64,3 +64,62 @@
   background: var(--ml-color-primary-muted);
   color: var(--ml-color-primary);
 }
+
+/* ── SegmentedControl (view switcher with a sliding thumb) ──
+   2–3 sibling views, one bordered track, a thumb that slides via transform.
+   The thumb fill + inverted label use --ml-text / --ml-bg so the
+   "dark-when-selected" treatment flips correctly between light and dark themes.
+   Equal columns (grid-auto-columns: 1fr) so the thumb is exactly one cell. */
+.ml-segmented {
+  position: relative;
+  display: inline-grid;
+  grid-auto-flow: column;
+  grid-auto-columns: 1fr;
+  width: fit-content;
+  padding: 4px;
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-pill);
+  background: var(--ml-bg);
+}
+
+.ml-segmented-thumb {
+  position: absolute;
+  top: 4px;
+  bottom: 4px;
+  left: 4px;
+  width: calc((100% - 8px) / var(--ml-seg-count, 2));
+  border-radius: var(--ml-radius-pill);
+  background: var(--ml-text);
+  transition: transform 0.2s ease;
+}
+
+.ml-segmented-btn {
+  position: relative;
+  z-index: 1;
+  padding: 8px 16px;
+  border: none;
+  background: none;
+  border-radius: var(--ml-radius-pill);
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  /* Same weight in both states so the row never shifts — color is the only
+     thing that changes. */
+  font-weight: 500;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition: color 0.15s;
+}
+
+.ml-segmented-btn[aria-selected="true"] {
+  color: var(--ml-bg);
+}
+
+.ml-segmented-count {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-segmented-thumb {
+    transition: none;
+  }
+}

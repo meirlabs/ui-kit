@@ -141,6 +141,40 @@ import { MetricValue } from "@meirlabs/ui-kit";
 | `value` | `number` | -- | The numeric value |
 | `formatter` | `(value: number) => string` | `String` | Custom display formatter |
 
+### SegmentedControl
+
+A bordered track with a sliding thumb for switching between **2–3 sibling views**
+(sub-tabs within a page). Equal columns, so the thumb is exactly one cell; it
+moves by `transform` only and color is the only thing that changes between states,
+so the row never shifts. The thumb fill / inverted label use `--ml-text` /
+`--ml-bg`, so the "dark-when-selected" treatment flips correctly per theme.
+
+```tsx
+import { SegmentedControl } from "@meirlabs/ui-kit";
+
+<SegmentedControl
+  aria-label="Wisdom view"
+  value={view}
+  onChange={setView}
+  options={[
+    { label: "Terms learned", value: "learned", count: 42 },
+    { label: "Diplomas", value: "diplomas", count: 3 },
+  ]}
+/>
+```
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `options` | `{ label, value, count? }[]` | -- | 2–3 views; optional `· N` count, shown only when > 0 |
+| `value` | `string` | -- | The active view's value |
+| `onChange` | `(value: string) => void` | -- | Fired with the clicked value |
+| `aria-label` | `string` | -- | **Required** — names the group for assistive tech |
+
+> **`SegmentedControl` vs `Toggle`:** `SegmentedControl` switches between *views*
+> (`role="tablist"`, animated thumb). `Toggle` picks a *value*
+> (`role="radiogroup"`, no thumb). For >3 options or long labels, use a `Dropdown`
+> or a horizontal chip rail instead.
+
 ## CSS Classes
 
 These classes are available globally after importing `styles.css`. Use them directly on HTML elements alongside or instead of the React components.
@@ -339,6 +373,24 @@ import "@meirlabs/ui-kit/compat.css"; // temporary — remove after migration
 | `.metric-negative` | `.ml-metric-negative` |
 
 The compat layer also bridges legacy `--token` names (e.g. `--primary`, `--bg`, `--text`) to their `--ml-*` equivalents. Plan to remove `compat.css` once all consumers have migrated.
+
+## Component governance
+
+The library is **intentionally small** — a curated set of primitives, not a
+catch-all. Keep it that way:
+
+- **Check what already exists first.** Before building a control, scan the
+  components above and `src/components/`. Reach for an existing primitive over a
+  hand-rolled `<button className="px-… bg-… rounded-…">`.
+- **Extend, don't override.** If a primitive is *almost* right, add a variant or
+  size to it (as `Button`'s `secondary` was added) rather than overriding it with
+  per-call `className` hacks. One source of truth per control.
+- **Don't inline-fork.** When you need a control in more than one place, promote
+  it to a primitive here and reuse it — don't copy a styled element across pages.
+- **Earn the addition.** A new component should be genuinely distinct from what
+  exists (e.g. `SegmentedControl` switches *views* where `Toggle` picks a
+  *value*). When two would overlap, extend the existing one or cross-reference
+  both so the boundary is clear.
 
 ## How to Add a Component
 

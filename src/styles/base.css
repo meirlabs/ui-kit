@@ -1,0 +1,226 @@
+/* @meirlabs/ui-kit — Base
+   Cross-project defaults that prevent common layout bugs, so every consuming
+   app inherits them instead of re-discovering the same fixes. */
+
+/* Always reserve the vertical scrollbar gutter. Without this, navigating from a
+   tall page (scrollbar present) to a short one (scrollbar absent) shifts all
+   centered/fixed content sideways by the scrollbar width — the classic
+   horizontal "jump". `stable` keeps the gutter reserved either way. */
+html {
+  scrollbar-gutter: stable;
+}
+
+/* Thin, unobtrusive scrollbars everywhere. No track background; a slim rounded
+   thumb that only hints at itself and darkens on hover. This is a cross-project
+   default so scrollbars never need hand-styling again — the chunky, boxed
+   browser default is never what we want. */
+* {
+  scrollbar-width: thin; /* Firefox */
+  scrollbar-color: color-mix(in srgb, var(--ml-text-faint, #6e7681) 28%, transparent)
+    transparent; /* thumb, track */
+}
+*::-webkit-scrollbar {
+  width: 4px;
+  height: 4px;
+}
+*::-webkit-scrollbar-track,
+*::-webkit-scrollbar-corner {
+  background: transparent;
+}
+*::-webkit-scrollbar-thumb {
+  background: color-mix(in srgb, var(--ml-text-faint, #6e7681) 28%, transparent);
+  border-radius: 9999px;
+}
+*::-webkit-scrollbar-thumb:hover {
+  background: color-mix(in srgb, var(--ml-text-faint, #6e7681) 55%, transparent);
+}
+
+/* Opt-in: render a container's scrollbar on the LEFT edge instead of the right.
+   CSS has no direct property for this, so flip the container to `rtl` (which
+   moves the scrollbar to the left) and restore `ltr` on its direct children so
+   the content still reads normally. Apply to the scroll container; its children
+   should be block-level. */
+.ml-scroll-left {
+  direction: rtl;
+}
+.ml-scroll-left > * {
+  direction: ltr;
+}
+
+/* ── Scroll edge fades (scroll-mask) ──────────────────────────────────────────
+   Fade the edge of an overflow container that still has content to scroll
+   toward, and keep the edge you've reached crisp. Pure CSS scroll-driven
+   animation — no JS listeners, no stacked gradient <div>. The MASKED element
+   must itself be the scroll container (overflow-*); the mask is tied to
+   scroll(self). It clips children via mask-image, so don't nest a sticky header
+   inside — keep headers as siblings above it. Unsupported browsers (no
+   scroll-timeline, e.g. Safari today) simply show no fade; that's the intended
+   fallback, so don't add a JS polyfill unless one screen truly needs it.
+   Technique: https://twilson.net/scroll-mask
+     .ml-scroll-mask-t / -b / -y   top / bottom / both (vertical lists)
+     .ml-scroll-mask-l / -r / -x   left / right / both (horizontal rails)
+   Override the fade depth per element with `--ml-scroll-mask: 32px`. */
+@supports (animation-timeline: scroll()) {
+  @property --ml-fade-t {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+  @property --ml-fade-b {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+  @property --ml-fade-l {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+  @property --ml-fade-r {
+    syntax: "<length>";
+    inherits: false;
+    initial-value: 0px;
+  }
+
+  [class*="ml-scroll-mask-"] {
+    --ml-scroll-mask: 24px;
+  }
+
+  /* Vertical */
+  .ml-scroll-mask-t {
+    --ml-fade-b: 0px;
+    animation: ml-fade-in-t linear;
+    animation-timeline: scroll(self block);
+    animation-range: 0 var(--ml-scroll-mask);
+  }
+  .ml-scroll-mask-b {
+    --ml-fade-t: 0px;
+    --ml-fade-b: var(--ml-scroll-mask);
+    animation: ml-fade-out-b linear;
+    animation-timeline: scroll(self block);
+    animation-range: calc(100% - var(--ml-scroll-mask)) 100%;
+  }
+  .ml-scroll-mask-y {
+    animation: ml-fade-in-t linear, ml-fade-out-b linear;
+    animation-timeline: scroll(self block), scroll(self block);
+    animation-range: 0 var(--ml-scroll-mask), calc(100% - var(--ml-scroll-mask)) 100%;
+  }
+  .ml-scroll-mask-y,
+  .ml-scroll-mask-t,
+  .ml-scroll-mask-b {
+    -webkit-mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--ml-fade-t),
+      #000 calc(100% - var(--ml-fade-b)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to bottom,
+      transparent 0,
+      #000 var(--ml-fade-t),
+      #000 calc(100% - var(--ml-fade-b)),
+      transparent 100%
+    );
+  }
+
+  /* Horizontal (rails) */
+  .ml-scroll-mask-l {
+    --ml-fade-r: 0px;
+    animation: ml-fade-in-l linear;
+    animation-timeline: scroll(self inline);
+    animation-range: 0 var(--ml-scroll-mask);
+  }
+  .ml-scroll-mask-r {
+    --ml-fade-l: 0px;
+    --ml-fade-r: var(--ml-scroll-mask);
+    animation: ml-fade-out-r linear;
+    animation-timeline: scroll(self inline);
+    animation-range: calc(100% - var(--ml-scroll-mask)) 100%;
+  }
+  .ml-scroll-mask-x {
+    animation: ml-fade-in-l linear, ml-fade-out-r linear;
+    animation-timeline: scroll(self inline), scroll(self inline);
+    animation-range: 0 var(--ml-scroll-mask), calc(100% - var(--ml-scroll-mask)) 100%;
+  }
+  .ml-scroll-mask-x,
+  .ml-scroll-mask-l,
+  .ml-scroll-mask-r {
+    -webkit-mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--ml-fade-l),
+      #000 calc(100% - var(--ml-fade-r)),
+      transparent 100%
+    );
+    mask-image: linear-gradient(
+      to right,
+      transparent 0,
+      #000 var(--ml-fade-l),
+      #000 calc(100% - var(--ml-fade-r)),
+      transparent 100%
+    );
+  }
+
+  @keyframes ml-fade-in-t {
+    from { --ml-fade-t: 0px; }
+    to { --ml-fade-t: var(--ml-scroll-mask); }
+  }
+  @keyframes ml-fade-out-b {
+    from { --ml-fade-b: var(--ml-scroll-mask); }
+    to { --ml-fade-b: 0px; }
+  }
+  @keyframes ml-fade-in-l {
+    from { --ml-fade-l: 0px; }
+    to { --ml-fade-l: var(--ml-scroll-mask); }
+  }
+  @keyframes ml-fade-out-r {
+    from { --ml-fade-r: var(--ml-scroll-mask); }
+    to { --ml-fade-r: 0px; }
+  }
+
+  /* Reduced motion: keep a calm static both-edges fade instead of driving the
+     mask on scroll. (SVG/keyframe motion is frozen globally; this mirrors it
+     for the scroll-driven mask, which that rule doesn't reach.) */
+  @media (prefers-reduced-motion: reduce) {
+    [class*="ml-scroll-mask-"] {
+      animation: none;
+    }
+    .ml-scroll-mask-y,
+    .ml-scroll-mask-t,
+    .ml-scroll-mask-b {
+      -webkit-mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 var(--ml-scroll-mask),
+        #000 calc(100% - var(--ml-scroll-mask)),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to bottom,
+        transparent 0,
+        #000 var(--ml-scroll-mask),
+        #000 calc(100% - var(--ml-scroll-mask)),
+        transparent 100%
+      );
+    }
+    .ml-scroll-mask-x,
+    .ml-scroll-mask-l,
+    .ml-scroll-mask-r {
+      -webkit-mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--ml-scroll-mask),
+        #000 calc(100% - var(--ml-scroll-mask)),
+        transparent 100%
+      );
+      mask-image: linear-gradient(
+        to right,
+        transparent 0,
+        #000 var(--ml-scroll-mask),
+        #000 calc(100% - var(--ml-scroll-mask)),
+        transparent 100%
+      );
+    }
+  }
+}

@@ -2,7 +2,7 @@ import { type ComponentPropsWithoutRef } from "react";
 import { cn } from "../utils/cn";
 
 export interface ButtonProps extends ComponentPropsWithoutRef<"button"> {
-  variant?: "primary" | "ghost" | "danger";
+  variant?: "primary" | "secondary" | "ghost" | "danger";
 }
 
 export function Button({ variant = "primary", className, children, ...rest }: ButtonProps) {

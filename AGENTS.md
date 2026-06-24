@@ -4,9 +4,9 @@
 
 - **Name:** @meirlabs/ui-kit
 - **Version:** 0.1.0
-- **Location:** ~/Documents/business/packages/ui-kit/
+- **Location:** ~/Documents/business/meirlabs/ui-kit/
 - **Purpose:** Dark-themed presentational component library for React
-- **Install:** `pnpm add @meirlabs/ui-kit` or `"@meirlabs/ui-kit": "file:../packages/ui-kit"` for local dev
+- **Install:** `pnpm add @meirlabs/ui-kit` or `"@meirlabs/ui-kit": "file:../meirlabs/ui-kit"` for local dev
 - **CSS:** `import "@meirlabs/ui-kit/styles.css"` in root layout
 - **Theme:** Add `data-meirlabs-theme="dark"` to a wrapper element (typically `<html>`)
 - **Next.js:** Add `transpilePackages: ["@meirlabs/ui-kit"]` to next.config
@@ -46,10 +46,17 @@ MetricValue(props: MetricValueProps): JSX.Element
 // MetricValueProps: { value: number; formatter?: (value: number) => string } & span props (except children)
 // Applies .ml-metric-positive when value > 0, .ml-metric-negative when value < 0
 
+SegmentedControl(props: SegmentedControlProps): JSX.Element
+// SegmentedControlProps: { options: { label, value, count? }[]; value: string; onChange: (value: string) => void; "aria-label": string } & div props
+// View switcher for 2–3 sibling views: bordered track + sliding thumb (transform-only), role="tablist".
+// Use Toggle (role="radiogroup") to pick a VALUE; SegmentedControl to switch VIEWS. >3 options → Dropdown / chip rail.
+
 // Types
 PaginationProps
 StatusPillProps
 MetricValueProps
+SegmentedControlProps
+SegmentedControlOption
 ```
 
 ## CSS Classes
@@ -172,6 +179,11 @@ All tokens are CSS custom properties scoped under `[data-meirlabs-theme="dark"]`
 - When displaying a status, use `<StatusPill>` not a custom span.
 - When showing positive/negative numbers, use `<MetricValue>` or `.ml-metric-*` classes.
 - If a component does not exist in ui-kit but would be generally reusable, suggest adding it to the package.
+- The library is intentionally small. Check existing components first; **extend** a
+  primitive with a variant/size (as `Button` gained `secondary`) rather than
+  overriding it with per-call `className`. Don't inline-fork a control across pages —
+  promote it here once it's needed twice. Add a new component only when it's
+  genuinely distinct from what exists.
 - The compat layer (`compat.css`) is deprecated. Do not use legacy `.tt-*` class names in new code.
 
 ## Adding a Component
