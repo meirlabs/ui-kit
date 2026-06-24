@@ -21,13 +21,52 @@
   cursor: default;
 }
 
+/* Primary = the "btn-dark" treatment: a soft charcoal gradient with a 1px ring,
+   inset top highlight + bottom shadow — a raised, tactile surface, not a flat
+   fill. Built-in hover (brighten), active (dim + 0.5px nudge), disabled (50%).
+   Don't shadow-fork this elsewhere — apply .ml-btn-primary and add only
+   shape/size utilities. */
 .ml-btn-primary {
-  background: var(--ml-color-success);
+  background: var(--ml-btn-primary-bg, linear-gradient(180deg, #323232 0%, #222222 100%));
   color: #ffffff;
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.06), /* 1px ring */
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.1), /* top highlight */
+    0 1px 2px 0 rgba(0, 0, 0, 0.45); /* bottom shadow */
+  transition: filter 0.15s, transform 0.06s, box-shadow 0.15s, opacity 0.15s;
 }
 
 .ml-btn-primary:hover:not(:disabled) {
-  opacity: 0.85;
+  filter: brightness(1.12);
+}
+
+.ml-btn-primary:active:not(:disabled) {
+  filter: brightness(0.95);
+  transform: translateY(0.5px);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-btn-primary {
+    transition: none;
+  }
+  .ml-btn-primary:active:not(:disabled) {
+    transform: none;
+  }
+}
+
+/* Secondary = a flat, filled surface that sits between primary and ghost:
+   solid presence (elevated fill + full-strength text + 1px ring) but none of
+   primary's tactile gradient/lift. Medium-emphasis actions. */
+.ml-btn-secondary {
+  padding: 7px 15px;
+  border: 1px solid var(--ml-border);
+  background: var(--ml-bg-elevated);
+  color: var(--ml-text);
+}
+
+.ml-btn-secondary:hover:not(:disabled) {
+  border-color: var(--ml-text-muted);
+  filter: brightness(1.1);
 }
 
 .ml-btn-ghost {
@@ -136,6 +175,181 @@
   border: none;
   border-top: 1px solid var(--ml-border);
   margin: var(--ml-space-lg) 0;
+}
+
+/* dashed — same subtle weight, broken line */
+.ml-divider-dashed {
+  border-top-style: dashed;
+}
+
+/* decorative & diamond — glyph-bearing separators */
+.ml-divider-decorative,
+.ml-divider-diamond {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ml-space-md);
+  margin: var(--ml-space-lg) 0;
+  border: none;
+}
+
+/* faded line fading out toward the centered diamond on each side */
+.ml-divider-decorative::before,
+.ml-divider-decorative::after {
+  content: "";
+  flex: 1;
+  height: 1px;
+  min-width: 0;
+}
+
+.ml-divider-decorative::before {
+  background: linear-gradient(to right, transparent, var(--ml-border));
+}
+
+.ml-divider-decorative::after {
+  background: linear-gradient(to left, transparent, var(--ml-border));
+}
+
+.ml-divider-glyph {
+  flex: none;
+  font-size: 11px;
+  line-height: 1;
+  color: var(--ml-text-faint);
+  user-select: none;
+}
+
+/* ── EditableDocument: form-bound fill-in-the-blank placeholders ── */
+.doc {
+  color: var(--ml-text);
+  font-size: var(--ml-text-base);
+  line-height: 1.9; /* generous, so blanks have room for underline + tint */
+}
+
+.doc-p {
+  margin: 0 0 1em;
+}
+
+.doc-p:last-child {
+  margin-bottom: 0;
+}
+
+/* keeps a blank from breaking across lines */
+.doc-field-wrap {
+  white-space: nowrap;
+}
+
+/* the blank — inline-block so it can hold padding + a min width in the flow */
+.doc-field {
+  display: inline-block;
+  min-width: 2.5em;
+  padding: 0 4px;
+  text-align: start;
+  border-radius: 5px;
+  outline: none;
+  cursor: text;
+  transition: background-color 120ms ease, border-color 120ms ease;
+}
+
+/* EMPTY — muted label on a thin underline */
+.doc-field.is-empty {
+  color: var(--ml-text-faint);
+  border-bottom: 1.5px solid color-mix(in srgb, var(--ml-text-faint) 65%, transparent);
+}
+
+.doc-field.is-empty::before {
+  content: attr(data-placeholder);
+  pointer-events: none;
+}
+
+/* on focus the label clears like a real placeholder */
+.doc-field.is-empty:focus::before {
+  content: none;
+}
+
+/* FILLED — bold value on a faint tint, no underline */
+.doc-field.is-filled {
+  font-weight: 600;
+  color: var(--ml-text);
+  background: color-mix(in srgb, var(--ml-text) 5%, transparent);
+}
+
+/* FOCUSED (either state) — soft highlight, kill any app-wide focus ring */
+.doc-field:focus,
+.doc-field:focus-visible {
+  color: var(--ml-text);
+  border-bottom-color: transparent;
+  box-shadow: none;
+  background: color-mix(in srgb, var(--ml-color-primary) 16%, transparent);
+}
+
+/* one-time "Click to edit" nudge — positioned by JS (position: fixed) */
+.doc-edit-hint {
+  position: fixed;
+  z-index: 60;
+  transform: translate(-50%, calc(-100% - 9px));
+  padding: 5px 10px;
+  border-radius: 8px;
+  background: var(--ml-text);
+  color: var(--ml-bg);
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1.2;
+  white-space: nowrap;
+  pointer-events: none;
+  box-shadow: 0 8px 20px -8px rgba(0, 0, 0, 0.45);
+  animation: doc-edit-hint-in 160ms ease-out;
+}
+
+.doc-edit-hint::after {
+  content: "";
+  position: absolute;
+  bottom: -4px;
+  left: 50%;
+  width: 8px;
+  height: 8px;
+  background: var(--ml-text);
+  border-radius: 1px;
+  transform: translateX(-50%) rotate(45deg);
+}
+
+@keyframes doc-edit-hint-in {
+  from {
+    opacity: 0;
+    transform: translate(-50%, calc(-100% - 3px));
+  }
+  to {
+    opacity: 1;
+    transform: translate(-50%, calc(-100% - 9px));
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .doc-edit-hint {
+    animation: none;
+  }
+}
+
+/* ── Placeholder: embossed empty-state graphic ── */
+.ml-placeholder {
+  /* motif colors, derived from theme tokens so light/dark both read well */
+  --ml-ph-paper: var(--ml-bg-card); /* the raised "paper" object */
+  --ml-ph-soft: color-mix(in srgb, var(--ml-text) 7%, var(--ml-bg-card)); /* secondary shapes */
+  --ml-ph-line: var(--ml-border); /* thin outlines */
+  --ml-ph-mark: var(--ml-text-faint); /* detail bars + accent strokes */
+
+  position: relative;
+  display: grid;
+  place-items: center;
+  flex-shrink: 0;
+  border: 1px solid var(--ml-border-subtle);
+  background: var(--ml-bg-surface);
+  /* embossed/raised — dark theme: deep shadow + faint top-left highlight */
+  box-shadow: 6px 6px 14px rgba(0, 0, 0, 0.45), -5px -5px 12px rgba(255, 255, 255, 0.03);
+}
+
+/* light theme: the original soft-UI emboss (strong white highlight) */
+[data-meirlabs-theme="light"] .ml-placeholder {
+  box-shadow: 5px 5px 14px rgba(0, 0, 0, 0.07), -5px -5px 14px rgba(255, 255, 255, 0.9);
 }
 
 /* ── Banner ── */

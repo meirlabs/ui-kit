@@ -12,7 +12,14 @@ export type { BadgeProps } from "./components/Badge";
 export { Avatar } from "./components/Avatar";
 export type { AvatarProps } from "./components/Avatar";
 export { Label } from "./components/Label";
-export { Divider } from "./components/Divider";
+export { Divider, type DividerVariant } from "./components/Divider";
+export {
+  EditableDocument,
+  parseDocFields,
+  type DocFieldDef,
+  type EditableDocumentProps,
+} from "./components/EditableDocument";
+export { Placeholder, type PlaceholderSubject } from "./components/Placeholder";
 export { Banner } from "./components/Banner";
 export type { BannerProps } from "./components/Banner";
 export { Pagination } from "./components/Pagination";
@@ -45,6 +52,11 @@ export { Tabs } from "./components/Tabs";
 export type { TabsProps } from "./components/Tabs";
 export { Toggle } from "./components/Toggle";
 export type { ToggleProps } from "./components/Toggle";
+export { SegmentedControl } from "./components/SegmentedControl";
+export type {
+  SegmentedControlProps,
+  SegmentedControlOption,
+} from "./components/SegmentedControl";
 
 // Data Display
 export { StatCard } from "./components/StatCard";
