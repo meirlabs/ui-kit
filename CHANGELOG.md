@@ -1,5 +1,11 @@
 # Changelog
 
+## Unreleased
+
+- Add theme-independent motion tokens (`--ml-duration-*`, `--ml-ease-*`,
+  `--ml-stagger*`, `--ml-press-scale`) calibrated to the design system's
+  motion foundation. Migrate component transitions to consume them.
+
 ## 0.1.1
 
 - Document light theme token values in README and AGENTS.

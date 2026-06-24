@@ -1,4 +1,30 @@
 /* @meir-labs/ui-kit — Design Tokens */
+
+/* ── Motion (theme-independent) ──
+   Calibrated to design/foundation/motion.md. Durations and easings don't
+   change per theme, so they live in plain :root. */
+:root {
+  /* Durations */
+  --ml-duration-press: 60ms;      /* :active transform feedback */
+  --ml-duration-fast: 120ms;      /* tight color/border shifts */
+  --ml-duration-base: 150ms;      /* interactive default: hover color/border/bg, focus */
+  --ml-duration-slow: 200ms;      /* expand/collapse (small elements) */
+  --ml-duration-exit: 450ms;      /* overlay/list dissolve */
+  --ml-duration-entrance: 800ms;  /* landing scroll reveal (exempt from sub-300ms UI rule) */
+
+  /* Easings */
+  --ml-ease: ease;                                          /* plain interactive default */
+  --ml-ease-out: cubic-bezier(0.23, 1, 0.32, 1);           /* strong ease-out for deliberate UI */
+  --ml-ease-entrance: cubic-bezier(0.25, 0.46, 0.45, 0.94); /* landing fade-up */
+
+  /* Stagger */
+  --ml-stagger: 100ms;            /* between siblings on entrance */
+  --ml-stagger-tight: 80ms;       /* word-by-word splits */
+
+  /* Press feedback — never below 0.95 */
+  --ml-press-scale: 0.97;
+}
+
 :root[data-meirlabs-theme="dark"],
 [data-meirlabs-theme="dark"] {
   --ml-bg: #0d1117;

@@ -25,7 +25,7 @@
   color: var(--ml-text);
   font-family: inherit;
   font-size: var(--ml-text-sm);
-  transition: border-color 0.15s, outline 0.15s;
+  transition: border-color var(--ml-duration-base), outline var(--ml-duration-base);
 }
 
 .ml-field input:focus,
@@ -47,7 +47,7 @@
   height: 3px;
   border-radius: 2px;
   background: var(--ml-bg-elevated);
-  transition: background 0.2s;
+  transition: background var(--ml-duration-slow);
 }
 
 .ml-wizard-segment.filled {

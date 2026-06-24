@@ -37,7 +37,7 @@
 }
 
 .ml-dt tbody tr {
-  transition: background-color 0.15s ease;
+  transition: background-color var(--ml-duration-base) ease;
 }
 
 .ml-dt tbody tr:hover {
@@ -68,7 +68,7 @@
 
 .ml-dt-chevron {
   color: transparent;
-  transition: color 0.15s ease;
+  transition: color var(--ml-duration-base) ease;
   text-align: right;
   padding-right: 14px;
   vertical-align: middle;
