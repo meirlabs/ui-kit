@@ -223,46 +223,49 @@ These classes are available globally after importing `styles.css`. Use them dire
 
 ## Design Tokens
 
-All tokens are CSS custom properties scoped under `[data-meirlabs-theme="dark"]`.
+All tokens are CSS custom properties. Color, background, text, border, shadow,
+and glass tokens differ per theme — set `[data-meirlabs-theme="dark"]` or
+`[data-meirlabs-theme="light"]` on a wrapper (typically `<html>`). Spacing,
+radius, and typography are shared across both themes.
 
 ### Colors
 
-| Token | Value |
-| --- | --- |
-| `--ml-color-primary` | `#58a6ff` |
-| `--ml-color-primary-muted` | `rgba(88, 166, 255, 0.15)` |
-| `--ml-color-success` | `#3fb950` |
-| `--ml-color-success-muted` | `rgba(63, 185, 80, 0.12)` |
-| `--ml-color-danger` | `#f85149` |
-| `--ml-color-danger-muted` | `rgba(248, 81, 73, 0.12)` |
-| `--ml-color-warning` | `#d29922` |
-| `--ml-color-warning-muted` | `rgba(210, 153, 34, 0.12)` |
-| `--ml-color-purple` | `#bc8cff` |
-| `--ml-color-purple-muted` | `rgba(188, 140, 255, 0.15)` |
+| Token | Dark | Light |
+| --- | --- | --- |
+| `--ml-color-primary` | `#58a6ff` | `#0969da` |
+| `--ml-color-primary-muted` | `rgba(88, 166, 255, 0.15)` | `rgba(9, 105, 218, 0.1)` |
+| `--ml-color-success` | `#3fb950` | `#1a7f37` |
+| `--ml-color-success-muted` | `rgba(63, 185, 80, 0.12)` | `rgba(26, 127, 55, 0.1)` |
+| `--ml-color-danger` | `#f85149` | `#cf222e` |
+| `--ml-color-danger-muted` | `rgba(248, 81, 73, 0.12)` | `rgba(207, 34, 46, 0.1)` |
+| `--ml-color-warning` | `#d29922` | `#9a6700` |
+| `--ml-color-warning-muted` | `rgba(210, 153, 34, 0.12)` | `rgba(154, 103, 0, 0.1)` |
+| `--ml-color-purple` | `#bc8cff` | `#8250df` |
+| `--ml-color-purple-muted` | `rgba(188, 140, 255, 0.15)` | `rgba(130, 80, 223, 0.1)` |
 
 ### Backgrounds
 
-| Token | Value |
-| --- | --- |
-| `--ml-bg` | `#0d1117` |
-| `--ml-bg-surface` | `#161b22` |
-| `--ml-bg-card` | `#1c2129` |
-| `--ml-bg-elevated` | `#21262d` |
+| Token | Dark | Light |
+| --- | --- | --- |
+| `--ml-bg` | `#0d1117` | `#ffffff` |
+| `--ml-bg-surface` | `#161b22` | `#f6f8fa` |
+| `--ml-bg-card` | `#1c2129` | `#ffffff` |
+| `--ml-bg-elevated` | `#21262d` | `#ffffff` |
 
 ### Text
 
-| Token | Value |
-| --- | --- |
-| `--ml-text` | `#e6edf3` |
-| `--ml-text-muted` | `#8b949e` |
-| `--ml-text-faint` | `#6e7681` |
+| Token | Dark | Light |
+| --- | --- | --- |
+| `--ml-text` | `#e6edf3` | `#1f2328` |
+| `--ml-text-muted` | `#8b949e` | `#656d76` |
+| `--ml-text-faint` | `#6e7681` | `#8b949e` |
 
 ### Borders
 
-| Token | Value |
-| --- | --- |
-| `--ml-border` | `#30363d` |
-| `--ml-border-subtle` | `rgba(48, 54, 61, 0.5)` |
+| Token | Dark | Light |
+| --- | --- | --- |
+| `--ml-border` | `#30363d` | `#d0d7de` |
+| `--ml-border-subtle` | `rgba(48, 54, 61, 0.5)` | `rgba(208, 215, 222, 0.5)` |
 
 ### Spacing
 
@@ -287,20 +290,20 @@ All tokens are CSS custom properties scoped under `[data-meirlabs-theme="dark"]`
 
 ### Shadows
 
-| Token | Value |
-| --- | --- |
-| `--ml-shadow-card` | `0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.03) inset` |
-| `--ml-shadow-elevated` | `0 8px 24px rgba(0,0,0,0.4)` |
-| `--ml-shadow-modal` | `0 24px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset` |
-| `--ml-shadow-glow` | `0 0 20px rgba(88,166,255,0.08)` |
+| Token | Dark | Light |
+| --- | --- | --- |
+| `--ml-shadow-card` | `0 1px 3px rgba(0,0,0,0.3), 0 0 0 1px rgba(255,255,255,0.03) inset` | `0 1px 3px rgba(31,35,40,0.08), 0 0 0 1px rgba(31,35,40,0.06)` |
+| `--ml-shadow-elevated` | `0 8px 24px rgba(0,0,0,0.4)` | `0 8px 24px rgba(31,35,40,0.12)` |
+| `--ml-shadow-modal` | `0 24px 70px rgba(0,0,0,0.5), 0 0 0 1px rgba(255,255,255,0.04) inset` | `0 24px 70px rgba(31,35,40,0.2), 0 0 0 1px rgba(31,35,40,0.06)` |
+| `--ml-shadow-glow` | `0 0 20px rgba(88,166,255,0.08)` | `0 0 20px rgba(9,105,218,0.06)` |
 
 ### Glass
 
-| Token | Value |
-| --- | --- |
-| `--ml-glass-bg` | `rgba(22, 27, 34, 0.82)` |
-| `--ml-glass-blur` | `blur(40px)` |
-| `--ml-glass-border` | `rgba(48, 54, 61, 0.6)` |
+| Token | Dark | Light |
+| --- | --- | --- |
+| `--ml-glass-bg` | `rgba(22, 27, 34, 0.82)` | `rgba(255, 255, 255, 0.85)` |
+| `--ml-glass-blur` | `blur(40px)` | `blur(40px)` |
+| `--ml-glass-border` | `rgba(48, 54, 61, 0.6)` | `rgba(208, 215, 222, 0.6)` |
 
 ### Typography
 

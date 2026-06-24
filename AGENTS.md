@@ -97,7 +97,10 @@ SegmentedControlOption
 
 ## Design Tokens
 
-All tokens are CSS custom properties scoped under `[data-meirlabs-theme="dark"]`.
+All tokens are CSS custom properties. The values below are the **dark** theme
+(`[data-meirlabs-theme="dark"]`). The **light** theme (`[data-meirlabs-theme="light"]`)
+overrides color/background/text/border/shadow/glass tokens (light values listed
+at the end of this section); spacing, radius, and typography are shared.
 
 ### Colors
 
@@ -171,6 +174,14 @@ All tokens are CSS custom properties scoped under `[data-meirlabs-theme="dark"]`
 - `--ml-text-xl`: 1.2rem
 - `--ml-text-2xl`: 1.5rem
 - `--ml-text-3xl`: 2rem
+
+### Light theme overrides (`[data-meirlabs-theme="light"]`)
+
+- Backgrounds: `--ml-bg` #ffffff · `--ml-bg-surface` #f6f8fa · `--ml-bg-card` #ffffff · `--ml-bg-elevated` #ffffff
+- Text: `--ml-text` #1f2328 · `--ml-text-muted` #656d76 · `--ml-text-faint` #8b949e
+- Borders: `--ml-border` #d0d7de · `--ml-border-subtle` rgba(208,215,222,0.5)
+- Colors: `--ml-color-primary` #0969da · `--ml-color-success` #1a7f37 · `--ml-color-danger` #cf222e · `--ml-color-warning` #9a6700 · `--ml-color-purple` #8250df (muted variants at ~0.1 alpha)
+- Shadows use `rgba(31,35,40,…)`; glass is `rgba(255,255,255,0.85)`. Spacing, radius, and typography are unchanged.
 
 ## Rules
 

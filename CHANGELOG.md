@@ -1,6 +1,11 @@
 # Changelog
 
-## 0.1.0 (Unreleased)
+## 0.1.1
+
+- Document light theme token values in README and AGENTS.
+- Point repository/homepage/bugs URLs at github.com/meirlabs/ui-kit.
+
+## 0.1.0
 
 - Initial release
 - Table system (`.ml-dt-*` CSS classes)
