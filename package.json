@@ -25,6 +25,7 @@
   "scripts": {
     "build": "tsup && postcss src/styles/index.css -o dist/styles.css && postcss src/styles/compat.css -o dist/compat.css",
     "prepublishOnly": "npm run build",
+    "prepare": "[ -f tsup.config.ts ] && npm run build || true",
     "dev": "concurrently \"tsup --watch\" \"postcss src/styles/index.css -o dist/styles.css --watch\" \"postcss src/styles/compat.css -o dist/compat.css --watch\"",
     "test": "vitest run",
     "test:watch": "vitest",
