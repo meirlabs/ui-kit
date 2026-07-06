@@ -66,4 +66,61 @@ describe("SegmentedControl", () => {
     fireEvent.click(screen.getByRole("tab", { name: /Diplomas/ }));
     expect(onChange).toHaveBeenCalledWith("diplomas");
   });
+
+  it("uses a roving tabindex — only the selected tab is tabbable", () => {
+    render(
+      <SegmentedControl
+        aria-label="View"
+        value="terms"
+        onChange={() => {}}
+        options={options}
+      />,
+    );
+    expect(screen.getByRole("tab", { name: /Terms/ })).toHaveAttribute(
+      "tabindex",
+      "0",
+    );
+    expect(screen.getByRole("tab", { name: /Diplomas/ })).toHaveAttribute(
+      "tabindex",
+      "-1",
+    );
+  });
+
+  it("moves selection with ArrowRight/ArrowLeft (wrapping)", () => {
+    const onChange = vi.fn();
+    render(
+      <SegmentedControl
+        aria-label="View"
+        value="terms"
+        onChange={onChange}
+        options={options}
+      />,
+    );
+    fireEvent.keyDown(screen.getByRole("tab", { name: /Terms/ }), {
+      key: "ArrowRight",
+    });
+    expect(onChange).toHaveBeenLastCalledWith("diplomas");
+    fireEvent.keyDown(screen.getByRole("tab", { name: /Terms/ }), {
+      key: "ArrowLeft",
+    });
+    // wraps from first to last
+    expect(onChange).toHaveBeenLastCalledWith("diplomas");
+  });
+
+  it("Home and End jump to the first and last option", () => {
+    const onChange = vi.fn();
+    render(
+      <SegmentedControl
+        aria-label="View"
+        value="diplomas"
+        onChange={onChange}
+        options={options}
+      />,
+    );
+    const active = screen.getByRole("tab", { name: /Diplomas/ });
+    fireEvent.keyDown(active, { key: "Home" });
+    expect(onChange).toHaveBeenLastCalledWith("terms");
+    fireEvent.keyDown(active, { key: "End" });
+    expect(onChange).toHaveBeenLastCalledWith("diplomas");
+  });
 });

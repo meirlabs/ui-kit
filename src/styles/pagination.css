@@ -3,6 +3,7 @@
   display: flex;
   align-items: center;
   justify-content: center;
+  flex-wrap: wrap;
   gap: 4px;
   padding: 10px 14px 12px;
 }
@@ -11,9 +12,13 @@
 .ml-pg-num {
   min-width: 28px;
   height: 28px;
+  padding: 0 6px;
   border-radius: var(--ml-radius-sm);
   font-size: var(--ml-text-xs);
+  /* Constant weight across states — selection is expressed by color only, so
+     the row never reflows (design contract §9). */
   font-weight: 500;
+  font-variant-numeric: tabular-nums;
   color: var(--ml-text-muted);
   background: none;
   border: none;
@@ -21,7 +26,8 @@
   align-items: center;
   justify-content: center;
   cursor: pointer;
-  transition: background var(--ml-duration-base), color var(--ml-duration-base);
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
   font-family: var(--ml-font-sans);
 }
 
@@ -32,12 +38,59 @@
 }
 
 .ml-pg-num.active {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-color-primary);
-  font-weight: 600;
+  background: var(--ml-text);
+  color: var(--ml-bg);
 }
 
 .ml-pg-arrow:disabled {
   color: var(--ml-text-faint);
+  opacity: 0.5;
   cursor: default;
+  /* keeps its box so the row width never changes at the ends */
+}
+
+.ml-pg-arrow:focus-visible,
+.ml-pg-num:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-pg-dots {
+  min-width: 28px;
+  height: 28px;
+  display: flex;
+  align-items: flex-end;
+  justify-content: center;
+  color: var(--ml-text-faint);
+  font-size: var(--ml-text-xs);
+  user-select: none;
+}
+
+.ml-pg-size {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+  margin-left: var(--ml-space-md);
+}
+
+.ml-pg-size label {
+  font-size: var(--ml-text-xs);
+  color: var(--ml-text-muted);
+}
+
+.ml-pg-size select {
+  height: 28px;
+  padding: 0 8px;
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-sm);
+  background: var(--ml-bg-card);
+  color: var(--ml-text);
+  font-family: var(--ml-font-sans);
+  font-size: var(--ml-text-xs);
+  cursor: pointer;
+}
+
+.ml-pg-size select:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
 }

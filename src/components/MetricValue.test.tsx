@@ -45,4 +45,49 @@ describe("MetricValue", () => {
     expect(el).toHaveAttribute("data-testid", "metric");
     expect(el).toHaveClass("custom");
   });
+
+  it("applies tabular-nums so values align as digits change", () => {
+    render(<MetricValue value={100} data-testid="metric" />);
+
+    const el = screen.getByTestId("metric");
+    expect(el).toHaveStyle({ fontVariantNumeric: "tabular-nums" });
+    expect(el).toHaveClass("ml-metric");
+  });
+
+  it("merges a consumer style without dropping tabular-nums", () => {
+    render(
+      <MetricValue value={5} data-testid="metric" style={{ fontWeight: 600 }} />,
+    );
+
+    const el = screen.getByTestId("metric");
+    expect(el).toHaveStyle({ fontVariantNumeric: "tabular-nums" });
+    expect(el).toHaveStyle({ fontWeight: "600" });
+  });
+
+  it("renders an up delta as functional success and hides the sign in the number", () => {
+    render(<MetricValue value={120} delta={8} data-testid="metric" />);
+
+    const delta = screen.getByTestId("metric").querySelector(".ml-metric-delta");
+    expect(delta).toBeInTheDocument();
+    expect(delta).toHaveClass("ml-metric-positive");
+    expect(delta).toHaveTextContent("8");
+    expect(delta).not.toHaveTextContent("-");
+  });
+
+  it("renders a down delta as functional danger", () => {
+    render(<MetricValue value={120} delta={-8} data-testid="metric" />);
+
+    const delta = screen.getByTestId("metric").querySelector(".ml-metric-delta");
+    expect(delta).toHaveClass("ml-metric-negative");
+    expect(delta).toHaveTextContent("8");
+  });
+
+  it("respects an explicit deltaDirection over the sign", () => {
+    render(
+      <MetricValue value={120} delta={4} deltaDirection="down" data-testid="metric" />,
+    );
+
+    const delta = screen.getByTestId("metric").querySelector(".ml-metric-delta");
+    expect(delta).toHaveClass("ml-metric-negative");
+  });
 });

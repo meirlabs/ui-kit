@@ -21,3 +21,12 @@ export const Negative: StoryObj = {
 export const Zero: StoryObj = {
   render: () => <MetricValue value={0} formatter={money} />,
 };
+
+export const WithDelta: StoryObj = {
+  render: () => (
+    <div style={{ display: "flex", flexDirection: "column", gap: "0.5rem" }}>
+      <MetricValue value={12500} formatter={money} delta={8.2} deltaFormatter={(v) => `${v}%`} />
+      <MetricValue value={9800} formatter={money} delta={-3.4} deltaFormatter={(v) => `${v}%`} />
+    </div>
+  ),
+};

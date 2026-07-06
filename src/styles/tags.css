@@ -1,41 +1,197 @@
-/* @meir-labs/ui-kit — Tags & Status Pills */
+/* @meir-labs/ui-kit — Badges, Tags, Chips & Metric Values (tags.css)
+   Monochrome-neutral by default; functional status colors only.
+   Neutral = surface + muted text (never the blue --ml-color-primary).
+   WS1 owns --ml-neutral-fill / --ml-neutral-text / .ml-tabular; referenced
+   here with shipped-token fallbacks so this file is robust on its own. */
+
+/* ── Shared pill/tag base (layout only) ── */
 .ml-tag,
 .ml-status-pill {
   display: inline-flex;
   align-items: center;
   justify-content: center;
+  gap: var(--ml-space-xs);
   padding: 3px 10px;
+  border: none;
   border-radius: var(--ml-radius-pill);
-  font-size: var(--ml-text-xs);
+  font-size: 12px;
   font-weight: 600;
+  line-height: 1.4;
+  white-space: nowrap;
+  vertical-align: middle;
 }
 
-.ml-tag {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-text-muted);
+/* Focus ring on anything interactive: 2px var(--ml-text), offset 2px. */
+.ml-status-pill:focus-visible,
+.ml-tag:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
 }
 
+/* ── StatusPill tones ──
+   Fill = -muted tint, text/dot = solid tone token (via currentColor).
+   Neutral = surface fill + muted text (monochrome, NOT blue). */
 .ml-status-pill-good {
   background: var(--ml-color-success-muted);
   color: var(--ml-color-success);
 }
-
 .ml-status-pill-warn {
   background: var(--ml-color-warning-muted);
   color: var(--ml-color-warning);
 }
-
+.ml-status-pill-danger {
+  background: var(--ml-color-danger-muted);
+  color: var(--ml-color-danger);
+}
 .ml-status-pill-neutral {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-color-primary);
+  background: var(--ml-neutral-fill, var(--ml-bg-surface));
+  color: var(--ml-neutral-text, var(--ml-text-muted));
 }
 
+/* Leading status dot — takes the solid tone via currentColor. */
+.ml-status-pill-dot {
+  flex: none;
+  width: 6px;
+  height: 6px;
+  border-radius: var(--ml-radius-pill);
+  background: currentColor;
+}
+.ml-status-pill-icon {
+  display: inline-flex;
+  flex: none;
+  align-items: center;
+}
+.ml-status-pill-icon svg {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Tag ──
+   Default neutral = gray. Functional tones for success/warning/danger. */
+.ml-tag {
+  gap: 4px;
+  background: var(--ml-neutral-fill, var(--ml-bg-surface));
+  color: var(--ml-neutral-text, var(--ml-text-muted));
+}
+.ml-tag-neutral {
+  background: var(--ml-neutral-fill, var(--ml-bg-surface));
+  color: var(--ml-neutral-text, var(--ml-text-muted));
+}
+.ml-tag-success {
+  background: var(--ml-color-success-muted);
+  color: var(--ml-color-success);
+}
+.ml-tag-warning {
+  background: var(--ml-color-warning-muted);
+  color: var(--ml-color-warning);
+}
+.ml-tag-danger {
+  background: var(--ml-color-danger-muted);
+  color: var(--ml-color-danger);
+}
+
+/* Sizes */
+.ml-tag-md {
+  padding: 3px 10px;
+  font-size: 12px;
+}
+.ml-tag-sm {
+  padding: 1px 8px;
+  font-size: 11px;
+}
+
+/* Trailing remove (×) icon-button.
+   Small visible box (16px), hit area grown via ::before — never padded,
+   so the tag geometry (and neighbors) never shift. */
+.ml-tag-remove {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  margin-right: -2px;
+  padding: 0;
+  border: none;
+  border-radius: var(--ml-radius-pill);
+  background: transparent;
+  color: currentColor;
+  opacity: 0.72;
+  cursor: pointer;
+  transition:
+    opacity var(--ml-duration-base) var(--ml-ease),
+    background-color var(--ml-duration-base) var(--ml-ease);
+}
+.ml-tag-remove svg {
+  width: 12px;
+  height: 12px;
+  pointer-events: none;
+}
+.ml-tag-remove:hover {
+  opacity: 1;
+  background: color-mix(in srgb, currentColor 16%, transparent);
+}
+.ml-tag-remove:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  opacity: 1;
+}
+/* ≥24px inner target on desktop; ≥44px on coarse pointers (no reflow). */
+.ml-tag-remove::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+@media (pointer: coarse) {
+  .ml-tag-remove::before {
+    inset: -14px;
+  }
+}
+
+/* ── ChipRow ──
+   No forced margin — the parent owns vertical rhythm so chips align
+   flush inside table cells. Spacing comes from the gap prop (default 8px). */
 .ml-chip-row {
-  margin-top: var(--ml-space-sm);
   display: flex;
   flex-wrap: wrap;
-  gap: var(--ml-space-xs);
+  align-items: center;
+  gap: var(--ml-space-sm);
+}
+.ml-chip-row-gap-sm {
+  gap: var(--ml-space-sm); /* 8px */
+}
+.ml-chip-row-gap-md {
+  gap: var(--ml-space-md); /* 12px */
+}
+.ml-chip-row-item {
+  display: inline-flex;
+  align-items: center;
 }
 
-.ml-metric-positive { color: var(--ml-color-success); }
-.ml-metric-negative { color: var(--ml-color-danger); }
+/* ── MetricValue ──
+   tabular-nums so in-place value changes (9→10→100) never nudge neighbors.
+   Delta coloring is functional success/danger only. */
+.ml-metric {
+  font-variant-numeric: tabular-nums;
+}
+.ml-metric-positive {
+  color: var(--ml-color-success);
+}
+.ml-metric-negative {
+  color: var(--ml-color-danger);
+}
+.ml-metric-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  margin-left: var(--ml-space-xs);
+  font-size: 0.85em;
+  font-weight: 500;
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-tag-remove {
+    transition-duration: 0.01ms;
+  }
+}

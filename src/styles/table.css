@@ -1,99 +1,287 @@
-/* @meir-labs/ui-kit — Data Table */
-.ml-dt-wrap {
-  background: var(--ml-bg-surface);
+/* @meir-labs/ui-kit — DataTable
+   Header: 12px uppercase muted, filled with --ml-bg-surface so the header band
+   reads as distinct from the card body, + border-bottom. Cell: 14px/400, 12px
+   16px (compact 8px 12px). Row hover = surface shift (--ml-bg-surface), NOT a
+   colored fill. Row divider = --ml-border-subtle. Numeric columns right-align +
+   tabular-nums. No font-weight 700 anywhere. Focus ring is 2px var(--ml-text).
+   Loading states RESERVE space (skeleton rows at the real row height) — never
+   display:none. */
+
+/* ── Root container: border + surface only, no shadow at rest (card rule §4) ── */
+.ml-dt-root {
+  background: var(--ml-bg-card);
   border: 1px solid var(--ml-border);
-  border-radius: 12px;
+  border-radius: var(--ml-radius-xl);
   overflow: hidden;
 }
 
-.ml-dt-wrap--flush {
-  margin-top: var(--ml-space-md);
+/* Sticky-header scroll region — owns its own overflow, so it must reserve the
+   scrollbar gutter to stay reflow-stable (§9). */
+.ml-dt-scroll {
+  max-height: 100%;
+  overflow: auto;
+  scrollbar-gutter: stable;
 }
 
 .ml-dt {
   width: 100%;
   border-collapse: collapse;
+  color: var(--ml-text);
+  font-size: 14px;
 }
 
-.ml-dt thead {
-  background: var(--ml-dt-thead-bg, rgba(255, 255, 255, 0.03));
-}
-
-.ml-dt th {
-  text-align: left;
-  font-size: 0.62rem;
-  font-weight: 500;
-  color: var(--ml-text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  padding: 8px 14px;
-  border-bottom: 1px solid var(--ml-border-subtle);
-}
-
-.ml-dt td {
-  padding: 8px 14px;
-  font-size: 0.78rem;
+/* ── Header ── */
+.ml-dt thead th {
+  background: var(--ml-bg-surface);
+  border-bottom: 1px solid var(--ml-border);
+  padding: 0;
   vertical-align: middle;
 }
 
-.ml-dt tbody tr {
-  transition: background-color var(--ml-duration-base) ease;
+.ml-dt-th-label {
+  display: inline-block;
+  font-size: 11px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: 0.06em;
+  text-transform: uppercase;
+  color: var(--ml-text-muted);
 }
 
-.ml-dt tbody tr:hover {
-  background: var(--ml-color-primary-muted);
+/* The non-sort header padding lives on the label so it matches the sort button. */
+.ml-dt-th > .ml-dt-th-label {
+  padding: 12px 16px;
+}
+.ml-dt--compact .ml-dt-th > .ml-dt-th-label {
+  padding: 8px 12px;
 }
 
-.ml-dt tbody tr:not(:last-child) td {
+.ml-dt-align-left { text-align: left; }
+.ml-dt-align-center { text-align: center; }
+.ml-dt-align-right { text-align: right; }
+
+/* ── Sortable header trigger ── */
+.ml-dt-sort {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-xs);
+  width: 100%;
+  padding: 12px 16px;
+  background: none;
+  border: none;
+  cursor: pointer;
+  color: inherit;
+  font: inherit;
+  text-align: inherit;
+  border-radius: var(--ml-radius-sm);
+  transition: color var(--ml-duration-base) var(--ml-ease);
+}
+.ml-dt--compact .ml-dt-sort {
+  padding: 8px 12px;
+}
+.ml-dt-align-right .ml-dt-sort { justify-content: flex-end; }
+.ml-dt-align-center .ml-dt-sort { justify-content: center; }
+
+.ml-dt-sort:hover .ml-dt-th-label {
+  color: var(--ml-text);
+}
+.ml-dt-sort:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+}
+
+/* ── Sort caret: monochrome double-chevron; the active arm brightens ── */
+.ml-dt-caret {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--ml-text-faint);
+}
+.ml-dt-caret-up,
+.ml-dt-caret-down {
+  opacity: 0.4;
+  transition: opacity var(--ml-duration-base) var(--ml-ease);
+}
+.ml-dt-caret--asc .ml-dt-caret-up { opacity: 1; color: var(--ml-text); }
+.ml-dt-caret--desc .ml-dt-caret-down { opacity: 1; color: var(--ml-text); }
+
+/* ── Body cells ── */
+.ml-dt td {
+  padding: 12px 16px;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ml-text);
+  vertical-align: middle;
+}
+.ml-dt--compact td {
+  padding: 8px 12px;
+}
+
+.ml-dt-num {
+  text-align: right;
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Rows ── */
+.ml-dt tbody .ml-dt-row:not(:last-child) td {
   border-bottom: 1px solid var(--ml-border-subtle);
 }
-
-.ml-dt th.ml-dt-r,
-.ml-dt td.ml-dt-r {
-  text-align: right;
+.ml-dt tbody .ml-dt-row {
+  transition: background-color var(--ml-duration-base) var(--ml-ease);
 }
-
-.ml-dt-row-link {
+/* Hover is a surface shift — never a colored fill (§7, contract). */
+.ml-dt tbody .ml-dt-row--clickable:hover,
+.ml-dt tbody .ml-dt-row--selected {
+  background: var(--ml-bg-surface);
+}
+.ml-dt-row--clickable {
   cursor: pointer;
 }
+.ml-dt-row--clickable:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+}
 
-.ml-dt-avatar {
-  width: 40px;
+/* ── Sticky header ── */
+.ml-dt--sticky thead th {
+  position: sticky;
+  top: 0;
+  z-index: var(--ml-z-sticky);
+}
+
+/* ── Selection checkbox (local look-alike; decoupled from WS6 Checkbox) ── */
+.ml-dt-check-cell {
+  width: 44px;
+  padding-left: var(--ml-space-lg);
   padding-right: 0;
 }
-
-.ml-dt-chevron-col {
-  width: 32px;
+.ml-dt--compact .ml-dt-check-cell {
+  padding-left: var(--ml-space-md);
+}
+.ml-dt-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  cursor: pointer;
+}
+.ml-dt-check-input {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  opacity: 0;
+  margin: 0;
+  pointer-events: none;
+}
+.ml-dt-check-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 18px;
+  height: 18px;
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-sm);
+  background: var(--ml-bg-card);
+  color: var(--ml-bg-card);
+  transition:
+    background-color var(--ml-duration-base) var(--ml-ease),
+    border-color var(--ml-duration-base) var(--ml-ease);
+}
+.ml-dt-check-mark {
+  width: 14px;
+  height: 14px;
+  opacity: 0;
+  transition: opacity var(--ml-duration-fast) var(--ml-ease);
+}
+.ml-dt-check-dash {
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  border-radius: 1px;
+  background: currentColor;
+  opacity: 0;
+}
+.ml-dt-check-input:checked + .ml-dt-check-box,
+.ml-dt-check-input:indeterminate + .ml-dt-check-box {
+  background: var(--ml-text);
+  border-color: var(--ml-text);
+  color: var(--ml-bg-card);
+}
+.ml-dt-check-input:checked + .ml-dt-check-box .ml-dt-check-mark {
+  opacity: 1;
+}
+.ml-dt-check-input:indeterminate + .ml-dt-check-box .ml-dt-check-dash {
+  opacity: 1;
+}
+.ml-dt-check-input:focus-visible + .ml-dt-check-box {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+.ml-dt-check-input:disabled + .ml-dt-check-box {
+  opacity: 0.5;
 }
 
-.ml-dt-chevron {
-  color: transparent;
-  transition: color var(--ml-duration-base) ease;
-  text-align: right;
-  padding-right: 14px;
-  vertical-align: middle;
-  line-height: 0;
+/* ── States: empty / error span all columns ── */
+.ml-dt-state {
+  padding: var(--ml-space-2xl) var(--ml-space-lg);
+  text-align: center;
+  color: var(--ml-text-muted);
 }
-
-.ml-dt-row-link:hover .ml-dt-chevron {
+.ml-dt-state--error {
+  color: var(--ml-color-danger);
+}
+.ml-dt-empty-fallback {
+  font-size: 14px;
   color: var(--ml-text-muted);
 }
 
-.ml-dt-primary { font-weight: 600; }
-.ml-dt-secondary { margin-top: 2px; font-size: var(--ml-text-xs); color: var(--ml-text-muted); }
-.ml-dt-time {
-  white-space: nowrap;
-  color: var(--ml-text-muted);
-  font-family: var(--ml-font-mono);
-  font-size: var(--ml-text-xs);
+/* ── Loading skeletons — reserve the real row height, never display:none ── */
+.ml-dt-row--skeleton td {
+  border-bottom: 1px solid var(--ml-border-subtle);
 }
-.ml-dt-truncate {
-  max-width: 300px;
-  overflow: hidden;
-  text-overflow: ellipsis;
-  white-space: nowrap;
+.ml-dt-skel {
+  display: block;
+  height: 14px;
+  width: 70%;
+  border-radius: var(--ml-radius-sm);
+  /* Monochrome surface — no gradient (contract §0.2); loading is an opacity pulse. */
+  background: color-mix(in srgb, var(--ml-text-faint) 15%, var(--ml-bg-surface));
+  animation: ml-dt-shimmer 1.2s ease-in-out infinite;
+}
+.ml-dt-num .ml-dt-skel {
+  margin-left: auto;
+  width: 40%;
+}
+.ml-dt-skel--check {
+  width: 18px;
+  height: 18px;
 }
 
-@media (max-width: 720px) {
-  .ml-dt td.ml-dt-r { text-align: left; }
+@keyframes ml-dt-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ── Footer slot (pagination / summary) ── */
+.ml-dt-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ml-space-md);
+  padding: var(--ml-space-md) var(--ml-space-lg);
+  border-top: 1px solid var(--ml-border-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-dt-skel {
+    animation: none;
+    background: var(--ml-bg-surface);
+  }
+  .ml-dt tbody .ml-dt-row,
+  .ml-dt-sort,
+  .ml-dt-caret-up,
+  .ml-dt-caret-down,
+  .ml-dt-check-box,
+  .ml-dt-check-mark {
+    transition-duration: 0.01ms;
+  }
 }

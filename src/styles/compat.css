@@ -98,7 +98,9 @@
 }
 
 .tt tbody tr:hover {
-  background: rgba(88, 166, 255, 0.04);
+  /* Was a blue tint (neutral row-hover rendered blue). Repointed to the neutral
+     surface shift the design system uses for row hover (G10). */
+  background: var(--ml-bg-surface);
 }
 
 .tt tbody tr:not(:last-child) td {
@@ -227,8 +229,10 @@
 }
 
 .status-pill-neutral {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-color-primary);
+  /* Legacy neutral pill mapped to the blue primary. Repointed to the dedicated
+     neutral tokens so upgrading apps stop rendering blue (G10). */
+  background: var(--ml-neutral-fill);
+  color: var(--ml-neutral-text);
 }
 
 .chip-row {

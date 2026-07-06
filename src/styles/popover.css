@@ -1,0 +1,53 @@
+/* @meir-labs/ui-kit — Popover */
+
+.ml-popover {
+  position: fixed;
+  min-width: 200px;
+  max-width: min(92vw, 360px);
+  padding: var(--ml-space-lg);
+  border-radius: var(--ml-radius-lg);
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  box-shadow: var(--ml-shadow-elevated);
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  /* Motion: fade + small translate in, dissolve out (<=200ms). */
+  opacity: 0;
+  transition: opacity var(--ml-duration-slow) var(--ml-ease-out),
+    transform var(--ml-duration-slow) var(--ml-ease-out);
+  will-change: opacity, transform;
+}
+
+.ml-popover:focus {
+  outline: none;
+}
+
+.ml-popover[data-placement^="top"] {
+  transform: translateY(4px);
+}
+.ml-popover[data-placement^="bottom"] {
+  transform: translateY(-4px);
+}
+.ml-popover[data-placement^="left"] {
+  transform: translateX(4px);
+}
+.ml-popover[data-placement^="right"] {
+  transform: translateX(-4px);
+}
+
+.ml-popover[data-open="true"] {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-popover {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
+  .ml-popover[data-open="true"] {
+    transform: none;
+  }
+}

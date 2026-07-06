@@ -1,0 +1,27 @@
+/* @meir-labs/ui-kit — Kbd (keyboard-shortcut badge)
+   Small monochrome pill(s). No motion. */
+
+.ml-kbd {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  flex-shrink: 0;
+}
+
+.ml-kbd-key {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  min-width: 20px;
+  height: 20px;
+  padding: 0 5px;
+  background: var(--ml-bg-surface);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-sm); /* 6px */
+  color: var(--ml-text-muted);
+  font-family: var(--ml-font-mono);
+  font-size: 12px; /* type-scale floor (contract §6) — never below 12px */
+  line-height: 1;
+  font-weight: 500;
+  white-space: nowrap;
+}

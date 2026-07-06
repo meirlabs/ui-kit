@@ -1,0 +1,243 @@
+/* @meir-labs/ui-kit — Drawer (slide-over panel)
+   Reuses .ml-overlay backdrop from overlays.css. Entrance = subtle translate +
+   opacity via --ml-ease-out ≤200ms; exit = dissolve in place (opacity only, no
+   transform). Reduced-motion collapses to instant. */
+
+.ml-drawer-overlay {
+  padding: 0;
+}
+
+/* Anchor the panel to the requested edge. */
+.ml-drawer-overlay[data-side="right"] {
+  justify-content: flex-end;
+  align-items: stretch;
+}
+.ml-drawer-overlay[data-side="left"] {
+  justify-content: flex-start;
+  align-items: stretch;
+}
+.ml-drawer-overlay[data-side="top"] {
+  align-items: flex-start;
+  justify-content: stretch;
+}
+.ml-drawer-overlay[data-side="bottom"] {
+  align-items: flex-end;
+  justify-content: stretch;
+}
+
+.ml-drawer {
+  display: flex;
+  flex-direction: column;
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  box-shadow: var(--ml-shadow-modal);
+  opacity: 1;
+  transition: opacity var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+.ml-drawer:focus-visible {
+  outline: none;
+}
+
+/* Left / right: full height, width from size. */
+.ml-drawer[data-side="left"],
+.ml-drawer[data-side="right"] {
+  height: 100%;
+  max-width: 100vw;
+}
+.ml-drawer[data-side="left"] {
+  border-top: none;
+  border-bottom: none;
+  border-left: none;
+}
+.ml-drawer[data-side="right"] {
+  border-top: none;
+  border-bottom: none;
+  border-right: none;
+}
+
+/* Top / bottom: full width, height from size. */
+.ml-drawer[data-side="top"],
+.ml-drawer[data-side="bottom"] {
+  width: 100%;
+  max-height: 100vh;
+}
+.ml-drawer[data-side="top"] {
+  border-left: none;
+  border-right: none;
+  border-top: none;
+}
+.ml-drawer[data-side="bottom"] {
+  border-left: none;
+  border-right: none;
+  border-bottom: none;
+}
+
+/* Sizes along the panel's main axis. */
+.ml-drawer[data-side="left"].ml-drawer-sm,
+.ml-drawer[data-side="right"].ml-drawer-sm {
+  width: min(100vw, 320px);
+}
+.ml-drawer[data-side="left"].ml-drawer-md,
+.ml-drawer[data-side="right"].ml-drawer-md {
+  width: min(100vw, 420px);
+}
+.ml-drawer[data-side="left"].ml-drawer-lg,
+.ml-drawer[data-side="right"].ml-drawer-lg {
+  width: min(100vw, 560px);
+}
+.ml-drawer[data-side="top"].ml-drawer-sm,
+.ml-drawer[data-side="bottom"].ml-drawer-sm {
+  height: min(100vh, 240px);
+}
+.ml-drawer[data-side="top"].ml-drawer-md,
+.ml-drawer[data-side="bottom"].ml-drawer-md {
+  height: min(100vh, 360px);
+}
+.ml-drawer[data-side="top"].ml-drawer-lg,
+.ml-drawer[data-side="bottom"].ml-drawer-lg {
+  height: min(100vh, 480px);
+}
+
+/* Entrance: translate in from the edge + fade. */
+.ml-drawer[data-state="open"][data-side="right"] {
+  animation: ml-drawer-in-right var(--ml-duration-slow) var(--ml-ease-out);
+}
+.ml-drawer[data-state="open"][data-side="left"] {
+  animation: ml-drawer-in-left var(--ml-duration-slow) var(--ml-ease-out);
+}
+.ml-drawer[data-state="open"][data-side="top"] {
+  animation: ml-drawer-in-top var(--ml-duration-slow) var(--ml-ease-out);
+}
+.ml-drawer[data-state="open"][data-side="bottom"] {
+  animation: ml-drawer-in-bottom var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+/* Exit: dissolve in place — opacity only. */
+.ml-drawer[data-state="closed"] {
+  opacity: 0;
+}
+
+@keyframes ml-drawer-in-right {
+  from {
+    opacity: 0;
+    transform: translateX(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes ml-drawer-in-left {
+  from {
+    opacity: 0;
+    transform: translateX(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+@keyframes ml-drawer-in-top {
+  from {
+    opacity: 0;
+    transform: translateY(-24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+@keyframes ml-drawer-in-bottom {
+  from {
+    opacity: 0;
+    transform: translateY(24px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+.ml-drawer-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ml-space-md);
+  padding: var(--ml-space-xl);
+  border-bottom: 1px solid var(--ml-border);
+}
+
+.ml-drawer-title {
+  margin: 0;
+  font-size: 18px;
+  line-height: 1.3;
+  font-weight: 600;
+  letter-spacing: -0.4px;
+  color: var(--ml-text);
+  text-wrap: balance;
+}
+
+.ml-drawer-close {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ml-radius-md);
+  border: none;
+  background: none;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-drawer-close:hover {
+  background: var(--ml-bg-surface);
+  color: var(--ml-text);
+}
+
+.ml-drawer-close:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* Guarantee a ≥44px touch target on mobile (contract §12). */
+@media (max-width: 640px) {
+  .ml-drawer-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+.ml-drawer-body {
+  flex: 1;
+  min-height: 0;
+  padding: var(--ml-space-xl);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.31px;
+  color: var(--ml-text);
+}
+
+.ml-drawer-footer {
+  display: flex;
+  align-items: center;
+  justify-content: flex-end;
+  gap: var(--ml-space-sm);
+  padding: var(--ml-space-lg) var(--ml-space-xl);
+  border-top: 1px solid var(--ml-border);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-drawer {
+    transition: none;
+  }
+  .ml-drawer[data-state="open"] {
+    animation: none;
+  }
+}

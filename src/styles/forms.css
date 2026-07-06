@@ -1,63 +1,158 @@
-/* @meir-labs/ui-kit — Forms */
+/* @meir-labs/ui-kit — Forms (Field + Wizard) */
+
+/* ── Visually-hidden (safety net; WS1 owns the canonical rule) ── */
+.ml-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
 
 /* ── Field ── */
 .ml-field {
   display: flex;
   flex-direction: column;
-  gap: 4px;
+  gap: 6px; /* label sits 6px above the control */
 }
 
 .ml-field-label {
-  font-size: var(--ml-text-xs);
-  color: var(--ml-text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
-  font-weight: 600;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.31px;
+  color: var(--ml-text);
 }
 
-.ml-field input,
-.ml-field select,
-.ml-field textarea {
-  padding: 8px 12px;
+.ml-field-required {
+  margin-left: 2px;
+  color: var(--ml-color-danger);
+}
+
+.ml-field-hint {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
+}
+
+.ml-field-error {
+  margin: 0;
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ml-color-danger);
+}
+
+/* Bare host controls placed directly inside a Field (no Input/Textarea wrapper).
+   Matches the §8 input canon: 40px, 1px border, radius-md, neutral focus. */
+.ml-field > input:not([type="checkbox"]):not([type="radio"]),
+.ml-field > select,
+.ml-field > textarea {
+  width: 100%;
+  min-height: 40px;
+  padding: 0 12px;
   border-radius: var(--ml-radius-md);
   border: 1px solid var(--ml-border);
-  background: var(--ml-bg);
+  background: var(--ml-bg-card);
   color: var(--ml-text);
   font-family: inherit;
-  font-size: var(--ml-text-sm);
-  transition: border-color var(--ml-duration-base), outline var(--ml-duration-base);
+  font-size: 14px;
+  line-height: 1.5;
+  transition:
+    border-color var(--ml-duration-base) var(--ml-ease),
+    box-shadow var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-field input:focus,
-.ml-field select:focus,
-.ml-field textarea:focus {
-  outline: 2px solid var(--ml-color-primary-muted);
-  border-color: var(--ml-color-primary);
+.ml-field > textarea {
+  min-height: 80px;
+  padding: 8px 12px;
+  resize: vertical;
+  scrollbar-gutter: stable;
+}
+
+.ml-field > input::placeholder,
+.ml-field > textarea::placeholder {
+  color: var(--ml-text-faint);
+}
+
+/* Neutral 2px focus ring on :focus-visible — never the blue accent outline. */
+.ml-field > input:not([type="checkbox"]):not([type="radio"]):focus-visible,
+.ml-field > select:focus-visible,
+.ml-field > textarea:focus-visible {
+  outline: none;
+  border-color: var(--ml-text);
+  box-shadow: 0 0 0 2px var(--ml-text);
+}
+
+/* Danger state (Field injects aria-invalid onto the control). */
+.ml-field > [aria-invalid="true"] {
+  border-color: var(--ml-color-danger);
+}
+.ml-field > [aria-invalid="true"]:focus-visible {
+  border-color: var(--ml-color-danger);
+  box-shadow: 0 0 0 2px var(--ml-color-danger);
+}
+
+.ml-field > :disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ── Wizard ── */
 .ml-wizard-progress {
   display: flex;
   gap: 4px;
-  margin-bottom: var(--ml-space-lg);
+  margin-bottom: var(--ml-space-md);
 }
 
 .ml-wizard-segment {
   flex: 1;
-  height: 3px;
-  border-radius: 2px;
+  height: 4px;
+  border-radius: var(--ml-radius-pill);
   background: var(--ml-bg-elevated);
-  transition: background var(--ml-duration-slow);
+  border: 1px solid var(--ml-border-subtle);
+  transition: background var(--ml-duration-base) var(--ml-ease);
 }
 
+/* Monochrome fill — charcoal text token, never an accent color. */
 .ml-wizard-segment.filled {
-  background: var(--ml-color-primary);
+  background: var(--ml-text);
+  border-color: var(--ml-text);
+}
+
+.ml-wizard-steps {
+  display: flex;
+  gap: 4px;
+  margin-bottom: var(--ml-space-lg);
+}
+
+.ml-wizard-step-title {
+  flex: 1;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ml-text-faint);
+  transition: color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-wizard-step-title.done {
+  color: var(--ml-text-muted);
+}
+
+.ml-wizard-step-title.current {
+  color: var(--ml-text);
 }
 
 .ml-wizard-footer {
   display: flex;
   justify-content: space-between;
   align-items: center;
+  gap: var(--ml-space-md);
   padding-top: var(--ml-space-lg);
   border-top: 1px solid var(--ml-border);
   margin-top: var(--ml-space-xl);

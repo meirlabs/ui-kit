@@ -1,0 +1,51 @@
+/* @meir-labs/ui-kit — Tooltip */
+
+.ml-tooltip {
+  position: fixed;
+  max-width: 260px;
+  padding: 6px 8px;
+  border-radius: var(--ml-radius-md);
+  background: var(--ml-bg-elevated);
+  border: 1px solid var(--ml-border);
+  box-shadow: var(--ml-shadow-card);
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: 12px;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  text-align: left;
+  pointer-events: none;
+  /* Motion: fade + small translate in, dissolve out. */
+  opacity: 0;
+  transition: opacity var(--ml-duration-fast) var(--ml-ease-out),
+    transform var(--ml-duration-fast) var(--ml-ease-out);
+  will-change: opacity, transform;
+}
+
+.ml-tooltip[data-placement^="top"] {
+  transform: translateY(3px);
+}
+.ml-tooltip[data-placement^="bottom"] {
+  transform: translateY(-3px);
+}
+.ml-tooltip[data-placement^="left"] {
+  transform: translateX(3px);
+}
+.ml-tooltip[data-placement^="right"] {
+  transform: translateX(-3px);
+}
+
+.ml-tooltip[data-open="true"] {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-tooltip {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
+  .ml-tooltip[data-open="true"] {
+    transform: none;
+  }
+}

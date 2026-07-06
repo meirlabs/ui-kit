@@ -4,26 +4,32 @@ export function DangerZoneDemo() {
   return (
     <>
       <div className="demo-section">
-        <div className="demo-label">With title and action</div>
+        <div className="demo-label">Multi-row destructive pattern</div>
         <DangerZone title="Danger Zone">
-          <p style={{ fontSize: "var(--ml-text-sm)", color: "var(--ml-text-muted)", marginBottom: "var(--ml-space-md)" }}>
-            Deleting this agent is permanent and cannot be undone.
-          </p>
-          <button
-            type="button"
-            style={{
-              padding: "6px 16px",
-              fontSize: "var(--ml-text-sm)",
-              fontWeight: 600,
-              color: "var(--ml-color-danger)",
-              background: "var(--ml-color-danger-muted)",
-              border: "1px solid var(--ml-color-danger-muted)",
-              borderRadius: "var(--ml-radius-md)",
-              cursor: "pointer",
-            }}
-          >
-            Delete Agent
-          </button>
+          <DangerZone.Item
+            title="Transfer ownership"
+            description="Move this workspace to another account. You'll lose admin access."
+            actionLabel="Transfer"
+            onConfirm={() => alert("wire your confirm modal here")}
+          />
+          <DangerZone.Item
+            title="Delete workspace"
+            description="Permanently remove this workspace and all of its data. This cannot be undone."
+            actionLabel="Delete workspace"
+            onConfirm={() => alert("wire your confirm modal here")}
+          />
+        </DangerZone>
+      </div>
+
+      <div className="demo-section">
+        <div className="demo-label">Single item, loading state</div>
+        <DangerZone title="Account">
+          <DangerZone.Item
+            title="Delete account"
+            description="This will erase your profile and cannot be reversed."
+            actionLabel="Delete account"
+            loading
+          />
         </DangerZone>
       </div>
     </>

@@ -1,151 +1,594 @@
 /* @meir-labs/ui-kit — Layout Components */
 
-/* ── Shell ── */
+/* ─────────────────────────────────────────────────────────────
+   Shell — full-height app frame: fixed sidebar + fluid main.
+   CSS grid `240px 1fr`; collapses to a single column under 640px.
+   ───────────────────────────────────────────────────────────── */
 .ml-shell {
-  display: flex;
+  display: grid;
+  grid-template-columns: 240px 1fr;
   width: 100%;
   min-height: 100vh;
 }
 
 .ml-shell-sidebar {
-  flex-shrink: 0;
-}
-
-.ml-shell-main {
-  flex: 1;
+  min-width: 0;
+  grid-row: 1;
+  /* Pin the nav: it stays in view while the main column scrolls, instead of
+     scrolling away with the page. Sticky (not fixed) so it keeps its grid
+     column and collapses cleanly on mobile. */
+  position: sticky;
+  top: 0;
+  align-self: start;
+  height: 100vh;
+  height: 100dvh;
   overflow-y: auto;
 }
 
-/* ── Sidebar ── */
+.ml-shell-main {
+  min-width: 0;
+  grid-row: 1;
+  overflow-y: auto;
+  overflow-x: hidden;
+  /* Keep an additional scroll region stable (spec §9) */
+  scrollbar-gutter: stable;
+}
+
+@media (max-width: 640px) {
+  .ml-shell {
+    grid-template-columns: 1fr;
+    grid-auto-rows: min-content 1fr;
+  }
+  .ml-shell-sidebar,
+  .ml-shell-main {
+    grid-row: auto;
+  }
+  /* Stacked layout on mobile: the sidebar sits on top and scrolls with the
+     page, so drop the pin. */
+  .ml-shell-sidebar {
+    position: static;
+    height: auto;
+    overflow-y: visible;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Sidebar — 240px navigation rail, collapsible to a 64px icon rail.
+   ───────────────────────────────────────────────────────────── */
 .ml-sidebar {
   display: flex;
   flex-direction: column;
+  gap: var(--ml-space-xs);
+  width: 240px;
   height: 100%;
+  padding: var(--ml-space-md);
+  background: var(--ml-bg-surface);
+  border-right: 1px solid var(--ml-border);
+  transition: width var(--ml-duration-slow) var(--ml-ease-out);
 }
 
+.ml-sidebar[data-collapsed="true"] {
+  width: 64px;
+  align-items: stretch;
+}
+
+/* Section — grouped nav with a quiet uppercase micro-label */
 .ml-sidebar-section {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   margin-bottom: var(--ml-space-sm);
 }
 
+.ml-sidebar-section-label {
+  padding: var(--ml-space-xs) var(--ml-space-md);
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ml-text-muted);
+  white-space: nowrap;
+  overflow: hidden;
+}
+
+.ml-sidebar[data-collapsed="true"] .ml-sidebar-section-label {
+  /* keep the box, drop its width — never display:none (spec §0.7) */
+  max-width: 0;
+  padding-inline: 0;
+  visibility: hidden;
+}
+
+/* Nav item — 14px/400, 8px×12px pad, 8px radius, 20px icon + 12px gap */
 .ml-sidebar-item {
+  position: relative;
   display: flex;
   align-items: center;
-  gap: 10px;
-  padding: var(--ml-space-sm) var(--ml-space-lg);
+  gap: var(--ml-space-md);
+  width: 100%;
+  padding: var(--ml-space-sm) var(--ml-space-md);
   font-family: inherit;
-  font-size: 0.82rem;
-  font-weight: 500;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.4;
   color: var(--ml-text-muted);
+  text-align: left;
+  text-decoration: none;
   background: none;
   border: none;
   border-radius: var(--ml-radius-md);
   cursor: pointer;
-  transition: background var(--ml-duration-base), color var(--ml-duration-base);
-  width: 100%;
-  text-align: left;
+  transition:
+    background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
 }
 
 .ml-sidebar-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+  background: var(--ml-bg-elevated);
   color: var(--ml-text);
 }
 
+/* Monochrome active — surface shift + full-strength text, NOT accent blue */
+.ml-sidebar-item[aria-current="page"],
 .ml-sidebar-item.active {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-color-primary);
+  background: var(--ml-bg-elevated);
+  color: var(--ml-text);
+  font-weight: 500;
+}
+
+.ml-sidebar-item:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-sidebar-item:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ml-sidebar-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+}
+
+.ml-sidebar-item-label {
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  transition: max-width var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+.ml-sidebar[data-collapsed="true"] .ml-sidebar-item {
+  justify-content: center;
+  padding-inline: 0;
+}
+
+/* Collapsed rail: hide the label VISUALLY but keep it in the accessibility
+   tree so the icon-only button still has an accessible name. visibility:hidden
+   / display:none would strip the name (a11y), so use the sr-only clip pattern
+   (still no layout shift — it's removed from flow). */
+.ml-sidebar[data-collapsed="true"] .ml-sidebar-item-label {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0 0 0 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
 }
 
 .ml-sidebar-spacer {
   flex: 1;
 }
 
-/* ── Top Bar ── */
+/* Mobile — guarantee a 44px touch target (spec §12) */
+@media (max-width: 640px) {
+  .ml-sidebar {
+    width: 100%;
+    border-right: none;
+    border-bottom: 1px solid var(--ml-border);
+  }
+  .ml-sidebar-item {
+    min-height: 44px;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Top Bar — 56px header with left / center / right slots.
+   ───────────────────────────────────────────────────────────── */
 .ml-top-bar {
   display: flex;
   align-items: center;
   gap: var(--ml-space-lg);
-  padding: 0 var(--ml-space-xl);
   height: 56px;
+  padding: 0 var(--ml-space-xl);
+  background: var(--ml-bg-surface);
   border-bottom: 1px solid var(--ml-border);
-  background: var(--ml-bg-surface);
 }
 
-/* ── Page Header ── */
-.ml-page-header {
-  margin-bottom: var(--ml-space-xl);
-}
-
-.ml-page-title {
-  font-size: var(--ml-text-2xl);
-  font-weight: 700;
-  letter-spacing: -0.03em;
-}
-
-.ml-page-subtitle {
-  font-size: 0.82rem;
-  color: var(--ml-text-muted);
-  margin-top: var(--ml-space-xs);
-}
-
-/* ── Card ── */
-.ml-card {
-  border: 1px solid var(--ml-border);
-  border-radius: var(--ml-radius-xl);
-  padding: var(--ml-space-lg);
-  background: var(--ml-bg-surface);
-}
-
-/* ── Grid ── */
-.ml-grid {
-  display: grid;
-  grid-template-columns: repeat(auto-fit, minmax(180px, 1fr));
+.ml-top-bar-left,
+.ml-top-bar-right {
+  display: flex;
+  align-items: center;
   gap: var(--ml-space-md);
+  min-width: 0;
 }
 
-/* ── Section ── */
-.ml-section {
-  margin-bottom: var(--ml-space-xl);
+.ml-top-bar-center {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: 1;
+  min-width: 0;
 }
 
-.ml-section-title {
-  font-size: var(--ml-text-xs);
-  font-weight: 600;
-  color: var(--ml-text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.05em;
-  margin-bottom: var(--ml-space-md);
+.ml-top-bar-right {
+  margin-left: auto;
 }
 
-/* ── Detail List ── */
-.ml-detail-list {
-  display: grid;
-  grid-template-columns: 1fr 1fr;
-  gap: var(--ml-space-sm) var(--ml-space-xl);
+@media (max-width: 640px) {
+  .ml-top-bar {
+    padding: 0 var(--ml-space-lg);
+    gap: var(--ml-space-md);
+  }
 }
 
-.ml-detail-list dt {
-  font-size: var(--ml-text-xs);
-  color: var(--ml-text-faint);
-  text-transform: uppercase;
-  letter-spacing: 0.04em;
+/* ─────────────────────────────────────────────────────────────
+   Page Header — title + subtitle, optional breadcrumb / back / actions.
+   ───────────────────────────────────────────────────────────── */
+.ml-page-header {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-md);
+  margin-bottom: var(--ml-space-2xl);
 }
 
-.ml-detail-list dd {
-  font-size: var(--ml-text-sm);
+.ml-page-header-breadcrumb {
+  min-width: 0;
+}
+
+.ml-page-header-row {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ml-space-lg);
+}
+
+.ml-page-header-titles {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-xs);
+  min-width: 0;
+}
+
+.ml-page-back {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-xs);
+  align-self: flex-start;
+  margin-bottom: var(--ml-space-xs);
+  padding: var(--ml-space-xs) var(--ml-space-sm);
+  margin-left: calc(-1 * var(--ml-space-sm));
+  font-family: inherit;
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ml-text-muted);
+  text-decoration: none;
+  background: none;
+  border: none;
+  border-radius: var(--ml-radius-md);
+  cursor: pointer;
+  transition: color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-page-back:hover {
   color: var(--ml-text);
 }
 
-/* ── Danger Zone ── */
-.ml-danger-zone {
-  border: 1px solid var(--ml-color-danger-muted);
+.ml-page-back:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-page-back svg {
+  width: 16px;
+  height: 16px;
+}
+
+.ml-page-title {
+  font-size: 36px;
+  font-weight: 600;
+  line-height: 1.1;
+  letter-spacing: -1.2px;
+  color: var(--ml-text);
+  text-wrap: balance;
+}
+
+.ml-page-subtitle {
+  font-size: 16px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.31px;
+  color: var(--ml-text-muted);
+  text-wrap: pretty;
+}
+
+.ml-page-header-actions {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+  flex-shrink: 0;
+}
+
+@media (max-width: 640px) {
+  .ml-page-title {
+    font-size: 28px;
+    letter-spacing: -0.8px;
+  }
+  .ml-page-header-row {
+    flex-direction: column;
+  }
+  .ml-page-header-actions {
+    width: 100%;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Card — bordered surface, 12px radius, 24px padding, NO rest shadow.
+   Never nest a card inside a card (spec §0.10).
+   ───────────────────────────────────────────────────────────── */
+.ml-card {
+  padding: var(--ml-space-xl);
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
   border-radius: var(--ml-radius-lg);
-  padding: var(--ml-space-lg);
-  margin-top: var(--ml-space-xl);
+}
+
+.ml-card-compact {
+  padding: var(--ml-space-md);
+}
+
+.ml-card-interactive {
+  cursor: pointer;
+  text-align: inherit;
+  color: inherit;
+  text-decoration: none;
+  transition: border-color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-card-interactive:hover {
+  border-color: var(--ml-text-muted);
+}
+
+.ml-card-interactive:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Grid — responsive columns; collapses to one column on mobile.
+   ───────────────────────────────────────────────────────────── */
+.ml-grid {
+  display: grid;
+  gap: var(--ml-grid-gap, var(--ml-space-lg));
+  grid-template-columns: var(
+    --ml-grid-template,
+    repeat(auto-fit, minmax(180px, 1fr))
+  );
+}
+
+.ml-grid-gap-sm {
+  --ml-grid-gap: var(--ml-space-md);
+}
+.ml-grid-gap-md {
+  --ml-grid-gap: var(--ml-space-lg);
+}
+.ml-grid-gap-lg {
+  --ml-grid-gap: var(--ml-space-xl);
+}
+
+@media (max-width: 640px) {
+  .ml-grid {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Section — 32px gap; quiet muted 15px header (no uppercase/bold).
+   ───────────────────────────────────────────────────────────── */
+.ml-section {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-lg);
+  margin-bottom: var(--ml-space-2xl);
+}
+
+.ml-section:last-child {
+  margin-bottom: 0;
+}
+
+.ml-section-title {
+  font-size: 15px;
+  font-weight: 400;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  color: var(--ml-text-muted);
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Detail List — semantic dl/dt/dd; responsive columns; copy affordance.
+   ───────────────────────────────────────────────────────────── */
+.ml-detail-list {
+  display: grid;
+  gap: var(--ml-space-lg) var(--ml-space-xl);
+  margin: 0;
+}
+
+.ml-detail-list-cols-1 {
+  grid-template-columns: 1fr;
+}
+.ml-detail-list-cols-2 {
+  grid-template-columns: 1fr 1fr;
+}
+
+.ml-detail-item {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-xs);
+  min-width: 0;
+}
+
+.ml-detail-item-full {
+  grid-column: 1 / -1;
+}
+
+.ml-detail-list dt {
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ml-text-muted);
+}
+
+.ml-detail-list dd {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.31px;
+  color: var(--ml-text);
+  min-width: 0;
+}
+
+.ml-detail-value {
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+}
+
+.ml-detail-copy {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  color: var(--ml-text-faint);
+  background: none;
+  border: none;
+  border-radius: var(--ml-radius-md);
+  cursor: pointer;
+  transition:
+    color var(--ml-duration-base) var(--ml-ease),
+    background var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-detail-copy:hover {
+  color: var(--ml-text);
+  background: var(--ml-bg-surface);
+}
+
+.ml-detail-copy:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-detail-copy svg {
+  width: 14px;
+  height: 14px;
+}
+
+@media (max-width: 480px) {
+  .ml-detail-list-cols-2 {
+    grid-template-columns: 1fr;
+  }
+}
+
+/* ─────────────────────────────────────────────────────────────
+   Danger Zone — flat destructive panel; visible danger border.
+   ───────────────────────────────────────────────────────────── */
+.ml-danger-zone {
+  border: 1px solid var(--ml-color-danger);
+  border-radius: var(--ml-radius-lg);
+  margin-top: var(--ml-space-2xl);
+  overflow: hidden;
+}
+
+.ml-danger-zone-header {
+  padding: var(--ml-space-lg) var(--ml-space-xl);
+  border-bottom: 1px solid var(--ml-border-subtle);
 }
 
 .ml-danger-zone-title {
-  font-size: var(--ml-text-sm);
+  font-size: 18px;
   font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
   color: var(--ml-color-danger);
-  margin-bottom: var(--ml-space-sm);
+}
+
+.ml-danger-zone-body {
+  display: flex;
+  flex-direction: column;
+}
+
+.ml-danger-zone-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ml-space-lg);
+  padding: var(--ml-space-lg) var(--ml-space-xl);
+}
+
+.ml-danger-zone-item + .ml-danger-zone-item {
+  border-top: 1px solid var(--ml-border-subtle);
+}
+
+.ml-danger-zone-item-text {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-xs);
+  min-width: 0;
+}
+
+.ml-danger-zone-item-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ml-text);
+}
+
+.ml-danger-zone-item-desc {
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
+}
+
+.ml-danger-zone-item-action {
+  flex-shrink: 0;
+}
+
+@media (max-width: 480px) {
+  .ml-danger-zone-item {
+    flex-direction: column;
+    align-items: flex-start;
+  }
+  .ml-danger-zone-item-action {
+    width: 100%;
+  }
 }

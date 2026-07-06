@@ -1,0 +1,12 @@
+/* @meir-labs/ui-kit — Hint */
+
+/* A piece of text (header, label, term) that reveals a Tooltip on hover or
+   keyboard focus. Deliberately undecorated at rest: no icon, no cursor change,
+   no underline. The cursor stays whatever the surrounding text already uses, so
+   the text reads as normal until the tooltip appears. Only the keyboard focus
+   ring is drawn, matching the kit convention (outline in --ml-text). */
+.ml-hint:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  border-radius: var(--ml-radius-sm);
+}

@@ -1,0 +1,116 @@
+/* @meir-labs/ui-kit — Callout
+   Inline, form/doc-level admonition. Shares the tone→token recipe with Banner
+   (page-level) so they read as one family; Callout is the smaller, inline form.
+   `info` is neutral gray, NOT blue (monochrome contract). No motion beyond
+   hover. */
+
+.ml-callout {
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ml-space-md);
+  padding: var(--ml-space-md) var(--ml-space-lg);
+  border: 1px solid var(--ml-border);
+  border-left-width: 3px;
+  border-radius: var(--ml-radius-lg);
+  background: var(--ml-bg-surface);
+  color: var(--ml-text);
+  font-size: 14px;
+  line-height: 1.5;
+}
+
+.ml-callout-icon {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 20px;
+  height: 20px;
+  margin-top: 1px;
+  color: var(--ml-text-muted);
+}
+
+.ml-callout-body {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 4px;
+}
+
+.ml-callout-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  color: var(--ml-text);
+}
+
+.ml-callout-content {
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ml-text-muted);
+  word-break: break-word;
+}
+
+/* When there's a title, keep body text muted; when title-less, the content
+   carries primary text weight/color. */
+.ml-callout-body > .ml-callout-content:only-child {
+  color: var(--ml-text);
+}
+
+.ml-callout-close {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: -2px -4px -2px 0;
+  border: none;
+  border-radius: var(--ml-radius-md);
+  background: none;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition:
+    background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+.ml-callout-close:hover {
+  background: color-mix(in srgb, var(--ml-text) 8%, transparent);
+  color: var(--ml-text);
+}
+.ml-callout-close:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* ── Tones (shared recipe with Banner) ──
+   neutral + info → gray; success/warning/danger → functional accent. */
+.ml-callout-neutral,
+.ml-callout-info {
+  border-left-color: var(--ml-text-faint);
+}
+.ml-callout-neutral .ml-callout-icon,
+.ml-callout-info .ml-callout-icon {
+  color: var(--ml-text-muted);
+}
+
+.ml-callout-success {
+  background: color-mix(in srgb, var(--ml-color-success-muted) 55%, var(--ml-bg-surface));
+  border-left-color: var(--ml-color-success);
+}
+.ml-callout-success .ml-callout-icon { color: var(--ml-color-success); }
+
+.ml-callout-warning {
+  background: color-mix(in srgb, var(--ml-color-warning-muted) 55%, var(--ml-bg-surface));
+  border-left-color: var(--ml-color-warning);
+}
+.ml-callout-warning .ml-callout-icon { color: var(--ml-color-warning); }
+
+.ml-callout-danger {
+  background: color-mix(in srgb, var(--ml-color-danger-muted) 55%, var(--ml-bg-surface));
+  border-left-color: var(--ml-color-danger);
+}
+.ml-callout-danger .ml-callout-icon { color: var(--ml-color-danger); }

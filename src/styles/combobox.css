@@ -1,0 +1,202 @@
+/* @meir-labs/ui-kit — Combobox */
+
+.ml-combobox {
+  position: relative;
+  width: 100%;
+}
+
+/* ── Control (input-styled §8) ── */
+.ml-combobox-control {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: 4px;
+  min-height: 40px;
+  padding: 3px 10px;
+  border-radius: var(--ml-radius-md);
+  border: 1px solid var(--ml-border);
+  background: var(--ml-bg-card);
+  cursor: text;
+  transition: border-color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-combobox-control:hover {
+  border-color: var(--ml-text-muted);
+}
+
+.ml-combobox-control:focus-within {
+  border-color: var(--ml-text);
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* Only ring for keyboard focus, not mouse clicks (contract §7 — use
+   :focus-visible). Mirrors the .ml-input pattern in inputs.css. */
+.ml-combobox-control:has(.ml-combobox-input:focus:not(:focus-visible)) {
+  border-color: var(--ml-border);
+  outline: none;
+}
+
+.ml-combobox-control[data-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ml-combobox-input {
+  flex: 1;
+  min-width: 80px;
+  height: 32px;
+  border: none;
+  outline: none;
+  background: transparent;
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  padding: 0;
+}
+
+.ml-combobox-input::placeholder {
+  color: var(--ml-text-faint);
+}
+
+.ml-combobox-indicator {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ml-text-muted);
+  flex-shrink: 0;
+}
+
+.ml-combobox-spinner {
+  animation: ml-combobox-spin 0.7s linear infinite;
+}
+
+@keyframes ml-combobox-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* ── Chips (WS3 Tag look, replicated to avoid coupling) ── */
+.ml-combobox-chip {
+  display: inline-flex;
+  align-items: center;
+  gap: 4px;
+  height: 24px;
+  padding: 0 4px 0 8px;
+  border-radius: var(--ml-radius-pill);
+  background: var(--ml-bg-surface);
+  color: var(--ml-text);
+  font-size: 12px;
+  font-weight: 500;
+  white-space: nowrap;
+}
+
+.ml-combobox-chip-remove {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  border: none;
+  border-radius: var(--ml-radius-pill);
+  background: transparent;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition: color var(--ml-duration-base) var(--ml-ease),
+    background var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-combobox-chip-remove:hover {
+  background: var(--ml-bg-elevated);
+  color: var(--ml-text);
+}
+
+/* ── Listbox popover ── */
+.ml-combobox-popover {
+  position: fixed;
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  box-shadow: var(--ml-shadow-card);
+  padding: 4px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--ml-duration-fast) var(--ml-ease-out),
+    transform var(--ml-duration-fast) var(--ml-ease-out);
+}
+
+.ml-combobox-popover[data-placement^="top"] {
+  transform: translateY(4px);
+}
+
+.ml-combobox-popover[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ml-combobox-list {
+  max-height: 288px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+.ml-combobox-item {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ml-space-sm);
+  padding: 8px 10px;
+  border-radius: var(--ml-radius-sm);
+  color: var(--ml-text);
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  scroll-margin: 4px;
+}
+
+.ml-combobox-item[data-active="true"] {
+  background: var(--ml-bg-surface);
+}
+
+.ml-combobox-item[data-disabled="true"] {
+  color: var(--ml-text-faint);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ml-combobox-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+.ml-combobox-item-check {
+  flex-shrink: 0;
+  color: var(--ml-text);
+}
+
+.ml-combobox-empty,
+.ml-combobox-status {
+  padding: 12px 10px;
+  color: var(--ml-text-muted);
+  font-size: 14px;
+  text-align: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-combobox-popover {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
+  .ml-combobox-popover[data-open="true"] {
+    transform: none;
+  }
+  .ml-combobox-spinner {
+    animation-duration: 0.01ms;
+  }
+}

@@ -1,64 +1,158 @@
-/* @meir-labs/ui-kit — Overlays */
+/* @meir-labs/ui-kit — Overlays (Modal + Dropdown)
+   Motion lives here by design: overlays are the one place entrance/exit motion
+   is sanctioned. Entrances lift (opacity + slight scale/blur) with --ml-ease-out
+   at ≤200ms; exits dissolve (opacity → 0, no position change). All guarded by
+   prefers-reduced-motion. z-index + backdrop come from WS1 tokens with fallbacks. */
 
-/* ── Modal Overlay ── */
+/* ── Shared backdrop ── */
 .ml-overlay {
   position: fixed;
   inset: 0;
-  background: rgba(0, 0, 0, 0.5);
-  backdrop-filter: blur(4px);
   display: flex;
   align-items: center;
   justify-content: center;
-  z-index: 100;
+  padding: var(--ml-space-lg);
+  background: var(--ml-overlay, rgba(0, 0, 0, 0.5));
+  opacity: 1;
+  transition: opacity var(--ml-duration-slow) var(--ml-ease-out);
+  z-index: var(--ml-z-modal, 1500);
 }
 
-/* ── Modal ── */
+[data-meirlabs-theme="dark"] .ml-overlay {
+  background: var(--ml-overlay, rgba(0, 0, 0, 0.7));
+}
+
+.ml-overlay[data-state="closed"] {
+  opacity: 0;
+}
+
+/* ── Modal panel ── */
 .ml-modal {
-  background: var(--ml-bg-surface);
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 560px);
+  max-height: min(85vh, 100%);
+  background: var(--ml-bg-card);
   border: 1px solid var(--ml-border);
-  border-radius: var(--ml-radius-xl);
-  width: min(90vw, 560px);
-  max-height: 85vh;
-  overflow-y: auto;
+  border-radius: var(--ml-radius-xl); /* 16px */
   box-shadow: var(--ml-shadow-modal);
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+.ml-modal:focus-visible {
+  outline: none;
+}
+
+.ml-modal-sm {
+  width: min(100%, 400px);
+}
+.ml-modal-md {
+  width: min(100%, 560px);
+}
+.ml-modal-lg {
+  width: min(100%, 760px);
+}
+.ml-modal-fullscreen {
+  width: 100vw;
+  height: 100vh;
+  max-width: 100vw;
+  max-height: 100vh;
+  border-radius: 0;
+  border: none;
+}
+
+.ml-overlay[data-state="open"] .ml-modal {
+  animation: ml-modal-in var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+/* Exit: dissolve in place — opacity only, no transform. */
+.ml-modal[data-state="closed"] {
+  opacity: 0;
+}
+
+@keyframes ml-modal-in {
+  from {
+    opacity: 0;
+    transform: scale(0.97);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
 }
 
 .ml-modal-header {
   display: flex;
   align-items: center;
   justify-content: space-between;
-  padding: var(--ml-space-lg);
+  gap: var(--ml-space-md);
+  padding: var(--ml-space-xl);
   border-bottom: 1px solid var(--ml-border);
 }
 
-.ml-modal-header h2 {
+.ml-modal-title {
   margin: 0;
-  font-size: var(--ml-text-base);
+  font-size: 18px;
+  line-height: 1.3;
   font-weight: 600;
+  letter-spacing: -0.4px;
   color: var(--ml-text);
+  text-wrap: balance;
 }
 
-.ml-modal-header button {
+.ml-modal-close {
   display: flex;
   align-items: center;
   justify-content: center;
-  width: 28px;
-  height: 28px;
-  border-radius: var(--ml-radius-sm);
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  border-radius: var(--ml-radius-md);
   border: none;
   background: none;
   color: var(--ml-text-muted);
   cursor: pointer;
-  transition: background var(--ml-duration-base), color var(--ml-duration-base);
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-modal-header button:hover {
-  background: var(--ml-bg-elevated);
+.ml-modal-close:hover {
+  background: var(--ml-bg-surface);
   color: var(--ml-text);
 }
 
+.ml-modal-close:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* Guarantee a ≥44px touch target on mobile (contract §12). */
+@media (max-width: 640px) {
+  .ml-modal-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
 .ml-modal-body {
-  padding: var(--ml-space-lg);
+  flex: 1;
+  min-height: 0;
+  padding: var(--ml-space-xl);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  font-size: 14px;
+  line-height: 1.5;
+  letter-spacing: -0.31px;
+  color: var(--ml-text);
+}
+
+.ml-modal-description {
+  margin: 0 0 var(--ml-space-md);
+  color: var(--ml-text-muted);
 }
 
 .ml-modal-footer {
@@ -66,7 +160,7 @@
   align-items: center;
   justify-content: flex-end;
   gap: var(--ml-space-sm);
-  padding: var(--ml-space-lg);
+  padding: var(--ml-space-lg) var(--ml-space-xl);
   border-top: 1px solid var(--ml-border);
 }
 
@@ -76,40 +170,131 @@
   display: inline-block;
 }
 
+.ml-dropdown-trigger {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-xs);
+  font: inherit;
+  cursor: pointer;
+}
+
 .ml-dropdown-menu {
-  position: absolute;
-  top: 100%;
-  left: 0;
-  margin-top: 4px;
-  background: var(--ml-bg-elevated);
-  border: 1px solid var(--ml-border);
-  border-radius: var(--ml-radius-md);
-  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
   min-width: 180px;
-  box-shadow: var(--ml-shadow-elevated);
-  z-index: 50;
+  max-height: min(60vh, 420px);
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding: var(--ml-space-xs);
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  box-shadow: var(--ml-shadow-card);
+  z-index: var(--ml-z-dropdown, 1000);
+  animation: ml-dropdown-in var(--ml-duration-fast) var(--ml-ease-out);
+  transform-origin: top center;
+}
+
+.ml-dropdown-menu[data-placement="top"] {
+  transform-origin: bottom center;
+}
+
+@keyframes ml-dropdown-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98) translateY(-2px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1) translateY(0);
+  }
 }
 
 .ml-dropdown-item {
-  display: block;
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
   width: 100%;
-  padding: 6px 12px;
-  border-radius: var(--ml-radius-sm);
+  padding: 8px 10px;
   border: none;
+  border-radius: var(--ml-radius-md);
   background: none;
-  color: var(--ml-text-muted);
+  color: var(--ml-text);
   font-family: inherit;
-  font-size: var(--ml-text-sm);
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.31px;
   text-align: left;
   cursor: pointer;
-  transition: background var(--ml-duration-base), color var(--ml-duration-base);
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-dropdown-item:hover {
-  background: rgba(255, 255, 255, 0.04);
+/* Neutral hover/active — surface shift, never blue. */
+.ml-dropdown-item:hover:not(:disabled),
+.ml-dropdown-item:focus-visible {
+  background: var(--ml-bg-surface);
   color: var(--ml-text);
 }
 
-.ml-dropdown-item.active {
-  color: var(--ml-color-primary);
+.ml-dropdown-item:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+}
+
+.ml-dropdown-item:disabled,
+.ml-dropdown-item[aria-disabled="true"] {
+  color: var(--ml-text-faint);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ml-dropdown-item-destructive {
+  color: var(--ml-color-danger);
+}
+
+.ml-dropdown-item-destructive:hover:not(:disabled),
+.ml-dropdown-item-destructive:focus-visible {
+  background: var(--ml-color-danger-muted);
+  color: var(--ml-color-danger);
+}
+
+.ml-dropdown-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--ml-text-muted);
+}
+
+.ml-dropdown-item-destructive .ml-dropdown-item-icon {
+  color: var(--ml-color-danger);
+}
+
+.ml-dropdown-item-label {
+  flex: 1;
+  min-width: 0;
+}
+
+.ml-dropdown-item-check {
+  flex-shrink: 0;
+  color: var(--ml-text-muted);
+}
+
+.ml-dropdown-separator {
+  height: 1px;
+  margin: var(--ml-space-xs) 0;
+  background: var(--ml-border-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-overlay,
+  .ml-modal {
+    transition: none;
+  }
+  .ml-overlay[data-state="open"] .ml-modal,
+  .ml-dropdown-menu {
+    animation: none;
+  }
 }

@@ -1,0 +1,147 @@
+/* @meir-labs/ui-kit — Stepper (visual step indicator) */
+
+.ml-stepper {
+  display: flex;
+  list-style: none;
+  margin: 0;
+  padding: 0;
+}
+
+.ml-stepper--horizontal {
+  flex-direction: row;
+}
+.ml-stepper--vertical {
+  flex-direction: column;
+}
+
+.ml-stepper-item {
+  display: flex;
+  min-width: 0;
+}
+.ml-stepper--horizontal .ml-stepper-item {
+  flex: 1 1 0;
+  flex-direction: column;
+}
+.ml-stepper--vertical .ml-stepper-item {
+  flex-direction: row;
+  gap: var(--ml-space-md);
+}
+
+/* ── Marker (circle + connector) ── */
+.ml-stepper-marker {
+  display: flex;
+  align-items: center;
+}
+.ml-stepper--horizontal .ml-stepper-marker {
+  width: 100%;
+}
+.ml-stepper--vertical .ml-stepper-marker {
+  flex-direction: column;
+  align-self: stretch;
+}
+
+.ml-stepper-circle {
+  /* Pin box-sizing so the current-state 1px→2px border swap doesn't grow the
+     circle and nudge the connector (contract §9 — metrics stay fixed on state). */
+  box-sizing: border-box;
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--ml-radius-pill);
+  border: 1px solid var(--ml-border);
+  background: var(--ml-bg-card);
+  color: var(--ml-text-faint);
+  transition:
+    background var(--ml-duration-base) var(--ml-ease),
+    border-color var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-stepper-number {
+  font-size: 12px;
+  font-weight: 600;
+  font-variant-numeric: tabular-nums;
+  line-height: 1;
+}
+
+.ml-stepper-check {
+  width: 16px;
+  height: 16px;
+  color: var(--ml-bg);
+}
+
+.ml-stepper-connector {
+  background: var(--ml-border);
+  transition: background var(--ml-duration-base) var(--ml-ease);
+}
+.ml-stepper--horizontal .ml-stepper-connector {
+  flex: 1;
+  height: 1px;
+  margin: 0 8px;
+}
+.ml-stepper--vertical .ml-stepper-connector {
+  width: 1px;
+  flex: 1;
+  min-height: 20px;
+  margin: 6px 0;
+}
+
+/* ── Content ── */
+.ml-stepper-content {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+}
+.ml-stepper--horizontal .ml-stepper-content {
+  margin-top: 8px;
+  padding-right: var(--ml-space-md);
+}
+.ml-stepper--vertical .ml-stepper-content {
+  padding-bottom: var(--ml-space-lg);
+}
+
+.ml-stepper-label {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ml-text);
+}
+
+.ml-stepper-description {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
+}
+
+/* ── Status: complete ── */
+.ml-stepper-item--complete .ml-stepper-circle {
+  background: var(--ml-text);
+  border-color: var(--ml-text);
+  color: var(--ml-bg);
+}
+.ml-stepper-item--complete .ml-stepper-connector {
+  background: var(--ml-text);
+}
+
+/* ── Status: current (ring) ── */
+.ml-stepper-item--current .ml-stepper-circle {
+  border-width: 2px;
+  border-color: var(--ml-text);
+  color: var(--ml-text);
+}
+
+/* ── Status: upcoming ── */
+.ml-stepper-item--upcoming .ml-stepper-label {
+  color: var(--ml-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-stepper-circle,
+  .ml-stepper-connector {
+    transition-duration: 0.01ms;
+  }
+}

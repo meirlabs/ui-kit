@@ -1,51 +1,66 @@
 import { useState } from "react";
 import { Wizard } from "../../src/components/Wizard";
 
-const stepLabels = ["Account", "Profile", "Preferences", "Review"];
+const stepTitles = ["Account", "Profile", "Preferences", "Review"];
 
 export function WizardDemo() {
   const [current, setCurrent] = useState(0);
+  const [gated, setGated] = useState(1);
 
   return (
     <>
       <div className="demo-section">
-        <div className="demo-label">4-step wizard</div>
+        <div className="demo-label">
+          Built-in footer + step titles (monochrome progress)
+        </div>
         <Wizard
-          steps={4}
+          steps={stepTitles.length}
           current={current}
-          footer={
-            <>
-              <button
-                className="ml-btn ml-btn-ghost"
-                type="button"
-                disabled={current === 0}
-                onClick={() => setCurrent((c) => c - 1)}
-              >
-                Back
-              </button>
-              <span style={{ fontSize: "var(--ml-text-xs)", color: "var(--ml-text-muted)" }}>
-                Step {current + 1} of 4 &mdash; {stepLabels[current]}
-              </span>
-              <button
-                className="ml-btn ml-btn-primary"
-                type="button"
-                disabled={current === 3}
-                onClick={() => setCurrent((c) => c + 1)}
-              >
-                {current === 3 ? "Finish" : "Next"}
-              </button>
-            </>
-          }
+          stepTitles={stepTitles}
+          onStepChange={setCurrent}
+          aria-label="Account setup"
         >
           <div
             style={{
               padding: "var(--ml-space-2xl)",
               textAlign: "center",
               color: "var(--ml-text-muted)",
-              fontSize: "var(--ml-text-sm)",
+              fontSize: "14px",
             }}
           >
-            Content for <strong>{stepLabels[current]}</strong> step goes here.
+            Content for <strong>{stepTitles[current]}</strong> goes here.
+          </div>
+        </Wizard>
+      </div>
+
+      <div className="demo-section">
+        <div className="demo-label">
+          Validation gate — advancing past step 2 is blocked
+        </div>
+        <Wizard
+          steps={stepTitles.length}
+          current={gated}
+          stepTitles={stepTitles}
+          onStepChange={setGated}
+          onValidateStep={(step) => {
+            if (step === 1) {
+              // eslint-disable-next-line no-alert
+              return false; // pretend validation failed on the Profile step
+            }
+            return true;
+          }}
+        >
+          <div
+            style={{
+              padding: "var(--ml-space-2xl)",
+              textAlign: "center",
+              color: "var(--ml-text-muted)",
+              fontSize: "14px",
+            }}
+          >
+            {gated === 1
+              ? "Next is gated here — onValidateStep returns false."
+              : `On step: ${stepTitles[gated]}`}
           </div>
         </Wizard>
       </div>

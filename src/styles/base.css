@@ -35,6 +35,73 @@ html {
   background: color-mix(in srgb, var(--ml-text-faint, #6e7681) 55%, transparent);
 }
 
+/* ── Global reduced-motion guard ──────────────────────────────────────────────
+   The single canonical `prefers-reduced-motion` block for the whole kit (design
+   spec §10). Every workstream relies on this being here, so custom component CSS
+   does not need to re-declare it: motion collapses to ~0 across all elements
+   (durations, not `animation:none`, so state-dependent end frames still apply)
+   and smooth scrolling is disabled. Keep it high in the cascade. */
+@media (prefers-reduced-motion: reduce) {
+  *,
+  *::before,
+  *::after {
+    animation-duration: 0.01ms !important;
+    animation-iteration-count: 1 !important;
+    transition-duration: 0.01ms !important;
+    scroll-behavior: auto !important;
+  }
+}
+
+/* ── Shared utilities ─────────────────────────────────────────────────────────
+   Cross-workstream helpers so components don't re-invent them. */
+
+/* Focus ring (gap G3 — no ring token). Add `.ml-focus-ring` to any interactive
+   element to get the standard 2px ring on keyboard focus only. Components that
+   style their own `:focus-visible` should inline the same raw recipe:
+     :focus-visible { outline: 2px solid var(--ml-text); outline-offset: 2px; }
+   Use `:focus-visible` (not `:focus`) so mouse clicks don't ring. */
+.ml-focus-ring:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* Tabular figures for values that update in place (counters, timers, prices,
+   counts) so `9 → 10` doesn't nudge neighbors (§9). */
+.ml-tabular {
+  font-variant-numeric: tabular-nums;
+}
+
+/* Visually-hidden / sr-only: removes an element from view while keeping it in
+   the accessibility tree (e.g. "Step X of Y" live text for Wizard / Pagination /
+   DataTable). Never `display:none` — that drops it from the a11y tree too. */
+.ml-visually-hidden {
+  position: absolute;
+  width: 1px;
+  height: 1px;
+  padding: 0;
+  margin: -1px;
+  overflow: hidden;
+  clip: rect(0, 0, 0, 0);
+  clip-path: inset(50%);
+  white-space: nowrap;
+  border: 0;
+}
+
+/* Press feedback: add `.ml-press` for a subtle scale-down on `:active` (§7).
+   Reduced-motion callers get no scale (the global guard already zeroes the
+   transition; this also suppresses the transform end-state). */
+.ml-press {
+  transition: transform var(--ml-duration-press) var(--ml-ease);
+}
+.ml-press:active {
+  transform: scale(var(--ml-press-scale));
+}
+@media (prefers-reduced-motion: reduce) {
+  .ml-press:active {
+    transform: none;
+  }
+}
+
 /* Opt-in: render a container's scrollbar on the LEFT edge instead of the right.
    CSS has no direct property for this, so flip the container to `rtl` (which
    moves the scrollbar to the left) and restore `ltr` on its direct children so

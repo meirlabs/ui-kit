@@ -42,3 +42,26 @@ export const ThreeViews: StoryObj = {
     );
   },
 };
+
+/**
+ * Keyboard: focus a tab (Tab reaches only the selected one — roving tabindex),
+ * then ArrowLeft/ArrowRight move focus **and** selection (wrapping), and
+ * Home/End jump to the ends. Focus shows a 2px ring.
+ */
+export const KeyboardAndFocus: StoryObj = {
+  render: () => {
+    const [view, setView] = useState("month");
+    return (
+      <SegmentedControl
+        aria-label="Time range"
+        value={view}
+        onChange={setView}
+        options={[
+          { label: "Week", value: "week" },
+          { label: "Month", value: "month" },
+          { label: "Year", value: "year" },
+        ]}
+      />
+    );
+  },
+};

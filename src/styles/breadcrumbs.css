@@ -1,0 +1,131 @@
+/* @meir-labs/ui-kit — Breadcrumbs */
+.ml-bc {
+  display: block;
+  min-width: 0;
+}
+
+.ml-bc-list {
+  display: flex;
+  align-items: center;
+  flex-wrap: nowrap;
+  gap: 0;
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  min-width: 0;
+}
+
+.ml-bc-li {
+  display: inline-flex;
+  align-items: center;
+  min-width: 0;
+}
+
+.ml-bc-sep-wrap {
+  display: inline-flex;
+  align-items: center;
+  margin: 0 var(--ml-space-xs);
+  color: var(--ml-text-faint);
+  flex-shrink: 0;
+}
+
+.ml-bc-sep {
+  display: block;
+}
+
+.ml-bc-item {
+  display: inline-block;
+  max-width: 180px;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  vertical-align: bottom;
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  font-weight: 400;
+  line-height: 1.4;
+}
+
+.ml-bc-link {
+  padding: 2px 4px;
+  margin: 0 -4px;
+  border: none;
+  background: none;
+  border-radius: var(--ml-radius-sm);
+  color: var(--ml-text-muted);
+  text-decoration: none;
+  cursor: pointer;
+  transition: color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-bc-link:hover {
+  color: var(--ml-text);
+}
+
+.ml-bc-link:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-bc-current {
+  color: var(--ml-text);
+  cursor: default;
+}
+
+/* ── Collapse menu (…) ── */
+.ml-bc-collapse {
+  position: relative;
+  display: inline-flex;
+}
+
+.ml-bc-ellipsis {
+  max-width: none;
+  padding: 0 4px;
+  letter-spacing: 1px;
+}
+
+.ml-bc-menu {
+  position: absolute;
+  top: calc(100% + 4px);
+  left: 0;
+  z-index: var(--ml-z-dropdown, 1000);
+  min-width: 160px;
+  padding: 4px;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  box-shadow: var(--ml-shadow-card);
+}
+
+.ml-bc-menu-item {
+  display: block;
+  width: 100%;
+  padding: 6px 10px;
+  border: none;
+  background: none;
+  border-radius: var(--ml-radius-sm);
+  text-align: left;
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  color: var(--ml-text-muted);
+  text-decoration: none;
+  white-space: nowrap;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  cursor: pointer;
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-bc-menu-item:hover {
+  background: var(--ml-bg-surface);
+  color: var(--ml-text);
+}
+
+.ml-bc-menu-item:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+}

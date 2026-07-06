@@ -1,0 +1,177 @@
+/* @meir-labs/ui-kit — FileUpload */
+
+.ml-fileupload {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-md);
+}
+
+/* ── Dropzone (a real <button>) ── */
+.ml-fileupload-zone {
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: 6px;
+  width: 100%;
+  min-height: 128px;
+  padding: var(--ml-space-xl);
+  border: 1px dashed var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  background: var(--ml-bg-card);
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: 14px;
+  text-align: center;
+  cursor: pointer;
+  transition:
+    border-color var(--ml-duration-base) var(--ml-ease),
+    background var(--ml-duration-base) var(--ml-ease),
+    box-shadow var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-fileupload-zone:hover:not(:disabled) {
+  border-color: var(--ml-text-muted);
+}
+
+/* Drag-over shifts border color only (monochrome). */
+.ml-fileupload-zone--dragover {
+  border-color: var(--ml-text);
+  background: var(--ml-bg-surface);
+}
+
+.ml-fileupload-zone:focus-visible {
+  outline: none;
+  border-color: var(--ml-text);
+  box-shadow: 0 0 0 2px var(--ml-text);
+}
+
+.ml-fileupload-zone:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ml-fileupload-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ml-text-muted);
+}
+.ml-fileupload-icon > svg {
+  width: 24px;
+  height: 24px;
+}
+
+.ml-fileupload-label {
+  font-weight: 500;
+  color: var(--ml-text);
+}
+
+.ml-fileupload-hint {
+  font-size: 12px;
+  color: var(--ml-text-muted);
+}
+
+.ml-fileupload-error {
+  margin: 0;
+  font-size: 12px;
+  color: var(--ml-color-danger);
+}
+
+/* ── Selected-file list ── */
+.ml-fileupload-list {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-sm);
+}
+
+.ml-fileupload-file {
+  display: flex;
+  flex-direction: column;
+  gap: 6px;
+  padding: 8px 12px;
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  background: var(--ml-bg-card);
+}
+
+.ml-fileupload-file-main {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+}
+
+.ml-fileupload-file-name {
+  flex: 1 1 auto;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+  font-size: 14px;
+  color: var(--ml-text);
+}
+
+.ml-fileupload-file-size {
+  flex: none;
+  font-size: 12px;
+  font-variant-numeric: tabular-nums;
+  color: var(--ml-text-muted);
+}
+
+.ml-fileupload-remove {
+  flex: none;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  padding: 0;
+  border: none;
+  border-radius: var(--ml-radius-md);
+  background: transparent;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition:
+    color var(--ml-duration-base) var(--ml-ease),
+    background var(--ml-duration-base) var(--ml-ease);
+}
+.ml-fileupload-remove > svg {
+  width: 16px;
+  height: 16px;
+}
+.ml-fileupload-remove:hover {
+  color: var(--ml-text);
+  background: var(--ml-bg-surface);
+}
+.ml-fileupload-remove:focus-visible {
+  outline: none;
+  box-shadow: 0 0 0 2px var(--ml-text);
+}
+
+/* ── Per-file progress ── */
+.ml-fileupload-progress {
+  width: 100%;
+  height: 4px;
+  border-radius: var(--ml-radius-pill);
+  background: var(--ml-bg-elevated);
+  overflow: hidden;
+}
+
+.ml-fileupload-progress-bar {
+  display: block;
+  height: 100%;
+  border-radius: var(--ml-radius-pill);
+  background: var(--ml-text);
+  transition: width var(--ml-duration-base) var(--ml-ease);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-fileupload-zone,
+  .ml-fileupload-progress-bar,
+  .ml-fileupload-remove {
+    transition-duration: 0.01ms;
+  }
+}

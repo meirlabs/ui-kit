@@ -1,24 +1,58 @@
 /* @meir-labs/ui-kit — Component Styles */
 
-/* ── Button ── */
+/* ── Button ──
+   One base recipe; variants change color/surface only, sizes change metrics
+   only. Metrics never shift between STATES (hover/active/loading) — only
+   between sizes — so nothing reflows (contract §7/§9). box-sizing is pinned so
+   the 1px border on secondary/ghost doesn't grow the box vs. borderless
+   variants at the same size. */
 .ml-btn {
+  box-sizing: border-box;
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  gap: 6px;
-  padding: 8px 16px;
+  gap: 4px; /* icon ↔ text (contract §2) */
   border-radius: var(--ml-radius-pill);
   border: none;
   font-family: inherit;
-  font-size: var(--ml-text-sm);
+  font-size: 14px; /* fixed across sizes (contract §5/§6); token scale caps low, so px */
   font-weight: 600;
+  line-height: 1;
+  text-decoration: none;
+  white-space: nowrap;
   cursor: pointer;
-  transition: opacity var(--ml-duration-base), border-color var(--ml-duration-base), color var(--ml-duration-base);
+  transition: opacity var(--ml-duration-base), border-color var(--ml-duration-base), color var(--ml-duration-base), background-color var(--ml-duration-base), filter var(--ml-duration-base);
 }
 
-.ml-btn:disabled {
+/* 2px focus ring on every interactive element (contract §7, gap G3) */
+.ml-btn:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-btn:disabled,
+.ml-btn.ml-btn-disabled {
   opacity: 0.5;
-  cursor: default;
+  cursor: not-allowed;
+}
+
+.ml-btn.ml-btn-disabled {
+  pointer-events: none; /* for <a role="button"> which can't be :disabled */
+}
+
+/* ── Button sizes — metrics live here only ── */
+.ml-btn-size-sm {
+  height: 32px;
+  padding: 0 12px;
+}
+.ml-btn-size-md {
+  height: 40px;
+  padding: 0 16px;
+}
+.ml-btn-size-lg {
+  height: 48px;
+  padding: 0 20px;
 }
 
 /* Primary = the "btn-dark" treatment: a soft charcoal gradient with a 1px ring,
@@ -58,7 +92,6 @@
    solid presence (elevated fill + full-strength text + 1px ring) but none of
    primary's tactile gradient/lift. Medium-emphasis actions. */
 .ml-btn-secondary {
-  padding: 7px 15px;
   border: 1px solid var(--ml-border);
   background: var(--ml-bg-elevated);
   color: var(--ml-text);
@@ -70,7 +103,6 @@
 }
 
 .ml-btn-ghost {
-  padding: 6px 14px;
   border: 1px solid var(--ml-border);
   background: transparent;
   color: var(--ml-text-muted);
@@ -91,22 +123,121 @@
   opacity: 0.85;
 }
 
-/* ── Badge ── */
+/* Icon-only button: transparent, muted, square, 8px radius (not pill). Square
+   hit area follows the size height; grows to a 44px touch target on mobile. */
+.ml-btn-icon {
+  border: none;
+  background: transparent;
+  color: var(--ml-text-muted);
+  border-radius: var(--ml-radius-md);
+  padding: 8px;
+  aspect-ratio: 1 / 1;
+}
+
+.ml-btn-icon:hover:not(:disabled):not(.ml-btn-disabled) {
+  background: var(--ml-bg-surface);
+  color: var(--ml-text);
+}
+
+/* Enforce the ≥32px square regardless of intrinsic content */
+.ml-btn-icon.ml-btn-size-sm {
+  min-width: 32px;
+}
+.ml-btn-icon.ml-btn-size-md {
+  min-width: 40px;
+}
+.ml-btn-icon.ml-btn-size-lg {
+  min-width: 48px;
+}
+
+@media (max-width: 640px) {
+  .ml-btn-icon {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Icon slots — inline-flex so SVGs sit on the text baseline center */
+.ml-btn-icon-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+/* Loading — swap label for a spinner but RESERVE the width: the label/icons
+   stay in flow at visibility:hidden (their box is preserved, contract §7/§9),
+   and the spinner is centered on top. Never display:none, never collapse. */
+.ml-btn-loading {
+  cursor: default;
+}
+.ml-btn-loading .ml-btn-label,
+.ml-btn-loading .ml-btn-icon-slot {
+  visibility: hidden;
+}
+
+.ml-btn-spinner {
+  position: absolute;
+  top: 50%;
+  left: 50%;
+  width: 16px;
+  height: 16px;
+  margin: -8px 0 0 -8px;
+  border-radius: 50%;
+  border: 2px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.9;
+  animation: ml-btn-spin 0.7s linear infinite;
+}
+
+@keyframes ml-btn-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-btn-spinner {
+    animation: none;
+  }
+}
+
+/* ── Badge ──
+   Pill, -muted tint fill + solid status text, no border (contract §8). Neutral
+   is GRAY (surface + muted text) — never the blue `.ml-badge-neutral` legacy
+   class (contract §0/§8, gap G10). WS1 ships `--ml-neutral-fill`/
+   `--ml-neutral-text`; we fall back to surface/muted so this is safe standalone. */
 .ml-badge {
   display: inline-flex;
   align-items: center;
-  padding: 2px 8px;
+  gap: 4px;
+  padding: 3px 10px;
   border-radius: var(--ml-radius-pill);
-  font-size: var(--ml-text-xs);
+  border: none;
+  font-size: 12px;
   font-weight: 600;
   line-height: 1.4;
+  white-space: nowrap;
 }
 
+.ml-badge-sm {
+  padding: 2px 8px;
+  font-size: 11px;
+}
+
+/* Neutral (default) — gray, monochrome */
+.ml-badge-muted {
+  background: var(--ml-neutral-fill, var(--ml-bg-surface));
+  color: var(--ml-neutral-text, var(--ml-text-muted));
+}
+
+.ml-badge-success,
 .ml-badge-good {
   background: var(--ml-color-success-muted);
   color: var(--ml-color-success);
 }
 
+.ml-badge-warning,
 .ml-badge-warn {
   background: var(--ml-color-warning-muted);
   color: var(--ml-color-warning);
@@ -117,19 +248,46 @@
   color: var(--ml-color-danger);
 }
 
+/* Legacy blue neutral neutralized to gray so no monochrome violation lingers */
 .ml-badge-neutral {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-color-primary);
+  background: var(--ml-neutral-fill, var(--ml-bg-surface));
+  color: var(--ml-neutral-text, var(--ml-text-muted));
 }
 
-/* ── Avatar ── */
+/* Leading status dot — inherits the tone's solid text color */
+.ml-badge-dot {
+  width: 6px;
+  height: 6px;
+  border-radius: var(--ml-radius-pill);
+  background: currentColor;
+  flex-shrink: 0;
+}
+
+/* Leading icon — 12–14px, inherits tone color */
+.ml-badge-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 14px;
+  height: 14px;
+  flex-shrink: 0;
+}
+.ml-badge-sm .ml-badge-icon {
+  width: 12px;
+  height: 12px;
+}
+
+/* ── Avatar ──
+   Circular by default (radius-pill, contract §3). Carries an optional presence
+   dot and an optional focusable button wrapper for menu triggers. */
 .ml-avatar {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
   width: 32px;
   height: 32px;
-  border-radius: var(--ml-radius-md);
+  border-radius: var(--ml-radius-pill);
   background: var(--ml-bg-elevated);
   border: 1px solid var(--ml-border);
   overflow: hidden;
@@ -137,6 +295,15 @@
   font-size: var(--ml-text-xs);
   font-weight: 600;
   color: var(--ml-text-muted);
+  /* reset when the wrapper is a <button> */
+  padding: 0;
+  font-family: inherit;
+}
+
+.ml-avatar-xs {
+  width: 20px;
+  height: 20px;
+  font-size: 0.5rem;
 }
 
 .ml-avatar-sm {
@@ -151,23 +318,119 @@
   font-size: var(--ml-text-sm);
 }
 
-.ml-avatar-round {
-  border-radius: 50%;
+/* Opt out of the circle for a squared, 8px-radius avatar */
+.ml-avatar-square {
+  border-radius: var(--ml-radius-md);
 }
 
 .ml-avatar img {
   width: 100%;
   height: 100%;
   object-fit: cover;
+  display: block;
 }
 
-/* ── Label (eyebrow) ── */
+/* Interactive (avatar-menu trigger) — focusable, 2px ring, subtle press */
+.ml-avatar-interactive {
+  cursor: pointer;
+  overflow: visible; /* so the presence dot + ring aren't clipped */
+  transition: filter var(--ml-duration-base), border-color var(--ml-duration-base);
+}
+.ml-avatar-interactive > img,
+.ml-avatar-interactive > .ml-avatar-initials {
+  border-radius: inherit;
+  overflow: hidden;
+}
+.ml-avatar-interactive:hover {
+  border-color: var(--ml-text-muted);
+  filter: brightness(1.05);
+}
+.ml-avatar-interactive:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-avatar-initials {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 100%;
+  height: 100%;
+  user-select: none;
+}
+
+/* Presence dot — functional status colors only (contract §1) */
+.ml-avatar-status {
+  position: absolute;
+  right: -1px;
+  bottom: -1px;
+  width: 30%;
+  min-width: 8px;
+  aspect-ratio: 1 / 1;
+  border-radius: var(--ml-radius-pill);
+  border: 2px solid var(--ml-bg);
+  box-sizing: border-box;
+}
+.ml-avatar-status-online {
+  background: var(--ml-color-success);
+}
+.ml-avatar-status-busy {
+  background: var(--ml-color-danger);
+}
+.ml-avatar-status-away {
+  background: var(--ml-color-warning);
+}
+.ml-avatar-status-offline {
+  background: var(--ml-text-faint);
+}
+
+/* Skeleton shimmer while the image loads (self-contained) */
+.ml-avatar-loading .ml-avatar-initials {
+  visibility: hidden;
+}
+.ml-avatar-loading::before {
+  content: "";
+  position: absolute;
+  inset: 0;
+  /* Monochrome surface — no gradient (contract §0.2). Loading reads as a
+     soft opacity pulse, not a moving gradient sweep. */
+  background: color-mix(in srgb, var(--ml-text) 8%, var(--ml-bg-surface));
+  animation: ml-avatar-shimmer 1.2s ease-in-out infinite;
+}
+@keyframes ml-avatar-shimmer {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.5;
+  }
+}
+@media (prefers-reduced-motion: reduce) {
+  .ml-avatar-loading::before {
+    animation: none;
+  }
+}
+
+/* ── Label (eyebrow micro-label) ──
+   The uppercase tracked overline (contract §6): 12px/500, wide tracking. This
+   is the section eyebrow, distinct from Field's form label (WS6). */
 .ml-label {
-  font-size: 0.62rem;
-  font-weight: 600;
-  color: var(--ml-text-faint);
+  display: inline-block;
+  font-size: 12px;
+  font-weight: 500;
+  color: var(--ml-text-muted);
   text-transform: uppercase;
-  letter-spacing: 0.05em;
+  letter-spacing: 0.5px;
+  line-height: 1.2;
+}
+
+.ml-label-sm {
+  font-size: 11px;
+}
+
+.ml-label-muted {
+  color: var(--ml-text-faint);
 }
 
 /* ── Divider ── */
@@ -182,6 +445,15 @@
   border-top-style: dashed;
 }
 
+/* vertical — a 1px rule for toolbars/inline separators; stretches to its row */
+.ml-divider-vertical {
+  align-self: stretch;
+  width: 1px;
+  min-height: 1em;
+  margin: 0 var(--ml-space-md);
+  background: var(--ml-border);
+}
+
 /* decorative & diamond — glyph-bearing separators */
 .ml-divider-decorative,
 .ml-divider-diamond {
@@ -193,21 +465,15 @@
   border: none;
 }
 
-/* faded line fading out toward the centered diamond on each side */
+/* solid 1px rule on each side of the centered diamond — monochrome, no
+   gradient background (contract §0.2) */
 .ml-divider-decorative::before,
 .ml-divider-decorative::after {
   content: "";
   flex: 1;
   height: 1px;
   min-width: 0;
-}
-
-.ml-divider-decorative::before {
-  background: linear-gradient(to right, transparent, var(--ml-border));
-}
-
-.ml-divider-decorative::after {
-  background: linear-gradient(to left, transparent, var(--ml-border));
+  background: var(--ml-border);
 }
 
 .ml-divider-glyph {
@@ -273,19 +539,22 @@
   background: color-mix(in srgb, var(--ml-text) 5%, transparent);
 }
 
-/* FOCUSED (either state) — soft highlight, kill any app-wide focus ring */
+/* FOCUSED (either state) — monochrome treatment: border → --ml-text, a 2px
+   ring in --ml-text, and a faint neutral highlight. No blue/accent (contract
+   §0, gap G3/G10). */
 .doc-field:focus,
 .doc-field:focus-visible {
   color: var(--ml-text);
-  border-bottom-color: transparent;
-  box-shadow: none;
-  background: color-mix(in srgb, var(--ml-color-primary) 16%, transparent);
+  border-bottom-color: var(--ml-text);
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  background: color-mix(in srgb, var(--ml-text) 7%, transparent);
 }
 
 /* one-time "Click to edit" nudge — positioned by JS (position: fixed) */
 .doc-edit-hint {
   position: fixed;
-  z-index: 60;
+  z-index: var(--ml-z-tooltip, 1300);
   transform: translate(-50%, calc(-100% - 9px));
   padding: 5px 10px;
   border-radius: 8px;
@@ -352,12 +621,80 @@
   box-shadow: 5px 5px 14px rgba(0, 0, 0, 0.07), -5px -5px 14px rgba(255, 255, 255, 0.9);
 }
 
-/* ── Banner ── */
+/* ── Banner ──
+   Inline notice. Shares the tone recipe with Callout (WS9): -muted tint fill +
+   solid text for status tones; `info` is neutral GRAY, never blue (contract
+   §0/§8, gap G10). Optional icon slot, title/description, and a dismiss
+   icon-button. */
 .ml-banner {
-  padding: 8px 14px;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ml-space-md);
+  padding: 12px 14px;
   border-radius: var(--ml-radius-md);
-  font-size: var(--ml-text-sm);
+  font-size: 14px;
   font-weight: 500;
+  line-height: 1.5;
+}
+
+.ml-banner-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  margin-top: 1px;
+}
+
+.ml-banner-content {
+  flex: 1;
+  min-width: 0;
+}
+
+.ml-banner-title {
+  font-weight: 600;
+}
+/* description sits under a title; on its own it carries the banner text weight */
+.ml-banner-title + .ml-banner-desc {
+  margin-top: 2px;
+  font-weight: 400;
+  opacity: 0.85;
+}
+
+.ml-banner-dismiss {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0 -2px 0 var(--ml-space-sm);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: inherit;
+  border-radius: var(--ml-radius-sm);
+  cursor: pointer;
+  opacity: 0.7;
+  transition: opacity var(--ml-duration-base);
+}
+.ml-banner-dismiss:hover {
+  opacity: 1;
+}
+/* expand the hit area to ≥32px without reflowing neighbors (contract §9) */
+.ml-banner-dismiss::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+.ml-banner-dismiss:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  opacity: 1;
+}
+.ml-banner-dismiss svg {
+  width: 14px;
+  height: 14px;
 }
 
 .ml-banner-warning {
@@ -365,12 +702,19 @@
   color: var(--ml-color-warning);
 }
 
+.ml-banner-danger,
 .ml-banner-error {
   background: var(--ml-color-danger-muted);
   color: var(--ml-color-danger);
 }
 
+.ml-banner-success {
+  background: var(--ml-color-success-muted);
+  color: var(--ml-color-success);
+}
+
+/* info — neutral gray, monochrome (no blue tint) */
 .ml-banner-info {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-color-primary);
+  background: var(--ml-neutral-fill, var(--ml-bg-surface));
+  color: var(--ml-neutral-text, var(--ml-text-muted));
 }

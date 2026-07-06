@@ -1,0 +1,116 @@
+/* @meir-labs/ui-kit — Accordion (disclosure) */
+
+.ml-accordion {
+  display: flex;
+  flex-direction: column;
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  background: var(--ml-bg-card);
+  overflow: hidden;
+}
+
+.ml-accordion-item + .ml-accordion-item {
+  border-top: 1px solid var(--ml-border);
+}
+
+.ml-accordion-heading {
+  margin: 0;
+  font: inherit;
+}
+
+/* Header trigger — monochrome, full-strength text, focus ring */
+.ml-accordion-trigger {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ml-space-md);
+  width: 100%;
+  padding: var(--ml-space-lg) var(--ml-space-xl);
+  font-family: inherit;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.31px;
+  text-align: left;
+  color: var(--ml-text);
+  background: none;
+  border: none;
+  cursor: pointer;
+  transition: background var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-accordion-trigger:hover {
+  background: var(--ml-bg-surface);
+}
+
+.ml-accordion-trigger:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+}
+
+.ml-accordion-trigger:disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* Chevron — rotates via transform only (spec §9) */
+.ml-accordion-chevron {
+  display: inline-flex;
+  flex-shrink: 0;
+  color: var(--ml-text-muted);
+  transition: transform var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+.ml-accordion-chevron svg {
+  width: 18px;
+  height: 18px;
+}
+
+.ml-accordion-item[data-state="open"] .ml-accordion-chevron {
+  transform: rotate(180deg);
+}
+
+/* Panel — animates height + opacity; hidden via visibility, never display:none */
+.ml-accordion-panel {
+  display: grid;
+  grid-template-rows: 0fr;
+  opacity: 0;
+  visibility: hidden;
+  transition:
+    grid-template-rows var(--ml-duration-slow) var(--ml-ease-out),
+    opacity var(--ml-duration-base) var(--ml-ease),
+    visibility 0s linear var(--ml-duration-slow);
+}
+
+.ml-accordion-item[data-state="open"] .ml-accordion-panel {
+  grid-template-rows: 1fr;
+  opacity: 1;
+  visibility: visible;
+  transition:
+    grid-template-rows var(--ml-duration-slow) var(--ml-ease-out),
+    opacity var(--ml-duration-base) var(--ml-ease),
+    visibility 0s;
+}
+
+.ml-accordion-panel-inner {
+  overflow: hidden;
+  min-height: 0;
+}
+
+.ml-accordion-panel-content {
+  padding: 0 var(--ml-space-xl) var(--ml-space-lg);
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.31px;
+  color: var(--ml-text-muted);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-accordion-panel,
+  .ml-accordion-item[data-state="open"] .ml-accordion-panel,
+  .ml-accordion-chevron {
+    transition-duration: 0.01ms;
+  }
+}

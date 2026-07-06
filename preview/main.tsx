@@ -24,6 +24,7 @@ import { GridDemo } from "./demos/GridDemo";
 import { SectionDemo } from "./demos/SectionDemo";
 import { DetailListDemo } from "./demos/DetailListDemo";
 import { DangerZoneDemo } from "./demos/DangerZoneDemo";
+import { AccordionDemo } from "./demos/AccordionDemo";
 
 // Navigation
 import { TabsDemo } from "./demos/TabsDemo";
@@ -39,14 +40,31 @@ import { EmptyStateDemo } from "./demos/EmptyStateDemo";
 
 // Feedback
 import { BannerDemo } from "./demos/BannerDemo";
+import { ToastDemo } from "./demos/ToastDemo";
+import { CalloutDemo } from "./demos/CalloutDemo";
+import { SpinnerDemo } from "./demos/SpinnerDemo";
+import { SkeletonDemo } from "./demos/SkeletonDemo";
+import { ProgressDemo } from "./demos/ProgressDemo";
 
 // Overlays
 import { ModalDemo } from "./demos/ModalDemo";
 import { DropdownDemo } from "./demos/DropdownDemo";
+import { DrawerDemo } from "./demos/DrawerDemo";
+import { CommandPaletteDemo } from "./demos/CommandPaletteDemo";
+import { KbdDemo } from "./demos/KbdDemo";
+import { TooltipDemo } from "./demos/TooltipDemo";
+import { PopoverDemo } from "./demos/PopoverDemo";
+import { SelectDemo } from "./demos/SelectDemo";
+import { ComboboxDemo } from "./demos/ComboboxDemo";
 
 // Forms
 import { FieldDemo } from "./demos/FieldDemo";
 import { WizardDemo } from "./demos/WizardDemo";
+import { InputDemo } from "./demos/InputDemo";
+import { TextareaDemo } from "./demos/TextareaDemo";
+import { CheckboxRadioDemo } from "./demos/CheckboxRadioDemo";
+import { StepperDemo } from "./demos/StepperDemo";
+import { FileUploadDemo } from "./demos/FileUploadDemo";
 
 interface ComponentEntry {
   name: string;
@@ -85,6 +103,7 @@ const categories: Category[] = [
       { name: "Section", component: SectionDemo },
       { name: "Detail List", component: DetailListDemo },
       { name: "Danger Zone", component: DangerZoneDemo },
+      { name: "Accordion", component: AccordionDemo },
     ],
   },
   {
@@ -109,6 +128,11 @@ const categories: Category[] = [
     name: "Feedback",
     items: [
       { name: "Banner", component: BannerDemo },
+      { name: "Toast", component: ToastDemo },
+      { name: "Callout", component: CalloutDemo },
+      { name: "Spinner", component: SpinnerDemo },
+      { name: "Skeleton", component: SkeletonDemo },
+      { name: "Progress", component: ProgressDemo },
     ],
   },
   {
@@ -116,6 +140,13 @@ const categories: Category[] = [
     items: [
       { name: "Modal", component: ModalDemo },
       { name: "Dropdown", component: DropdownDemo },
+      { name: "Drawer", component: DrawerDemo },
+      { name: "Command Palette", component: CommandPaletteDemo },
+      { name: "Kbd", component: KbdDemo },
+      { name: "Tooltip", component: TooltipDemo },
+      { name: "Popover", component: PopoverDemo },
+      { name: "Select", component: SelectDemo },
+      { name: "Combobox", component: ComboboxDemo },
     ],
   },
   {
@@ -123,6 +154,11 @@ const categories: Category[] = [
     items: [
       { name: "Field", component: FieldDemo },
       { name: "Wizard", component: WizardDemo },
+      { name: "Input", component: InputDemo },
+      { name: "Textarea", component: TextareaDemo },
+      { name: "Checkbox & Radio", component: CheckboxRadioDemo },
+      { name: "Stepper", component: StepperDemo },
+      { name: "File Upload", component: FileUploadDemo },
     ],
   },
 ];

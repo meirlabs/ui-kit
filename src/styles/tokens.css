@@ -1,5 +1,35 @@
 /* @meir-labs/ui-kit — Design Tokens */
 
+/* ─────────────────────────────────────────────────────────────────────────────
+   WS1 FOUNDATION — new tokens added for the design-system upgrade (integrator ref)
+   All additive; no existing --ml-* token was renamed or removed.
+
+   Neutral pill helpers (both themes) — build neutral badges/tags from these
+   instead of the blue `.ml-badge-neutral` (design rule G10):
+     --ml-neutral-fill   → var(--ml-bg-surface)   (pale pill fill)
+     --ml-neutral-text   → var(--ml-text-muted)   (pill text/icon)
+
+   Overlay / backdrop (gap G9) — modal/dialog/sheet scrims:
+     --ml-overlay        → rgba(0,0,0,.5) light · rgba(0,0,0,.7) dark
+
+   Z-index scale (theme-independent) — every overlay CSS file MUST use these,
+   never a numeric literal, so stacking stays coordinated:
+     --ml-z-dropdown 1000 · --ml-z-sticky 1100 · --ml-z-popover 1200 ·
+     --ml-z-tooltip 1300 · --ml-z-drawer 1400 · --ml-z-modal 1500 ·
+     --ml-z-toast 1600 · --ml-z-command 1700
+
+   Monochrome neutralization (G10): --ml-color-primary / --ml-color-purple (and
+   their -muted) are still DEFINED (compat.css + legacy classes reference them)
+   but now RESOLVE TO NEUTRALS (text / surface) so nothing renders blue/purple by
+   accident. Functional status colors (success / warning / danger) are unchanged.
+   --ml-shadow-glow is neutralized to a colorless halo (it was blue).
+
+   Elevation (§4): --ml-shadow-card / -elevated / -modal are now layered stacks
+   approximating the 1→3→6→12→24→48 doubling intent (blur=b, offsetY=b/2,
+   spread=-b/2), preserving the dark-mode inset top-ring highlight. These tokens
+   are the ONLY sanctioned shadow source — never write a raw box-shadow in app CSS.
+   ───────────────────────────────────────────────────────────────────────────── */
+
 /* ── Motion (theme-independent) ──
    Calibrated to design/foundation/motion.md. Durations and easings don't
    change per theme, so they live in plain :root. */
@@ -23,6 +53,19 @@
 
   /* Press feedback — never below 0.95 */
   --ml-press-scale: 0.97;
+
+  /* ── Z-index scale (theme-independent) ──
+     Coordinates every stacking context so overlays never collide. New overlay
+     CSS files MUST reference these tokens, not numeric literals. Wide gaps leave
+     room for local layering (e.g. a popover's own arrow) inside each tier. */
+  --ml-z-dropdown: 1000;
+  --ml-z-sticky: 1100;
+  --ml-z-popover: 1200;
+  --ml-z-tooltip: 1300;
+  --ml-z-drawer: 1400;
+  --ml-z-modal: 1500;
+  --ml-z-toast: 1600;
+  --ml-z-command: 1700;
 }
 
 :root[data-meirlabs-theme="dark"],
@@ -36,16 +79,23 @@
   --ml-text: #e6edf3;
   --ml-text-muted: #8b949e;
   --ml-text-faint: #6e7681;
-  --ml-color-primary: #58a6ff;
-  --ml-color-primary-muted: rgba(88, 166, 255, 0.15);
+  /* Neutral pill helpers + overlay scrim (WS1). */
+  --ml-neutral-fill: var(--ml-bg-surface);
+  --ml-neutral-text: var(--ml-text-muted);
+  --ml-overlay: rgba(0, 0, 0, 0.7);
+  /* Monochrome (G10): kept defined for compat, repointed to neutrals so legacy
+     consumers stop rendering blue/purple. Do NOT use these for new emphasis —
+     primary = .ml-btn-primary charcoal, neutral pill = --ml-neutral-*. */
+  --ml-color-primary: var(--ml-text);
+  --ml-color-primary-muted: var(--ml-bg-surface);
   --ml-color-success: #3fb950;
   --ml-color-success-muted: rgba(63, 185, 80, 0.12);
   --ml-color-danger: #f85149;
   --ml-color-danger-muted: rgba(248, 81, 73, 0.12);
   --ml-color-warning: #d29922;
   --ml-color-warning-muted: rgba(210, 153, 34, 0.12);
-  --ml-color-purple: #bc8cff;
-  --ml-color-purple-muted: rgba(188, 140, 255, 0.15);
+  --ml-color-purple: var(--ml-text-muted);
+  --ml-color-purple-muted: var(--ml-bg-surface);
   --ml-space-xs: 4px;
   --ml-space-sm: 8px;
   --ml-space-md: 12px;
@@ -57,10 +107,27 @@
   --ml-radius-lg: 12px;
   --ml-radius-xl: 16px;
   --ml-radius-pill: 9999px;
-  --ml-shadow-card: 0 1px 3px rgba(0, 0, 0, 0.3), 0 0 0 1px rgba(255, 255, 255, 0.03) inset;
-  --ml-shadow-elevated: 0 8px 24px rgba(0, 0, 0, 0.4);
-  --ml-shadow-modal: 0 24px 70px rgba(0, 0, 0, 0.5), 0 0 0 1px rgba(255, 255, 255, 0.04) inset;
-  --ml-shadow-glow: 0 0 20px rgba(88, 166, 255, 0.08);
+  /* Layered elevation (§4): doubling stack b∈{1,3,6}/{3,6,12,24}/{6,12,24,48},
+     offsetY=b/2, spread=-b/2, + preserved inset top-ring highlight that
+     intensifies as the surface lifts. Only sanctioned shadow source. */
+  --ml-shadow-card:
+    0 1px 1px -0.5px rgba(0, 0, 0, 0.4),
+    0 2px 3px -1.5px rgba(0, 0, 0, 0.36),
+    0 3px 6px -3px rgba(0, 0, 0, 0.3),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.03);
+  --ml-shadow-elevated:
+    0 2px 3px -1.5px rgba(0, 0, 0, 0.4),
+    0 3px 6px -3px rgba(0, 0, 0, 0.38),
+    0 6px 12px -6px rgba(0, 0, 0, 0.36),
+    0 12px 24px -12px rgba(0, 0, 0, 0.34),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.035);
+  --ml-shadow-modal:
+    0 3px 6px -3px rgba(0, 0, 0, 0.4),
+    0 6px 12px -6px rgba(0, 0, 0, 0.42),
+    0 12px 24px -12px rgba(0, 0, 0, 0.46),
+    0 24px 48px -24px rgba(0, 0, 0, 0.5),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.04);
+  --ml-shadow-glow: 0 0 20px rgba(0, 0, 0, 0.25);
   --ml-dt-thead-bg: rgba(255, 255, 255, 0.03);
   --ml-glass-bg: rgba(22, 27, 34, 0.82);
   --ml-glass-blur: blur(40px);
@@ -88,20 +155,43 @@
   --ml-text: #1f2328;
   --ml-text-muted: #656d76;
   --ml-text-faint: #8b949e;
-  --ml-color-primary: #0969da;
-  --ml-color-primary-muted: rgba(9, 105, 218, 0.1);
+  /* Neutral pill helpers + overlay scrim (WS1). */
+  --ml-neutral-fill: var(--ml-bg-surface);
+  --ml-neutral-text: var(--ml-text-muted);
+  --ml-overlay: rgba(0, 0, 0, 0.5);
+  /* Monochrome (G10): kept defined for compat, repointed to neutrals so legacy
+     consumers stop rendering blue/purple. Do NOT use these for new emphasis —
+     primary = .ml-btn-primary charcoal, neutral pill = --ml-neutral-*. */
+  --ml-color-primary: var(--ml-text);
+  --ml-color-primary-muted: var(--ml-bg-surface);
   --ml-color-success: #1a7f37;
   --ml-color-success-muted: rgba(26, 127, 55, 0.1);
   --ml-color-danger: #cf222e;
   --ml-color-danger-muted: rgba(207, 34, 46, 0.1);
   --ml-color-warning: #9a6700;
   --ml-color-warning-muted: rgba(154, 103, 0, 0.1);
-  --ml-color-purple: #8250df;
-  --ml-color-purple-muted: rgba(130, 80, 223, 0.1);
-  --ml-shadow-card: 0 1px 3px rgba(31, 35, 40, 0.08), 0 0 0 1px rgba(31, 35, 40, 0.06);
-  --ml-shadow-elevated: 0 8px 24px rgba(31, 35, 40, 0.12);
-  --ml-shadow-modal: 0 24px 70px rgba(31, 35, 40, 0.2), 0 0 0 1px rgba(31, 35, 40, 0.06);
-  --ml-shadow-glow: 0 0 20px rgba(9, 105, 218, 0.06);
+  --ml-color-purple: var(--ml-text-muted);
+  --ml-color-purple-muted: var(--ml-bg-surface);
+  /* Layered elevation (§4): doubling stack, offsetY=b/2, spread=-b/2, plus the
+     preserved hairline perimeter ring. Only sanctioned shadow source. */
+  --ml-shadow-card:
+    0 0 0 1px rgba(31, 35, 40, 0.06),
+    0 1px 1px -0.5px rgba(31, 35, 40, 0.08),
+    0 2px 3px -1.5px rgba(31, 35, 40, 0.06),
+    0 3px 6px -3px rgba(31, 35, 40, 0.05);
+  --ml-shadow-elevated:
+    0 0 0 1px rgba(31, 35, 40, 0.06),
+    0 2px 3px -1.5px rgba(31, 35, 40, 0.06),
+    0 3px 6px -3px rgba(31, 35, 40, 0.06),
+    0 6px 12px -6px rgba(31, 35, 40, 0.08),
+    0 12px 24px -12px rgba(31, 35, 40, 0.1);
+  --ml-shadow-modal:
+    0 0 0 1px rgba(31, 35, 40, 0.06),
+    0 3px 6px -3px rgba(31, 35, 40, 0.05),
+    0 6px 12px -6px rgba(31, 35, 40, 0.07),
+    0 12px 24px -12px rgba(31, 35, 40, 0.1),
+    0 24px 48px -24px rgba(31, 35, 40, 0.16);
+  --ml-shadow-glow: 0 0 20px rgba(31, 35, 40, 0.06);
   --ml-dt-thead-bg: rgba(0, 0, 0, 0.02);
   --ml-glass-bg: rgba(255, 255, 255, 0.85);
   --ml-glass-blur: blur(40px);

@@ -1,0 +1,150 @@
+/* @meir-labs/ui-kit — CommandPalette (highest overlay tier)
+   Reuses .ml-overlay backdrop. Entrance lifts (opacity + scale/blur); exit
+   dissolves in place. Monochrome — active row is a surface shift, never blue. */
+
+.ml-command-overlay {
+  align-items: flex-start;
+  padding-top: 12vh;
+  z-index: var(--ml-z-command, 1700);
+}
+
+.ml-command {
+  display: flex;
+  flex-direction: column;
+  width: min(100%, 620px);
+  max-height: min(60vh, 520px);
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-xl);
+  box-shadow: var(--ml-shadow-modal);
+  overflow: hidden;
+  opacity: 1;
+  transition: opacity var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+.ml-command:focus-visible {
+  outline: none;
+}
+
+.ml-command-overlay[data-state="open"] .ml-command {
+  animation: ml-command-in var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+.ml-command[data-state="closed"] {
+  opacity: 0;
+}
+
+@keyframes ml-command-in {
+  from {
+    opacity: 0;
+    transform: scale(0.98);
+    filter: blur(4px);
+  }
+  to {
+    opacity: 1;
+    transform: scale(1);
+    filter: blur(0);
+  }
+}
+
+.ml-command-search {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+  padding: 0 var(--ml-space-lg);
+  border-bottom: 1px solid var(--ml-border);
+}
+
+.ml-command-search-icon {
+  flex-shrink: 0;
+  color: var(--ml-text-faint);
+}
+
+.ml-command-input {
+  flex: 1;
+  min-width: 0;
+  height: 52px;
+  border: none;
+  background: none;
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: 16px; /* ≥16px avoids iOS zoom */
+  letter-spacing: -0.31px;
+  outline: none;
+}
+
+.ml-command-input::placeholder {
+  color: var(--ml-text-faint);
+}
+
+.ml-command-list {
+  flex: 1;
+  min-height: 0;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+  padding: var(--ml-space-xs);
+}
+
+.ml-command-group + .ml-command-group {
+  margin-top: var(--ml-space-xs);
+}
+
+.ml-command-group-label {
+  padding: var(--ml-space-sm) var(--ml-space-sm) var(--ml-space-xs);
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.5px;
+  text-transform: uppercase;
+  color: var(--ml-text-muted);
+}
+
+.ml-command-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+  padding: 8px 10px;
+  border-radius: var(--ml-radius-md);
+  color: var(--ml-text);
+  font-size: 14px;
+  line-height: 1.4;
+  letter-spacing: -0.31px;
+  cursor: pointer;
+  user-select: none;
+}
+
+/* Active row: surface shift, not blue. */
+.ml-command-item.is-active {
+  background: var(--ml-bg-surface);
+}
+
+.ml-command-item-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  color: var(--ml-text-muted);
+}
+
+.ml-command-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  text-overflow: ellipsis;
+  white-space: nowrap;
+}
+
+.ml-command-empty {
+  padding: var(--ml-space-xl);
+  text-align: center;
+  color: var(--ml-text-muted);
+  font-size: 14px;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-command {
+    transition: none;
+  }
+  .ml-command-overlay[data-state="open"] .ml-command {
+    animation: none;
+  }
+}

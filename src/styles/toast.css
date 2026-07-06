@@ -1,0 +1,222 @@
+/* @meir-labs/ui-kit — Toast + Toaster
+   Transient feedback. Neutral elevated surface; status tones tint an accent
+   only (functional, never decorative). Enter = slide+fade, exit = dissolve;
+   both reduced-motion guarded. */
+
+/* ── Toaster region (portal) ── */
+.ml-toaster {
+  position: fixed;
+  z-index: var(--ml-z-toast);
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-md);
+  width: min(400px, calc(100vw - 32px));
+  margin: 0;
+  padding: 0;
+  list-style: none;
+  pointer-events: none; /* only the toasts catch events */
+}
+
+/* Placement anchors */
+.ml-toaster-bottom-right {
+  bottom: var(--ml-space-xl);
+  right: var(--ml-space-xl);
+  align-items: flex-end;
+}
+.ml-toaster-bottom-left {
+  bottom: var(--ml-space-xl);
+  left: var(--ml-space-xl);
+  align-items: flex-start;
+}
+.ml-toaster-bottom-center {
+  bottom: var(--ml-space-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+}
+.ml-toaster-top-right {
+  top: var(--ml-space-xl);
+  right: var(--ml-space-xl);
+  align-items: flex-end;
+  flex-direction: column-reverse;
+}
+.ml-toaster-top-left {
+  top: var(--ml-space-xl);
+  left: var(--ml-space-xl);
+  align-items: flex-start;
+  flex-direction: column-reverse;
+}
+.ml-toaster-top-center {
+  top: var(--ml-space-xl);
+  left: 50%;
+  transform: translateX(-50%);
+  align-items: center;
+  flex-direction: column-reverse;
+}
+
+/* ── Toast item ── */
+.ml-toast {
+  pointer-events: auto;
+  position: relative;
+  display: flex;
+  align-items: flex-start;
+  gap: var(--ml-space-md);
+  width: 100%;
+  padding: var(--ml-space-md) var(--ml-space-lg);
+  background: var(--ml-bg-elevated);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  box-shadow: var(--ml-shadow-card);
+  color: var(--ml-text);
+  /* Enter/exit: slide from the vertical edge + fade. Never animate size. */
+  opacity: 0;
+  transform: translateY(8px);
+  transition:
+    opacity var(--ml-duration-slow) var(--ml-ease-out),
+    transform var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+/* Top placements slide down from above instead of up from below. */
+.ml-toaster-top-right .ml-toast,
+.ml-toaster-top-left .ml-toast,
+.ml-toaster-top-center .ml-toast {
+  transform: translateY(-8px);
+}
+
+.ml-toast[data-state="open"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+/* Exit = dissolve only (no position change), per motion §10. */
+.ml-toast[data-state="closed"] {
+  opacity: 0;
+  transform: translateY(0);
+  transition:
+    opacity var(--ml-duration-base) var(--ml-ease),
+    transform var(--ml-duration-base) var(--ml-ease);
+}
+
+/* Status tones: a functional left accent + tinted fill; text stays --ml-text. */
+.ml-toast::before {
+  content: "";
+  position: absolute;
+  left: 0;
+  top: 0;
+  bottom: 0;
+  width: 3px;
+  border-radius: var(--ml-radius-lg) 0 0 var(--ml-radius-lg);
+  background: transparent;
+}
+.ml-toast-success::before { background: var(--ml-color-success); }
+.ml-toast-warning::before { background: var(--ml-color-warning); }
+.ml-toast-danger::before { background: var(--ml-color-danger); }
+.ml-toast-success { background: color-mix(in srgb, var(--ml-color-success-muted) 60%, var(--ml-bg-elevated)); }
+.ml-toast-warning { background: color-mix(in srgb, var(--ml-color-warning-muted) 60%, var(--ml-bg-elevated)); }
+.ml-toast-danger { background: color-mix(in srgb, var(--ml-color-danger-muted) 60%, var(--ml-bg-elevated)); }
+
+.ml-toast-content {
+  flex: 1 1 auto;
+  min-width: 0;
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ml-toast-title {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.2px;
+  color: var(--ml-text);
+}
+
+.ml-toast-description {
+  margin: 0;
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.5;
+  color: var(--ml-text-muted);
+  word-break: break-word;
+}
+
+/* Optional inline action button */
+.ml-toast-action {
+  flex: 0 0 auto;
+  align-self: center;
+  padding: 6px 12px;
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  background: var(--ml-bg-card);
+  color: var(--ml-text);
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
+  cursor: pointer;
+  transition:
+    background var(--ml-duration-base) var(--ml-ease),
+    border-color var(--ml-duration-base) var(--ml-ease);
+}
+.ml-toast-action:hover {
+  background: var(--ml-bg-surface);
+  border-color: var(--ml-text-muted);
+}
+.ml-toast-action:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* Dismiss button */
+.ml-toast-close {
+  flex: 0 0 auto;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  width: 24px;
+  height: 24px;
+  margin: -2px -4px -2px 0;
+  border: none;
+  border-radius: var(--ml-radius-md);
+  background: none;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition:
+    background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+.ml-toast-close:hover {
+  background: color-mix(in srgb, var(--ml-text) 8%, transparent);
+  color: var(--ml-text);
+}
+.ml-toast-close:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* Guarantee a ≥44px touch target on mobile (contract §12). */
+@media (max-width: 640px) {
+  .ml-toast-close {
+    min-width: 44px;
+    min-height: 44px;
+  }
+}
+
+/* Optional countdown text, if a consumer renders one */
+.ml-toast-countdown {
+  font-variant-numeric: tabular-nums;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-toast {
+    transition-property: opacity;
+    transform: none;
+  }
+  .ml-toaster-top-right .ml-toast,
+  .ml-toaster-top-left .ml-toast,
+  .ml-toaster-top-center .ml-toast {
+    transform: none;
+  }
+  .ml-toast[data-state="open"] { transform: none; }
+  .ml-toast[data-state="closed"] { transform: none; }
+}

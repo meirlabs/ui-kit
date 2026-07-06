@@ -1,0 +1,177 @@
+/* @meir-labs/ui-kit — Select */
+
+/* ── Trigger (input-styled §8) ── */
+.ml-select-trigger {
+  display: inline-flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ml-space-sm);
+  width: 100%;
+  height: 40px;
+  padding: 0 12px;
+  border-radius: var(--ml-radius-md);
+  border: 1px solid var(--ml-border);
+  background: var(--ml-bg-card);
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: 14px;
+  line-height: 1.5;
+  text-align: left;
+  cursor: pointer;
+  transition: border-color var(--ml-duration-base) var(--ml-ease),
+    background var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-select-trigger:hover:not(:disabled) {
+  border-color: var(--ml-text-muted);
+}
+
+.ml-select-trigger:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  border-color: var(--ml-text);
+}
+
+.ml-select-trigger[aria-expanded="true"] {
+  border-color: var(--ml-text);
+}
+
+.ml-select-trigger:disabled,
+.ml-select-trigger[aria-disabled="true"] {
+  opacity: 0.5;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ml-select-value {
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+  min-width: 0;
+  flex: 1;
+}
+
+.ml-select-placeholder {
+  color: var(--ml-text-faint);
+}
+
+.ml-select-chevron {
+  flex-shrink: 0;
+  color: var(--ml-text-muted);
+  transition: transform var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-select-trigger[aria-expanded="true"] .ml-select-chevron {
+  transform: rotate(180deg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-select-chevron {
+    transition: none;
+  }
+}
+
+/* ── Listbox popover ── */
+.ml-select-popover {
+  position: fixed;
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  box-shadow: var(--ml-shadow-card);
+  padding: 4px;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--ml-duration-fast) var(--ml-ease-out),
+    transform var(--ml-duration-fast) var(--ml-ease-out);
+}
+
+.ml-select-popover[data-placement^="top"] {
+  transform: translateY(4px);
+}
+
+.ml-select-popover[data-open="true"] {
+  opacity: 1;
+  transform: translateY(0);
+}
+
+.ml-select-list {
+  max-height: 288px;
+  overflow-y: auto;
+  scrollbar-gutter: stable;
+}
+
+/* ── Option ── */
+.ml-select-item {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+  padding: 8px 10px;
+  border-radius: var(--ml-radius-sm);
+  color: var(--ml-text);
+  font-size: 14px;
+  line-height: 1.4;
+  cursor: pointer;
+  user-select: none;
+  scroll-margin: 4px;
+}
+
+.ml-select-item[data-active="true"] {
+  background: var(--ml-bg-surface);
+}
+
+.ml-select-item[data-disabled="true"] {
+  color: var(--ml-text-faint);
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+.ml-select-item-check {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  flex-shrink: 0;
+  color: var(--ml-text);
+}
+
+.ml-select-item-icon {
+  display: inline-flex;
+  align-items: center;
+  color: var(--ml-text-muted);
+  flex-shrink: 0;
+}
+
+.ml-select-item-label {
+  flex: 1;
+  min-width: 0;
+  overflow: hidden;
+  white-space: nowrap;
+  text-overflow: ellipsis;
+}
+
+/* ── Group / Separator ── */
+.ml-select-group-label {
+  padding: 6px 10px 4px;
+  font-size: 12px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.04em;
+  color: var(--ml-text-muted);
+}
+
+.ml-select-separator {
+  height: 1px;
+  margin: 4px 0;
+  background: var(--ml-border-subtle);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-select-popover {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
+  .ml-select-popover[data-open="true"] {
+    transform: none;
+  }
+}

@@ -1,33 +1,148 @@
-/* @meir-labs/ui-kit — Data Display */
+/* @meir-labs/ui-kit — Data Display (StatCard, EmptyState) */
 
-/* ── Stat Card ── */
+/* ── Stat Card ──
+   No shadow at rest (card rule §4): border + surface only. Value is semibold
+   600 (NEVER 700) with tabular-nums so a changing figure never nudges the
+   layout. Delta is a functional success/danger indicator, not decoration. */
 .ml-stat-card {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-sm);
   border: 1px solid var(--ml-border);
   border-radius: var(--ml-radius-lg);
-  padding: var(--ml-space-md) var(--ml-space-lg);
-  background: var(--ml-bg-surface);
+  padding: var(--ml-space-xl);
+  background: var(--ml-bg-card);
 }
 
-.ml-stat-card-value {
-  font-size: var(--ml-text-xl);
-  font-weight: 700;
-  display: block;
-  margin-bottom: 2px;
-  color: var(--ml-text);
+.ml-stat-card-head {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  gap: var(--ml-space-md);
 }
 
 .ml-stat-card-label {
-  font-size: var(--ml-text-xs);
-  color: var(--ml-text-muted);
   margin: 0;
+  font-size: 12px;
+  font-weight: 500;
+  line-height: 1.2;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ml-text-muted);
 }
 
-/* ── Empty State ── */
+.ml-stat-card-icon {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ml-text-muted);
+  line-height: 0;
+}
+
+.ml-stat-card-value-row {
+  display: flex;
+  align-items: baseline;
+  gap: var(--ml-space-sm);
+  flex-wrap: wrap;
+}
+
+.ml-stat-card-value {
+  font-size: 28px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.8px;
+  color: var(--ml-text);
+  font-variant-numeric: tabular-nums;
+}
+
+.ml-stat-card-delta {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  font-variant-numeric: tabular-nums;
+}
+.ml-stat-card-delta-arrow {
+  font-size: 0.9em;
+}
+.ml-stat-card-delta--up { color: var(--ml-color-success); }
+.ml-stat-card-delta--down { color: var(--ml-color-danger); }
+.ml-stat-card-delta--neutral { color: var(--ml-text-muted); }
+
+/* Loading: reserve the value's height with a shimmer bar (no display:none). */
+.ml-stat-card-value-skel {
+  display: block;
+  width: 60%;
+  height: 28px;
+  border-radius: var(--ml-radius-sm);
+  /* Monochrome surface — no gradient (contract §0.2); loading is an opacity pulse. */
+  background: color-mix(in srgb, var(--ml-text-faint) 15%, var(--ml-bg-surface));
+  animation: ml-stat-shimmer 1.2s ease-in-out infinite;
+}
+
+@keyframes ml-stat-shimmer {
+  0%, 100% { opacity: 1; }
+  50% { opacity: 0.5; }
+}
+
+/* ── Empty State ──
+   Centered, muted. Only the no-data variant draws the dashed container. */
 .ml-empty-state {
-  border: 1px dashed var(--ml-border);
-  border-radius: var(--ml-radius-lg);
+  display: flex;
+  flex-direction: column;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ml-space-md);
   padding: var(--ml-space-2xl);
   text-align: center;
   color: var(--ml-text-muted);
-  font-size: var(--ml-text-sm);
+}
+
+.ml-empty-state--no-data {
+  border: 1px dashed var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+}
+
+.ml-empty-state-art {
+  margin-bottom: var(--ml-space-xs);
+}
+
+.ml-empty-state-title {
+  margin: 0;
+  font-size: 16px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.31px;
+  color: var(--ml-text);
+}
+.ml-empty-state--error .ml-empty-state-title {
+  color: var(--ml-color-danger);
+}
+
+.ml-empty-state-desc {
+  margin: 0;
+  max-width: 42ch;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.31px;
+  color: var(--ml-text-muted);
+}
+
+.ml-empty-state-action {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ml-space-sm);
+  margin-top: var(--ml-space-sm);
+  flex-wrap: wrap;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-stat-card-value-skel {
+    animation: none;
+    background: var(--ml-bg-surface);
+  }
 }

@@ -1,68 +1,141 @@
 /* @meir-labs/ui-kit — Navigation */
 
-/* ── Tabs (underline tab switcher) ── */
+/* ── Tabs (APG tablist with a sliding underline indicator) ──
+   The strip is the horizontal scroll container (hidden scrollbar + edge mask)
+   so many tabs never wrap or push the page wide. The active indicator is a
+   single element that slides by transform; labels keep the same weight in both
+   states so the row never reflows — only color changes. */
 .ml-tabs {
+  position: relative;
   display: flex;
   gap: 0;
   border-bottom: 1px solid var(--ml-border);
   margin-bottom: var(--ml-space-lg);
+  overflow-x: auto;
+  scrollbar-width: none;
+}
+
+.ml-tabs::-webkit-scrollbar {
+  display: none;
 }
 
 .ml-tabs-btn {
-  display: flex;
+  display: inline-flex;
   align-items: center;
-  gap: 6px;
+  gap: var(--ml-space-xs);
+  flex-shrink: 0;
   padding: 8px 16px;
   font-family: inherit;
   font-size: var(--ml-text-sm);
   font-weight: 500;
+  line-height: 1.4;
   color: var(--ml-text-muted);
   background: none;
   border: none;
-  border-bottom: 2px solid transparent;
-  margin-bottom: -1px;
   cursor: pointer;
-  transition: color var(--ml-duration-base), border-color var(--ml-duration-base);
+  white-space: nowrap;
+  transition: color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-tabs-btn:hover {
+.ml-tabs-btn:hover:not(:disabled) {
   color: var(--ml-text);
 }
 
 .ml-tabs-btn.active {
   color: var(--ml-text);
-  border-bottom-color: var(--ml-color-primary);
 }
 
-/* ── Toggle (pill / segmented control) ── */
+.ml-tabs-btn:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+  border-radius: var(--ml-radius-sm);
+}
+
+.ml-tabs-btn:disabled {
+  color: var(--ml-text-faint);
+  opacity: 0.6;
+  cursor: not-allowed;
+}
+
+.ml-tabs-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+.ml-tabs-indicator {
+  position: absolute;
+  bottom: 0;
+  left: 0;
+  height: 2px;
+  background: var(--ml-text);
+  pointer-events: none;
+  /* Position moves by transform only (never left/width) so the underline never
+     drives layout; width snaps to the active tab without animating. */
+  transition: transform var(--ml-duration-slow) var(--ml-ease-out);
+  will-change: transform;
+}
+
+.ml-tabs-panel:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  border-radius: var(--ml-radius-sm);
+}
+
+/* ── Toggle (APG radiogroup — pick a value) ──
+   Neutral inverted selection (fill --ml-text / label --ml-bg), matching
+   SegmentedControl so the two sibling controls speak the same monochrome
+   language. Weight/size/padding are identical across states — color only. */
 .ml-toggle {
   display: inline-flex;
   gap: 0;
   background: var(--ml-bg-elevated);
+  border: 1px solid var(--ml-border);
   border-radius: var(--ml-radius-pill);
   padding: 3px;
 }
 
 .ml-toggle button {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ml-space-xs);
   padding: 4px 14px;
   border-radius: var(--ml-radius-pill);
   border: none;
   background: none;
   font-family: inherit;
   font-size: var(--ml-text-xs);
-  font-weight: 600;
+  font-weight: 500;
   color: var(--ml-text-muted);
   cursor: pointer;
-  transition: background var(--ml-duration-base), color var(--ml-duration-base);
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-toggle button:hover {
+.ml-toggle-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
+.ml-toggle button:hover:not(.active):not(:disabled) {
   color: var(--ml-text);
 }
 
 .ml-toggle button.active {
-  background: var(--ml-color-primary-muted);
-  color: var(--ml-color-primary);
+  background: var(--ml-text);
+  color: var(--ml-bg);
+}
+
+.ml-toggle button:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-toggle button:disabled {
+  color: var(--ml-text-faint);
+  opacity: 0.5;
+  cursor: not-allowed;
 }
 
 /* ── SegmentedControl (view switcher with a sliding thumb) ──
@@ -96,6 +169,10 @@
 .ml-segmented-btn {
   position: relative;
   z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  gap: var(--ml-space-xs);
   padding: 8px 16px;
   border: none;
   background: none;
@@ -110,8 +187,19 @@
   transition: color var(--ml-duration-base);
 }
 
+.ml-segmented-icon {
+  display: inline-flex;
+  align-items: center;
+  flex-shrink: 0;
+}
+
 .ml-segmented-btn[aria-selected="true"] {
   color: var(--ml-bg);
+}
+
+.ml-segmented-btn:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
 }
 
 .ml-segmented-count {
@@ -119,7 +207,8 @@
 }
 
 @media (prefers-reduced-motion: reduce) {
-  .ml-segmented-thumb {
+  .ml-segmented-thumb,
+  .ml-tabs-indicator {
     transition: none;
   }
 }

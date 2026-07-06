@@ -1,0 +1,178 @@
+/* @meir-labs/ui-kit — Checkbox + Radio (choice controls) */
+
+/* ── Shared layout ── */
+.ml-checkbox,
+.ml-radio {
+  display: inline-flex;
+  align-items: flex-start;
+  gap: 8px;
+  cursor: pointer;
+  font-size: 14px;
+  line-height: 1.4;
+  color: var(--ml-text);
+  -webkit-tap-highlight-color: transparent;
+}
+
+.ml-checkbox--disabled,
+.ml-radio--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+.ml-checkbox-control,
+.ml-radio-control {
+  position: relative;
+  flex: none;
+  display: inline-flex;
+  width: 16px;
+  height: 16px;
+  /* nudge the box to align with the first line of label text */
+  margin-top: 1px;
+}
+
+/* ≥44px touch target without shifting layout (§9 ::before trick). */
+.ml-checkbox-control::before,
+.ml-radio-control::before {
+  content: "";
+  position: absolute;
+  inset: -14px;
+}
+
+/* Real input, visually replaced but focusable + clickable over the box. */
+.ml-checkbox-input,
+.ml-radio-input {
+  position: absolute;
+  inset: 0;
+  width: 100%;
+  height: 100%;
+  margin: 0;
+  opacity: 0;
+  cursor: inherit;
+}
+
+.ml-checkbox-box,
+.ml-radio-box {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 16px;
+  height: 16px;
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  transition:
+    background var(--ml-duration-base) var(--ml-ease),
+    border-color var(--ml-duration-base) var(--ml-ease),
+    box-shadow var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-checkbox-box {
+  border-radius: var(--ml-radius-sm);
+}
+.ml-radio-box {
+  border-radius: var(--ml-radius-pill);
+}
+
+/* ── Checkbox mark ── */
+.ml-checkbox-check {
+  width: 12px;
+  height: 12px;
+  color: var(--ml-bg);
+  opacity: 0;
+  transition: opacity var(--ml-duration-fast) var(--ml-ease);
+}
+
+.ml-checkbox-dash {
+  position: absolute;
+  width: 8px;
+  height: 2px;
+  border-radius: 1px;
+  background: var(--ml-bg);
+  opacity: 0;
+  transition: opacity var(--ml-duration-fast) var(--ml-ease);
+}
+
+.ml-checkbox-input:checked + .ml-checkbox-box,
+.ml-checkbox-input:indeterminate + .ml-checkbox-box {
+  background: var(--ml-text);
+  border-color: var(--ml-text);
+}
+.ml-checkbox-input:checked + .ml-checkbox-box .ml-checkbox-check {
+  opacity: 1;
+}
+.ml-checkbox-input:indeterminate + .ml-checkbox-box .ml-checkbox-check {
+  opacity: 0;
+}
+.ml-checkbox-input:indeterminate + .ml-checkbox-box .ml-checkbox-dash {
+  opacity: 1;
+}
+
+/* ── Radio dot ── */
+.ml-radio-dot {
+  width: 8px;
+  height: 8px;
+  border-radius: var(--ml-radius-pill);
+  background: var(--ml-text);
+  transform: scale(0);
+  transition: transform var(--ml-duration-fast) var(--ml-ease);
+}
+
+.ml-radio-input:checked + .ml-radio-box {
+  border-color: var(--ml-text);
+}
+.ml-radio-input:checked + .ml-radio-box .ml-radio-dot {
+  transform: scale(1);
+}
+
+/* ── Focus ring (keyboard only) — offset monochrome ring on the box ── */
+.ml-checkbox-input:focus-visible + .ml-checkbox-box,
+.ml-radio-input:focus-visible + .ml-radio-box {
+  box-shadow:
+    0 0 0 2px var(--ml-bg),
+    0 0 0 4px var(--ml-text);
+}
+
+/* ── Text block ── */
+.ml-checkbox-text,
+.ml-radio-text {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ml-checkbox-label,
+.ml-radio-label {
+  font-size: 14px;
+  font-weight: 500;
+  color: var(--ml-text);
+}
+
+.ml-checkbox-description,
+.ml-radio-description {
+  font-size: 12px;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
+}
+
+/* ── RadioGroup layout ── */
+.ml-radio-group {
+  display: flex;
+  gap: var(--ml-space-md);
+}
+.ml-radio-group--vertical {
+  flex-direction: column;
+}
+.ml-radio-group--horizontal {
+  flex-direction: row;
+  flex-wrap: wrap;
+  gap: var(--ml-space-lg);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-checkbox-box,
+  .ml-radio-box,
+  .ml-checkbox-check,
+  .ml-checkbox-dash,
+  .ml-radio-dot {
+    transition-duration: 0.01ms;
+  }
+}

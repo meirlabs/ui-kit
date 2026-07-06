@@ -1,0 +1,56 @@
+/* @meir-labs/ui-kit — CometLoader
+   Indeterminate AI/agentic loader: a 4×4 currentColor dot grid whose bright
+   head + fading tail orbits a clockwise-inward spiral. Inherits
+   --ml-text-muted by default. Reduced-motion freezes the orbit to a static
+   grid with a soft opacity pulse (opacity only — no transform). */
+
+.ml-comet {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ml-text-muted);
+  vertical-align: middle;
+}
+
+.ml-comet-grid {
+  display: block;
+  width: var(--ml-comet-size, 20px);
+  height: var(--ml-comet-size, 20px);
+}
+
+/* Each dot rests dim, flares to full, then fades over the next ~60% of the
+   cycle; staggered negative delays (set inline per dot by the component) send
+   the bright head clockwise around the spiral with a trailing tail.
+   Duration must match DURATION_S in CometLoader.tsx. */
+.ml-comet-grid circle {
+  fill: currentColor;
+  opacity: 0.18;
+  animation: ml-comet-dot 1.5s linear infinite;
+}
+
+.ml-comet-sm { --ml-comet-size: 16px; }
+.ml-comet-md { --ml-comet-size: 20px; }
+.ml-comet-lg { --ml-comet-size: 24px; }
+
+@keyframes ml-comet-dot {
+  0%   { opacity: 1; }
+  35%  { opacity: 0.5; }
+  60%  { opacity: 0.18; }
+  100% { opacity: 0.18; }
+}
+
+/* Reduced-motion: stop the orbit (dots settle at a uniform mid opacity) and
+   read as a soft whole-grid pulse instead. */
+@media (prefers-reduced-motion: reduce) {
+  .ml-comet-grid circle {
+    animation: none;
+    opacity: 0.45;
+  }
+  .ml-comet-grid {
+    animation: ml-comet-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes ml-comet-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+}

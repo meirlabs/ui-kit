@@ -1,10 +1,11 @@
-import { useState } from "react";
+import { useMemo, useState } from "react";
+import { DataTable, type Column } from "../../src/components/DataTable";
 import { Pagination } from "../../src/components/Pagination";
-import { usePagination } from "../../src/hooks/usePagination";
 import { StatusPill } from "../../src/components/StatusPill";
 import { Tag } from "../../src/components/Tag";
 import { ChipRow } from "../../src/components/ChipRow";
 import { MetricValue } from "../../src/components/MetricValue";
+import { EmptyState } from "../../src/components/EmptyState";
 
 interface User {
   id: number;
@@ -16,7 +17,7 @@ interface User {
   revenue: number;
 }
 
-const users: User[] = Array.from({ length: 25 }, (_, i) => ({
+const users: User[] = Array.from({ length: 23 }, (_, i) => ({
   id: i + 1,
   name: ["Alice Chen", "Bob Martinez", "Carol Johnson", "David Kim", "Eva Kowalski"][i % 5],
   role: ["Engineer", "Designer", "Manager", "Analyst", "Director"][i % 5],
@@ -39,59 +40,136 @@ const money = (v: number) =>
     signDisplay: "exceptZero",
   }).format(v);
 
+const columns: Column<User>[] = [
+  {
+    id: "name",
+    header: "Name",
+    sortable: true,
+    accessor: (u) => (
+      <div>
+        <div style={{ fontWeight: 500 }}>{u.name}</div>
+        <div style={{ marginTop: 2, fontSize: 12, color: "var(--ml-text-muted)" }}>
+          ID #{u.id}
+        </div>
+      </div>
+    ),
+    sortFn: (a, b) => a.name.localeCompare(b.name),
+  },
+  { id: "role", header: "Role", accessor: "role", sortable: true },
+  {
+    id: "departments",
+    header: "Departments",
+    accessor: (u) => (
+      <ChipRow>
+        {u.departments.map((d) => (
+          <Tag key={d}>{d}</Tag>
+        ))}
+      </ChipRow>
+    ),
+  },
+  {
+    id: "status",
+    header: "Status",
+    accessor: (u) => <StatusPill tone={u.status}>{u.statusLabel}</StatusPill>,
+  },
+  {
+    id: "revenue",
+    header: "Revenue",
+    numeric: true,
+    sortable: true,
+    accessor: (u) => <MetricValue value={u.revenue} formatter={money} />,
+    sortFn: (a, b) => a.revenue - b.revenue,
+  },
+];
+
+const PAGE_SIZE = 8;
+
 export function DataTableDemo() {
-  const { page, pageIndex, pageCount, setPage } = usePagination(users);
+  const [page, setPage] = useState(0);
+  const [selectedIds, setSelectedIds] = useState<string[]>([]);
+
+  const pageCount = Math.ceil(users.length / PAGE_SIZE);
+  const pageRows = useMemo(
+    () => users.slice(page * PAGE_SIZE, page * PAGE_SIZE + PAGE_SIZE),
+    [page],
+  );
 
   return (
-    <div className="ml-dt-wrap">
-      <table className="ml-dt">
-        <thead>
-          <tr>
-            <th>Name</th>
-            <th>Role</th>
-            <th>Departments</th>
-            <th>Status</th>
-            <th className="ml-dt-r">Revenue</th>
-            <th className="ml-dt-chevron-col"></th>
-          </tr>
-        </thead>
-        <tbody>
-          {page.map((user) => (
-            <tr key={user.id} className="ml-dt-row-link">
-              <td>
-                <div className="ml-dt-primary">{user.name}</div>
-                <div className="ml-dt-secondary">ID #{user.id}</div>
-              </td>
-              <td>{user.role}</td>
-              <td>
-                <ChipRow>
-                  {user.departments.map((d) => (
-                    <Tag key={d}>{d}</Tag>
-                  ))}
-                </ChipRow>
-              </td>
-              <td>
-                <StatusPill tone={user.status}>{user.statusLabel}</StatusPill>
-              </td>
-              <td className="ml-dt-r">
-                <MetricValue value={user.revenue} formatter={money} />
-              </td>
-              <td className="ml-dt-chevron">
-                <svg width="12" height="12" viewBox="0 0 12 12" fill="none">
-                  <path
-                    d="M4.5 2.5L8 6L4.5 9.5"
-                    stroke="currentColor"
-                    strokeWidth="1.4"
-                    strokeLinecap="round"
-                    strokeLinejoin="round"
-                  />
-                </svg>
-              </td>
-            </tr>
-          ))}
-        </tbody>
-      </table>
-      <Pagination pageIndex={pageIndex} pageCount={pageCount} onPage={setPage} />
-    </div>
+    <>
+      <div className="demo-section">
+        <div className="demo-label">
+          Sortable + selectable + sticky header (paired with Pagination)
+        </div>
+        <DataTable<User>
+          columns={columns}
+          data={pageRows}
+          getRowId={(u) => String(u.id)}
+          aria-label="Team members"
+          caption="Team members with role, departments, status and revenue"
+          selectable="multiple"
+          selectedIds={selectedIds}
+          onSelectionChange={setSelectedIds}
+          stickyHeader
+          defaultSort={{ columnId: "revenue", direction: "desc" }}
+          onRowClick={(u) => console.log("row", u.id)}
+          footer={
+            <>
+              <span style={{ marginRight: "auto", fontSize: 13, color: "var(--ml-text-muted)" }}>
+                {selectedIds.length} selected
+              </span>
+              <Pagination pageIndex={page} pageCount={pageCount} onPage={setPage} />
+            </>
+          }
+        />
+      </div>
+
+      <div className="demo-section">
+        <div className="demo-label">Compact density</div>
+        <DataTable<User>
+          columns={columns.slice(0, 4)}
+          data={users.slice(0, 4)}
+          getRowId={(u) => String(u.id)}
+          aria-label="Compact team"
+          compact
+        />
+      </div>
+
+      <div className="demo-section">
+        <div className="demo-label">Loading (skeleton rows reserve height)</div>
+        <DataTable<User>
+          columns={columns}
+          data={[]}
+          aria-label="Loading team"
+          loading
+          loadingRowCount={4}
+        />
+      </div>
+
+      <div className="demo-section">
+        <div className="demo-label">Empty (composed with EmptyState)</div>
+        <DataTable<User>
+          columns={columns}
+          data={[]}
+          aria-label="Empty team"
+          emptyState={
+            <EmptyState
+              variant="no-results"
+              title="No matching people"
+              description="Try adjusting your filters or search terms."
+            />
+          }
+        />
+      </div>
+
+      <div className="demo-section">
+        <div className="demo-label">Error state</div>
+        <DataTable<User>
+          columns={columns}
+          data={[]}
+          aria-label="Errored team"
+          error="Couldn't load team members. Retry."
+        />
+      </div>
+    </>
   );
 }

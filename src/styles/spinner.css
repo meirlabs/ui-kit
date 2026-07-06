@@ -1,0 +1,47 @@
+/* @meir-labs/ui-kit — Spinner
+   A currentColor ring for arbitrary async regions. Inherits --ml-text-muted by
+   default. Reduced-motion freezes the sweep to a static ring. */
+
+.ml-spinner {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ml-text-muted);
+  vertical-align: middle;
+}
+
+.ml-spinner-ring {
+  display: block;
+  box-sizing: border-box;
+  width: var(--ml-spinner-size, 20px);
+  height: var(--ml-spinner-size, 20px);
+  border-radius: var(--ml-radius-pill);
+  border: var(--ml-spinner-stroke, 2px) solid
+    color-mix(in srgb, currentColor 22%, transparent);
+  border-top-color: currentColor;
+  animation: ml-spinner-spin 0.7s linear infinite;
+}
+
+.ml-spinner-sm { --ml-spinner-size: 16px; --ml-spinner-stroke: 2px; }
+.ml-spinner-md { --ml-spinner-size: 20px; --ml-spinner-stroke: 2px; }
+.ml-spinner-lg { --ml-spinner-size: 24px; --ml-spinner-stroke: 2.5px; }
+
+@keyframes ml-spinner-spin {
+  to {
+    transform: rotate(360deg);
+  }
+}
+
+/* Reduced-motion: freeze the spin and read as a soft opacity pulse instead of a
+   rotating ring (opacity only — no transform/size change). */
+@media (prefers-reduced-motion: reduce) {
+  .ml-spinner-ring {
+    animation: ml-spinner-pulse 1.4s ease-in-out infinite;
+    border-color: color-mix(in srgb, currentColor 45%, transparent);
+    border-top-color: currentColor;
+  }
+  @keyframes ml-spinner-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+}
