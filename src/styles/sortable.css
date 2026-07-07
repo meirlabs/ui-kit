@@ -1,0 +1,100 @@
+/* @meir-labs/ui-kit — SortableList (drag-to-reorder)
+   Ships with the /sortable subpath; import alongside styles.css when using it. */
+
+.ml-sortable {
+  list-style: none;
+  margin: 0;
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-sm);
+}
+
+/* Row — card surface; dnd-kit drives transform/transition inline */
+.ml-sortable-item {
+  position: relative;
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-md);
+  padding: var(--ml-space-md) var(--ml-space-lg);
+  font-size: var(--ml-text-base);
+  line-height: 1.4;
+  color: var(--ml-text);
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+}
+
+/* Whole-row activator mode */
+.ml-sortable-item[data-draggable] {
+  cursor: grab;
+  touch-action: none; /* required for PointerSensor on touch */
+  user-select: none;
+  -webkit-user-select: none;
+}
+
+.ml-sortable-item[data-draggable]:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+}
+
+/* Lifted row — elevation via kit shadow tokens, above its siblings */
+.ml-sortable-item[data-dragging] {
+  z-index: 1;
+  cursor: grabbing;
+  background: var(--ml-bg-elevated);
+  box-shadow: var(--ml-shadow-elevated);
+}
+
+/* Explicit drag handle */
+.ml-sortable-handle {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 32px;
+  height: 32px;
+  margin: -4px;
+  padding: 0;
+  border: none;
+  border-radius: var(--ml-radius-sm);
+  background: none;
+  color: var(--ml-text-faint);
+  cursor: grab;
+  touch-action: none;
+  transition:
+    color var(--ml-duration-base) var(--ml-ease),
+    background var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-sortable-handle svg {
+  width: 16px;
+  height: 16px;
+}
+
+@media (hover: hover) {
+  .ml-sortable-handle:hover {
+    color: var(--ml-text);
+    background: var(--ml-bg-surface);
+  }
+}
+
+.ml-sortable-handle:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 0;
+}
+
+.ml-sortable-handle:active,
+.ml-sortable-item[data-dragging] .ml-sortable-handle {
+  cursor: grabbing;
+  color: var(--ml-text);
+}
+
+/* Reduced motion — !important beats dnd-kit's inline transform transition,
+   so rows snap instead of gliding (design/foundation/motion.md) */
+@media (prefers-reduced-motion: reduce) {
+  .ml-sortable-item,
+  .ml-sortable-handle {
+    transition-duration: 0.01ms !important;
+  }
+}

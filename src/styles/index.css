@@ -2,6 +2,7 @@
 @import "./tokens.css";
 @import "./components.css";
 @import "./table.css";
+@import "./virtual-table.css";
 @import "./pagination.css";
 @import "./tags.css";
 @import "./layout.css";
@@ -20,6 +21,7 @@
 @import "./combobox.css";
 @import "./forms.css";
 @import "./inputs.css";
+@import "./otp.css";
 @import "./choice.css";
 @import "./stepper.css";
 @import "./fileupload.css";
@@ -29,3 +31,5 @@
 @import "./comet.css";
 @import "./skeleton.css";
 @import "./progress.css";
+@import "./sortable.css";
+@import "./charts.css";

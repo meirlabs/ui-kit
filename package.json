@@ -1,6 +1,6 @@
 {
   "name": "@meir-labs/ui-kit",
-  "version": "0.1.1",
+  "version": "0.2.0",
   "description": "Themeable (light & dark) presentational component library for React",
   "type": "module",
   "main": "./dist/index.js",
@@ -10,6 +10,18 @@
     ".": {
       "import": "./dist/index.js",
       "types": "./dist/index.d.ts"
+    },
+    "./virtual": {
+      "import": "./dist/virtual.js",
+      "types": "./dist/virtual.d.ts"
+    },
+    "./sortable": {
+      "import": "./dist/sortable.js",
+      "types": "./dist/sortable.d.ts"
+    },
+    "./charts": {
+      "import": "./dist/charts.js",
+      "types": "./dist/charts.d.ts"
     },
     "./styles.css": "./dist/styles.css",
     "./compat.css": "./dist/compat.css"
@@ -35,13 +47,32 @@
   },
   "peerDependencies": {
     "react": "^18.2.0 || ^19.0.0",
-    "react-dom": "^18.2.0 || ^19.0.0"
+    "react-dom": "^18.2.0 || ^19.0.0",
+    "react-virtuoso": "^4.0.0",
+    "@dnd-kit/core": "^6.0.0",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.0.0",
+    "liveline": "^0.0.7"
+  },
+  "peerDependenciesMeta": {
+    "react-virtuoso": { "optional": true },
+    "@dnd-kit/core": { "optional": true },
+    "@dnd-kit/sortable": { "optional": true },
+    "@dnd-kit/utilities": { "optional": true },
+    "liveline": { "optional": true }
   },
   "dependencies": {
+    "@number-flow/react": "^0.6.1",
     "clsx": "^2.1.1",
+    "cmdk": "^1.1.1",
+    "input-otp": "^1.4.2",
+    "sonner": "^2.0.7",
     "tailwind-merge": "^3.0.0"
   },
   "devDependencies": {
+    "@dnd-kit/core": "^6.3.1",
+    "@dnd-kit/sortable": "^10.0.0",
+    "@dnd-kit/utilities": "^3.2.2",
     "@storybook/react-vite": "^10.3.3",
     "@testing-library/jest-dom": "^6.0.0",
     "@testing-library/react": "^16.0.0",
@@ -50,11 +81,13 @@
     "@vitejs/plugin-react": "^6.0.1",
     "concurrently": "^9.0.0",
     "jsdom": "^25.0.0",
+    "liveline": "^0.0.7",
     "postcss": "^8.5.0",
     "postcss-cli": "^11.0.0",
     "postcss-import": "^16.0.0",
     "react": "^19.1.0",
     "react-dom": "^19.1.0",
+    "react-virtuoso": "^4.18.10",
     "storybook": "^10.3.3",
     "tsup": "^8.0.0",
     "typescript": "^5.7.0",

@@ -4,7 +4,7 @@
 
 - **Name:** @meir-labs/ui-kit
 - **Version:** 0.1.0
-- **Location:** ~/Documents/business/meirlabs/ui-kit/
+- **Location:** ~/Documents/business/meirlabs/product/ui-kit/
 - **Purpose:** Themeable presentational component library for React (light & dark)
 - **Install:** `pnpm add @meir-labs/ui-kit` or `"@meir-labs/ui-kit": "file:../meirlabs/ui-kit"` for local dev
 - **CSS:** `import "@meir-labs/ui-kit/styles.css"` in root layout
@@ -41,11 +41,6 @@ useAnchoredPosition(anchorRef, floatingRef, options: UseAnchoredPositionOptions)
 // UseAnchoredPositionResult: { floatingStyle: CSSProperties; placement: AnchoredPlacement; update: () => void }
 // AnchoredPlacement: "top" | "bottom" | "left" | "right" | "<side>-start" | "<side>-end"
 // Powers Tooltip / Popover / Select / Combobox / Dropdown. Flips to the opposite side and clamps the cross axis to stay on-screen.
-
-useToast(): ToastContextValue
-// ToastContextValue: { toast: (options: ToastOptions) => string; dismiss: (id) => void; dismissAll: () => void; toasts: ToastItem[] }
-// ToastOptions: { title: ReactNode; description?; tone?: "neutral"|"success"|"warning"|"danger"; duration?: number; action?: { label, onClick }; id?: string }
-// Must be called under <ToastProvider>. Reuse an `id` to update a toast in place.
 
 // Components — basics
 Button(props: ButtonProps): JSX.Element
@@ -90,6 +85,11 @@ ChipRow(props: ChipRowProps): JSX.Element
 MetricValue(props: MetricValueProps): JSX.Element
 // value: number; formatter?: (value) => string; delta?: number; deltaDirection?: "up"|"down"|"auto"; deltaFormatter?: (value) => string
 // Applies .ml-metric-positive when value > 0, .ml-metric-negative when value < 0
+// animated?: boolean — NumberFlow (@number-flow/react) transitions; respects prefers-reduced-motion by default;
+// format via Intl.NumberFormatOptions; force dir="ltr" containers on Hebrew pages. Never hand-roll a rAF counter,
+// and no decorative mount-time count-ups on static marketing numbers.
+MetricGroup(props: MetricGroupProps): JSX.Element
+// Syncs the animation timing of several animated MetricValues so a metric row ticks as one.
 
 Accordion(props: AccordionProps) / AccordionItem(props: AccordionItemProps): JSX.Element
 // type?: "single" (value/defaultValue: string) | "multiple" (value/defaultValue: string[]); onValueChange
@@ -178,6 +178,8 @@ CommandPalette(props: CommandPaletteProps): JSX.Element
 // { open: boolean; onOpenChange: (open) => void; items: CommandItem[]; placeholder?; emptyState?; enableShortcut?: boolean (true); className? }
 // CommandItem: { id; label; group?; icon?; keywords?: string[]; shortcut?: string[]; onSelect: () => void }
 // enableShortcut registers a global Cmd/Ctrl+K toggle.
+// Internals rebuilt on cmdk: bare Command inside the kit's own portal/z-tier, styled via [cmdk-*] attributes
+// with logical properties for RTL; fuzzy filter tested with Hebrew labels.
 
 Kbd(props: KbdProps): JSX.Element
 // { keys?: string[]; mapGlyphs?: boolean (true — maps mod/shift/enter/arrows to platform glyphs); children?: ReactNode (overrides keys) } & span props
@@ -224,12 +226,18 @@ Stepper — see Navigation above
 FileUpload(props: FileUploadProps): JSX.Element
 // { accept?: string; multiple?; maxSize?: number (bytes); onFiles: (files: File[]) => void; disabled?; label?; hint?; icon?; progress?: Record<string, number> } & div props
 
+OtpInput(props: OtpInputProps): JSX.Element
+// Built on input-otp: token-styled slots, reduced-motion-aware caret, dir="ltr" hardcoded.
+// The only sanctioned segmented/OTP input; test with password managers. Never hand-roll segmented inputs.
+
 // Feedback
-Toaster(props: ToasterProps): JSX.Element
-// { toasts: ToastItem[]; placement?: ToastPlacement; onDismiss; onPause; onResume; label? } — rendered for you by ToastProvider; you shouldn't need it directly.
-ToastProvider(props: ToastProviderProps) / useToast(): ToastContextValue
-// ToastProviderProps: { children; duration?: number (5000); placement?: ToastPlacement ("bottom-right"); maxVisible?: number (3) }
-// ToastPlacement: "top"|"bottom" x "left"|"right"|"center". Mount once at the app root.
+Toaster(props: ToasterProps): JSX.Element / toast (re-export)
+// Rebuilt on Sonner: mount Toaster once at the app root and call the re-exported toast() / toast.promise().
+// Themed to --ml-* tokens, Hugeicons Pro icons via the icons prop at the app layer, dir="auto" for Hebrew,
+// reduced-motion verified per motion.md. Never hand-roll toasts.
+// ToasterProps: { placement?: ToastPlacement ("bottom-right"); duration?: number (5000); icons?; dir? ("auto") } + Sonner Toaster passthrough
+// ToastPlacement: "top"|"bottom" x "left"|"right"|"center". ToastOptions aliases Sonner's ExternalToast.
+// The old ToastProvider/useToast hook API is gone; call toast(message, options) directly.
 
 Callout(props: CalloutProps): JSX.Element
 // { tone?: "neutral"|"info"|"success"|"warning"|"danger"; title?; icon?; onDismiss? } & div props
@@ -249,6 +257,21 @@ Skeleton(props: SkeletonProps) / SkeletonText(props: SkeletonTextProps): JSX.Ele
 Progress(props: ProgressProps): JSX.Element
 // { value?: number; max?: number; size?: "sm"|"md"|"lg"; tone?: "neutral"|"success"|"warning"|"danger"; label?: string; showValue?: boolean } & div props
 // Omit value for an indeterminate bar.
+
+// Subpath exports (optional peer deps — install the peer only where the subpath is used)
+VirtualDataTable<Row>(props): JSX.Element            // from "@meir-labs/ui-kit/virtual"
+// react-virtuoso (MIT npm core only — never the commercial @virtuoso.dev/* packages).
+// Use when a list/table exceeds ~200-500 rendered rows or infinite-scrolls; below that use DataTable + Pagination.
+// Client-only; set initialItemCount if server HTML matters.
+
+SortableList(props): JSX.Element                     // from "@meir-labs/ui-kit/sortable"
+// @dnd-kit/core 6.x + sortable. Keyboard + screen-reader reordering must stay enabled; Hebrew announcement
+// strings on HE surfaces; reduced motion disables drag transitions. Re-evaluate @dnd-kit/react at 1.0.
+
+LiveChart(props): JSX.Element                        // from "@meir-labs/ui-kit/charts"
+// Liveline (pre-1.0 — pin the version, re-check at 1.0). Real-time streaming time-series ONLY; not the general
+// chart library. Wrapper defaults: monochrome token colors, decorative effects (particles/pulse/shake) off,
+// prefers-reduced-motion guard implemented in the wrapper (the lib lacks one).
 ```
 
 ## CSS Classes

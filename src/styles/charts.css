@@ -1,0 +1,17 @@
+/* @meir-labs/ui-kit — LiveChart (liveline wrapper)
+   Ships with the @meir-labs/ui-kit/charts subpath. Tokens only. */
+
+.ml-livechart {
+  position: relative;
+  height: var(--ml-livechart-height, 240px);
+  min-width: 0;
+  color: var(--ml-text);
+  font-family: var(--ml-font-sans);
+}
+
+/* Liveline fills its parent; pin it explicitly so the canvas can't collapse
+   inside flex/grid parents. */
+.ml-livechart-chart {
+  height: 100%;
+  width: 100%;
+}

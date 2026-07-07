@@ -39,8 +39,13 @@ export { Tag } from "./components/Tag";
 export type { TagProps, TagTone } from "./components/Tag";
 export { ChipRow } from "./components/ChipRow";
 export type { ChipRowProps } from "./components/ChipRow";
-export { MetricValue } from "./components/MetricValue";
-export type { MetricValueProps } from "./components/MetricValue";
+export { MetricValue, MetricGroup } from "./components/MetricValue";
+export type {
+  MetricValueProps,
+  MetricValueStaticProps,
+  MetricValueAnimatedProps,
+  MetricFormat,
+} from "./components/MetricValue";
 
 // Layout
 export { Shell } from "./components/Shell";
@@ -148,19 +153,12 @@ export { Stepper } from "./components/Stepper";
 export type { StepperProps, StepperStep, StepperStatus } from "./components/Stepper";
 export { FileUpload } from "./components/FileUpload";
 export type { FileUploadProps } from "./components/FileUpload";
+export { OtpInput } from "./components/OtpInput";
+export type { OtpInputProps } from "./components/OtpInput";
 
 // Feedback
-export { Toaster } from "./components/Toast";
-export type { ToasterProps, ToastPlacement } from "./components/Toast";
-export { ToastProvider, useToast } from "./hooks/useToast";
-export type {
-  ToastOptions,
-  ToastItem,
-  ToastTone,
-  ToastAction,
-  ToastContextValue,
-  ToastProviderProps,
-} from "./hooks/useToast";
+export { Toaster, toast } from "./components/Toast";
+export type { ToasterProps, ToastPlacement, ToastOptions } from "./components/Toast";
 export { Callout } from "./components/Callout";
 export type { CalloutProps, CalloutTone } from "./components/Callout";
 export { Spinner } from "./components/Spinner";

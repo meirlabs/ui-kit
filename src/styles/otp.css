@@ -1,0 +1,129 @@
+/* @meir-labs/ui-kit — OtpInput */
+
+/* Size knobs (md default; sm/lg mirror .ml-input heights). */
+.ml-otp {
+  --ml-otp-slot-w: 34px;
+  --ml-otp-slot-h: 40px;
+  --ml-otp-font: 16px;
+  display: inline-flex;
+}
+.ml-otp--sm {
+  --ml-otp-slot-w: 28px;
+  --ml-otp-slot-h: 32px;
+  --ml-otp-font: 14px;
+}
+.ml-otp--lg {
+  --ml-otp-slot-w: 40px;
+  --ml-otp-slot-h: 48px;
+  --ml-otp-font: 18px;
+}
+
+/* input-otp's own container (positions the invisible <input> over the slots). */
+.ml-otp-container {
+  display: flex;
+}
+
+/* Slot row rendered by the component. */
+.ml-otp-track {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-md);
+}
+
+.ml-otp-group {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+}
+
+/* Dash between groups (e.g. 123 - 456). */
+.ml-otp-separator {
+  flex: none;
+  width: 10px;
+  height: 2px;
+  border-radius: var(--ml-radius-pill);
+  background: var(--ml-border);
+}
+
+/* One code box. Mirrors the .ml-input shell (border / bg / radius / ring). */
+.ml-otp-slot {
+  position: relative;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  flex: none;
+  width: var(--ml-otp-slot-w);
+  height: var(--ml-otp-slot-h);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  background: var(--ml-bg-card);
+  color: var(--ml-text);
+  font-size: var(--ml-otp-font);
+  font-variant-numeric: tabular-nums;
+  transition:
+    border-color var(--ml-duration-base) var(--ml-ease),
+    box-shadow var(--ml-duration-base) var(--ml-ease);
+}
+
+/* The active slot is the typing-position cue (mouse and keyboard alike),
+   so it always rings — same 2px ring as .ml-input:focus-within. */
+.ml-otp-slot--active {
+  border-color: var(--ml-text);
+  box-shadow: 0 0 0 2px var(--ml-text);
+}
+
+.ml-otp-placeholder {
+  color: var(--ml-text-faint);
+}
+
+/* Error state — matches .ml-input--invalid. */
+.ml-otp--invalid .ml-otp-slot {
+  border-color: var(--ml-color-danger);
+}
+.ml-otp--invalid .ml-otp-slot--active {
+  border-color: var(--ml-color-danger);
+  box-shadow: 0 0 0 2px var(--ml-color-danger);
+}
+
+/* Disabled — matches .ml-input--disabled. */
+.ml-otp--disabled {
+  opacity: 0.5;
+  cursor: not-allowed;
+}
+
+/* Fake caret in the active empty slot. */
+.ml-otp-caret {
+  pointer-events: none;
+  position: absolute;
+  inset: 0;
+  display: flex;
+  align-items: center;
+  justify-content: center;
+}
+.ml-otp-caret-bar {
+  width: 1px;
+  height: 1em;
+  background: var(--ml-text);
+  animation: ml-otp-caret-blink 1.1s ease-out infinite;
+}
+
+@keyframes ml-otp-caret-blink {
+  0%,
+  45% {
+    opacity: 1;
+  }
+  55%,
+  95% {
+    opacity: 0;
+  }
+  100% {
+    opacity: 1;
+  }
+}
+
+/* Reduced motion: steady (non-blinking) caret — position cue stays visible. */
+@media (prefers-reduced-motion: reduce) {
+  .ml-otp-caret-bar {
+    animation: none;
+  }
+}

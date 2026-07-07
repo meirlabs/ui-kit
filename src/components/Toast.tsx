@@ -1,138 +1,102 @@
-import { useEffect, useState } from "react";
-import { createPortal } from "react-dom";
+import {
+  Toaster as SonnerToaster,
+  type ToastClassnames,
+  type ToasterProps as SonnerToasterProps,
+} from "sonner";
 import { cn } from "../utils/cn";
-import type { ToastItem } from "../hooks/useToast";
 
+/**
+ * `toast` — Sonner's imperative API, re-exported so consumers do
+ * `import { Toaster, toast } from "@meir-labs/ui-kit"` and never depend on
+ * sonner directly. `toast("Saved")`, `toast.success(...)`, `toast.error(...)`,
+ * `toast.warning(...)`, `toast.info(...)`, `toast.loading(...)`,
+ * `toast.promise(...)`, `toast.dismiss(id?)`.
+ */
+export { toast } from "sonner";
+
+/** Options accepted by `toast()` (Sonner's `ExternalToast`). */
+export type { ExternalToast as ToastOptions } from "sonner";
+
+/** Corner of the viewport the toast stack renders in. */
 export type ToastPlacement =
-  | "bottom-right"
-  | "bottom-left"
-  | "bottom-center"
-  | "top-right"
   | "top-left"
-  | "top-center";
+  | "top-right"
+  | "top-center"
+  | "bottom-left"
+  | "bottom-right"
+  | "bottom-center";
 
-const toneClass: Record<ToastItem["tone"], string> = {
-  neutral: "ml-toast-neutral",
+export interface ToasterProps extends Omit<SonnerToasterProps, "position"> {
+  /** Corner of the viewport the stack renders in. Maps to Sonner's `position`. */
+  placement?: ToastPlacement;
+}
+
+/**
+ * The kit's class hooks, mapped onto Sonner's slots. `toast.error` renders as
+ * the kit's `danger` tone; `info` stays neutral gray per the monochrome
+ * contract. Styled by `src/styles/toast.css` via `--ml-*` tokens only, so
+ * light/dark follow `data-meirlabs-theme` automatically.
+ */
+const KIT_CLASSNAMES: ToastClassnames = {
+  toast: "ml-toast",
+  content: "ml-toast-content",
+  title: "ml-toast-title",
+  description: "ml-toast-description",
+  icon: "ml-toast-icon",
+  loader: "ml-toast-loader",
+  actionButton: "ml-toast-action",
+  cancelButton: "ml-toast-cancel",
+  closeButton: "ml-toast-close",
+  default: "ml-toast-neutral",
   success: "ml-toast-success",
+  info: "ml-toast-info",
   warning: "ml-toast-warning",
-  danger: "ml-toast-danger",
+  error: "ml-toast-danger",
+  loading: "ml-toast-loading",
 };
 
-interface ToastProps {
-  toast: ToastItem;
-  onDismiss: (id: string) => void;
-  onPause: (id: string) => void;
-  onResume: (id: string) => void;
+function mergeToastClassNames(user?: ToastClassnames): ToastClassnames {
+  if (!user) return KIT_CLASSNAMES;
+  const merged: ToastClassnames = { ...KIT_CLASSNAMES };
+  for (const key of Object.keys(user) as (keyof ToastClassnames)[]) {
+    merged[key] = cn(KIT_CLASSNAMES[key], user[key]);
+  }
+  return merged;
 }
 
 /**
- * Toast — a single transient message. Enters with a slide+fade (driven by the
- * `data-state` flip on mount), exits by dissolving. Hover/focus pause the
- * parent's auto-dismiss timer. Danger tones assert (`role="alert"`); all others
- * announce politely (`role="status"`).
- */
-function Toast({ toast, onDismiss, onPause, onResume }: ToastProps) {
-  const [entered, setEntered] = useState(false);
-
-  useEffect(() => {
-    const raf = requestAnimationFrame(() => setEntered(true));
-    return () => cancelAnimationFrame(raf);
-  }, []);
-
-  const state = toast.dismissing ? "closed" : entered ? "open" : "closed";
-  const assertive = toast.tone === "danger";
-
-  return (
-    <li
-      className={cn("ml-toast", toneClass[toast.tone])}
-      data-state={state}
-      role={assertive ? "alert" : "status"}
-      aria-live={assertive ? "assertive" : "polite"}
-      aria-atomic="true"
-      onMouseEnter={() => onPause(toast.id)}
-      onMouseLeave={() => onResume(toast.id)}
-      onFocus={() => onPause(toast.id)}
-      onBlur={() => onResume(toast.id)}
-    >
-      <div className="ml-toast-content">
-        <p className="ml-toast-title">{toast.title}</p>
-        {toast.description != null && (
-          <p className="ml-toast-description">{toast.description}</p>
-        )}
-      </div>
-      {toast.action && (
-        <button
-          type="button"
-          className="ml-toast-action"
-          onClick={() => {
-            toast.action!.onClick();
-            onDismiss(toast.id);
-          }}
-        >
-          {toast.action.label}
-        </button>
-      )}
-      <button
-        type="button"
-        className="ml-toast-close"
-        aria-label="Dismiss notification"
-        onClick={() => onDismiss(toast.id)}
-      >
-        <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
-          <path
-            d="M3.5 3.5L10.5 10.5M3.5 10.5L10.5 3.5"
-            stroke="currentColor"
-            strokeWidth="1.4"
-            strokeLinecap="round"
-          />
-        </svg>
-      </button>
-    </li>
-  );
-}
-
-export interface ToasterProps {
-  toasts: ToastItem[];
-  placement?: ToastPlacement;
-  onDismiss: (id: string) => void;
-  onPause: (id: string) => void;
-  onResume: (id: string) => void;
-  /** Accessible name for the notification region. */
-  label?: string;
-}
-
-/**
- * Toaster — the portal region that stacks toasts in a viewport corner. Rendered
- * once by `ToastProvider`; kept mounted (even when empty) so the live region is
- * stable before messages are inserted. Not usually used directly.
+ * Toaster — the kit's toast outlet, a themed wrapper around Sonner's
+ * `<Toaster>`. Mount once at the app root, then fire messages with `toast()`.
+ * No provider or hook needed.
+ *
+ * - `placement` maps to Sonner's `position` (default `"bottom-right"`).
+ * - `dir` defaults to `"auto"` so RTL (Hebrew) pages lay out correctly.
+ * - `icons` passes through so apps can inject their own icon set (e.g.
+ *   Hugeicons Pro) — the kit stays icon-agnostic and bundles none.
+ * - Every other Sonner prop (`richColors`, `closeButton`, `expand`,
+ *   `visibleToasts`, ...) passes through untouched.
  */
 export function Toaster({
-  toasts,
   placement = "bottom-right",
-  onDismiss,
-  onPause,
-  onResume,
-  label = "Notifications",
+  dir = "auto",
+  duration = 5000,
+  gap = 12,
+  className,
+  toastOptions,
+  ...rest
 }: ToasterProps) {
-  if (typeof document === "undefined") return null;
-
-  return createPortal(
-    <ol
-      className={cn("ml-toaster", `ml-toaster-${placement}`)}
-      role="region"
-      aria-label={label}
-      tabIndex={-1}
-    >
-      {toasts.map((t) => (
-        <Toast
-          key={t.id}
-          toast={t}
-          onDismiss={onDismiss}
-          onPause={onPause}
-          onResume={onResume}
-        />
-      ))}
-    </ol>,
-    document.body,
+  return (
+    <SonnerToaster
+      position={placement}
+      dir={dir}
+      duration={duration}
+      gap={gap}
+      className={cn("ml-toaster", className)}
+      toastOptions={{
+        ...toastOptions,
+        classNames: mergeToastClassNames(toastOptions?.classNames),
+      }}
+      {...rest}
+    />
   );
 }

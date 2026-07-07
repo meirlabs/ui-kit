@@ -1,0 +1,36 @@
+/* @meir-labs/ui-kit — VirtualDataTable (virtualization-specific additions ONLY).
+   The table's look — header band, cells, rows, sort affordance, empty state —
+   comes entirely from table.css via the shared .ml-dt classes. This file owns
+   just the scroll container and the sticky-header shims TableVirtuoso needs.
+   Loaded only when the /virtual subpath is used; import it alongside styles.css. */
+
+/* Root card: virtuoso positions the sticky <thead> with an inline z-index (2).
+   Isolate the card so that z-index can never fight page-level stacking — the
+   header stays above rows inside the card and invisible to everything outside. */
+.ml-vdt-root {
+  isolation: isolate;
+}
+
+/* The virtuoso Scroller owns overflow (not .ml-dt-scroll). Reserve the
+   scrollbar gutter so the layout is reflow-stable as content height changes
+   under virtualization. */
+.ml-vdt-scroll {
+  scrollbar-gutter: stable;
+}
+
+.ml-vdt {
+  /* Explicit column widths + fixed layout: rows mounting/unmounting off-screen
+     must never re-measure and shift the columns. */
+  table-layout: fixed;
+  /* table.css collapses borders, but collapsed borders detach from a sticky
+     <thead> and scroll away with the body. Separate borders keep the header's
+     border-bottom (and each row's per-cell divider) glued to its cells. */
+  border-collapse: separate;
+  border-spacing: 0;
+}
+
+/* Sticky-header shim: fill the thead itself with the header-band surface so no
+   subpixel seam shows between cells while body rows scroll underneath. */
+.ml-vdt thead {
+  background: var(--ml-bg-surface);
+}

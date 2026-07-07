@@ -1,189 +1,137 @@
-import { act, render, screen, within } from "@testing-library/react";
-import { afterEach, beforeEach, describe, expect, it, vi } from "vitest";
-import { ToastProvider, useToast, type ToastOptions } from "../hooks/useToast";
+import { act, render, screen } from "@testing-library/react";
+import { toast as sonnerToast } from "sonner";
+import { beforeEach, describe, expect, it, vi } from "vitest";
+import { Toaster, toast } from "./Toast";
 
-/** A tiny harness that exposes the toast API through buttons. */
-function Harness({ options }: { options: ToastOptions }) {
-  const { toast, dismissAll } = useToast();
-  return (
-    <div>
-      <button onClick={() => toast(options)}>enqueue</button>
-      <button onClick={() => dismissAll()}>dismiss all</button>
-    </div>
-  );
-}
-
-function renderWithProvider(
-  options: ToastOptions,
-  providerProps?: Partial<Parameters<typeof ToastProvider>[0]>,
-) {
-  return render(
-    <ToastProvider {...providerProps}>
-      <Harness options={options} />
-    </ToastProvider>,
-  );
+/**
+ * Sonner mounts the toaster element lazily — it renders nothing until the
+ * first toast fires. Fire one, then grab the region.
+ */
+async function showToasterWith(message: string): Promise<HTMLElement> {
+  act(() => {
+    toast(message);
+  });
+  await screen.findByText(message);
+  const el = document.querySelector<HTMLElement>("[data-sonner-toaster]");
+  if (!el) throw new Error("toaster not rendered");
+  return el;
 }
 
 beforeEach(() => {
-  vi.useFakeTimers();
+  // Sonner keeps toast state at module level — clear it between tests.
+  act(() => {
+    toast.dismiss();
+  });
 });
 
-afterEach(() => {
-  vi.runOnlyPendingTimers();
-  vi.useRealTimers();
-});
-
-describe("Toast", () => {
-  it("enqueues a toast on demand", () => {
-    renderWithProvider({ title: "Saved", description: "Your changes are saved." });
-    expect(screen.queryByText("Saved")).not.toBeInTheDocument();
-
-    act(() => {
-      screen.getByText("enqueue").click();
-    });
-
-    expect(screen.getByText("Saved")).toBeInTheDocument();
-    expect(screen.getByText("Your changes are saved.")).toBeInTheDocument();
+describe("Toaster", () => {
+  it("re-exports sonner's toast API", () => {
+    expect(toast).toBe(sonnerToast);
+    expect(toast.success).toBeTypeOf("function");
+    expect(toast.promise).toBeTypeOf("function");
+    expect(toast.dismiss).toBeTypeOf("function");
   });
 
-  it("exposes a live region and the right role per tone", () => {
-    renderWithProvider({ title: "Delete failed", tone: "danger" });
-    act(() => {
-      screen.getByText("enqueue").click();
-    });
-
-    const region = screen.getByRole("region", { name: "Notifications" });
-    expect(region).toBeInTheDocument();
-
-    const alert = screen.getByRole("alert");
-    expect(alert).toHaveAttribute("aria-live", "assertive");
-    expect(within(alert).getByText("Delete failed")).toBeInTheDocument();
+  it("renders the kit-themed toaster region at bottom-right by default", async () => {
+    render(<Toaster />);
+    const toaster = await showToasterWith("region check");
+    expect(toaster).toHaveClass("ml-toaster");
+    expect(toaster).toHaveAttribute("data-y-position", "bottom");
+    expect(toaster).toHaveAttribute("data-x-position", "right");
   });
 
-  it("announces neutral toasts politely via role=status", () => {
-    renderWithProvider({ title: "Copied", tone: "neutral" });
-    act(() => {
-      screen.getByText("enqueue").click();
-    });
-    const status = screen.getByRole("status");
-    expect(status).toHaveAttribute("aria-live", "polite");
+  it("maps placement to sonner's position", async () => {
+    render(<Toaster placement="top-center" />);
+    const toaster = await showToasterWith("placement check");
+    expect(toaster).toHaveAttribute("data-y-position", "top");
+    expect(toaster).toHaveAttribute("data-x-position", "center");
   });
 
-  it("auto-dismisses after the duration elapses", () => {
-    renderWithProvider({ title: "Ephemeral", duration: 1000 });
-    act(() => {
-      screen.getByText("enqueue").click();
-    });
-    expect(screen.getByText("Ephemeral")).toBeInTheDocument();
-
-    // Run past the duration + the exit animation window.
-    act(() => {
-      vi.advanceTimersByTime(1000);
-    });
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-
-    expect(screen.queryByText("Ephemeral")).not.toBeInTheDocument();
+  it("forwards dir for RTL pages", async () => {
+    render(<Toaster dir="rtl" />);
+    const toaster = await showToasterWith("dir check");
+    expect(toaster).toHaveAttribute("dir", "rtl");
   });
 
-  it("does not auto-dismiss when duration is 0", () => {
-    renderWithProvider({ title: "Sticky", duration: 0 });
+  it("shows a toast when toast() fires", async () => {
+    render(<Toaster />);
     act(() => {
-      screen.getByText("enqueue").click();
+      toast("Changes saved", { description: "Everything is up to date." });
     });
-    act(() => {
-      vi.advanceTimersByTime(10000);
-    });
-    expect(screen.getByText("Sticky")).toBeInTheDocument();
+
+    expect(await screen.findByText("Changes saved")).toBeInTheDocument();
+    expect(
+      await screen.findByText("Everything is up to date."),
+    ).toBeInTheDocument();
   });
 
-  it("dismisses on the close button", () => {
-    renderWithProvider({ title: "Closable", duration: 0 });
+  it("applies the kit classNames to the toast slots", async () => {
+    render(<Toaster />);
     act(() => {
-      screen.getByText("enqueue").click();
+      toast.success("Deployed", { description: "Now live." });
     });
 
-    act(() => {
-      screen.getByRole("button", { name: "Dismiss notification" }).click();
-    });
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-
-    expect(screen.queryByText("Closable")).not.toBeInTheDocument();
-  });
-
-  it("fires the action and dismisses the toast", () => {
-    const onClick = vi.fn();
-    renderWithProvider({
-      title: "Deleted",
-      duration: 0,
-      action: { label: "Undo", onClick },
-    });
-    act(() => {
-      screen.getByText("enqueue").click();
-    });
-
-    act(() => {
-      screen.getByRole("button", { name: "Undo" }).click();
-    });
-    expect(onClick).toHaveBeenCalledTimes(1);
-
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-    expect(screen.queryByText("Deleted")).not.toBeInTheDocument();
-  });
-
-  it("caps visible toasts at maxVisible and queues the rest", () => {
-    function MultiHarness() {
-      const { toast } = useToast();
-      return (
-        <button
-          onClick={() => {
-            toast({ title: "One", duration: 0 });
-            toast({ title: "Two", duration: 0 });
-            toast({ title: "Three", duration: 0 });
-          }}
-        >
-          burst
-        </button>
-      );
-    }
-    render(
-      <ToastProvider maxVisible={2}>
-        <MultiHarness />
-      </ToastProvider>,
+    const title = await screen.findByText("Deployed");
+    expect(title).toHaveClass("ml-toast-title");
+    expect(await screen.findByText("Now live.")).toHaveClass(
+      "ml-toast-description",
     );
 
-    act(() => {
-      screen.getByText("burst").click();
-    });
-
-    expect(screen.getByText("One")).toBeInTheDocument();
-    expect(screen.getByText("Two")).toBeInTheDocument();
-    expect(screen.queryByText("Three")).not.toBeInTheDocument();
-
-    // Dismiss one → the queued toast is promoted.
-    act(() => {
-      screen.getAllByRole("button", { name: "Dismiss notification" })[0].click();
-    });
-    act(() => {
-      vi.advanceTimersByTime(300);
-    });
-
-    expect(screen.getByText("Three")).toBeInTheDocument();
+    const item = title.closest("[data-sonner-toast]");
+    expect(item).toHaveClass("ml-toast");
+    expect(item).toHaveClass("ml-toast-success");
   });
 
-  it("throws when useToast is used outside a provider", () => {
-    function Orphan() {
-      useToast();
-      return null;
-    }
-    // Silence the expected React error boundary log.
-    const spy = vi.spyOn(console, "error").mockImplementation(() => {});
-    expect(() => render(<Orphan />)).toThrow(/within a <ToastProvider>/);
-    spy.mockRestore();
+  it("maps toast.error to the kit's danger tone", async () => {
+    render(<Toaster />);
+    act(() => {
+      toast.error("Delete failed");
+    });
+
+    const item = (await screen.findByText("Delete failed")).closest(
+      "[data-sonner-toast]",
+    );
+    expect(item).toHaveClass("ml-toast-danger");
+  });
+
+  it("merges consumer classNames with the kit's instead of replacing them", async () => {
+    render(
+      <Toaster toastOptions={{ classNames: { toast: "custom-toast" } }} />,
+    );
+    act(() => {
+      toast("Merged");
+    });
+
+    const item = (await screen.findByText("Merged")).closest(
+      "[data-sonner-toast]",
+    );
+    expect(item).toHaveClass("ml-toast");
+    expect(item).toHaveClass("custom-toast");
+  });
+
+  it("renders injected icons (icon passthrough)", async () => {
+    render(
+      <Toaster icons={{ success: <span data-testid="custom-icon" /> }} />,
+    );
+    act(() => {
+      toast.success("With icon");
+    });
+
+    expect(await screen.findByTestId("custom-icon")).toBeInTheDocument();
+  });
+
+  it("fires the action button's handler", async () => {
+    const onClick = vi.fn();
+    render(<Toaster />);
+    act(() => {
+      toast("Item deleted", { action: { label: "Undo", onClick } });
+    });
+
+    const button = await screen.findByRole("button", { name: "Undo" });
+    expect(button).toHaveClass("ml-toast-action");
+    act(() => {
+      button.click();
+    });
+    expect(onClick).toHaveBeenCalledTimes(1);
   });
 });

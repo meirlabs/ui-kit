@@ -1,10 +1,14 @@
 /* @meir-labs/ui-kit — CommandPalette (highest overlay tier)
-   Reuses .ml-overlay backdrop. Entrance lifts (opacity + scale/blur); exit
-   dissolves in place. Monochrome — active row is a surface shift, never blue. */
+   Shell (overlay, panel, motion) is kit-owned; the innards are cmdk primitives,
+   styled via their [cmdk-*] attributes and scoped under .ml-command so other
+   cmdk instances on the page are untouched. Reuses .ml-overlay backdrop.
+   Entrance lifts (opacity + scale/blur); exit dissolves in place. Monochrome —
+   selected row is a surface shift, never blue. Logical properties throughout
+   for RTL/Hebrew. */
 
 .ml-command-overlay {
   align-items: flex-start;
-  padding-top: 12vh;
+  padding-block-start: 12vh;
   z-index: var(--ml-z-command, 1700);
 }
 
@@ -47,12 +51,21 @@
   }
 }
 
+/* cmdk root — a plain div wrapping input row + list; must pass the panel's
+   flex sizing through so the list scrolls. */
+.ml-command [cmdk-root] {
+  display: flex;
+  flex-direction: column;
+  flex: 1;
+  min-height: 0;
+}
+
 .ml-command-search {
   display: flex;
   align-items: center;
   gap: var(--ml-space-sm);
-  padding: 0 var(--ml-space-lg);
-  border-bottom: 1px solid var(--ml-border);
+  padding-inline: var(--ml-space-lg);
+  border-block-end: 1px solid var(--ml-border);
 }
 
 .ml-command-search-icon {
@@ -60,7 +73,7 @@
   color: var(--ml-text-faint);
 }
 
-.ml-command-input {
+.ml-command [cmdk-input] {
   flex: 1;
   min-width: 0;
   height: 52px;
@@ -73,24 +86,26 @@
   outline: none;
 }
 
-.ml-command-input::placeholder {
+.ml-command [cmdk-input]::placeholder {
   color: var(--ml-text-faint);
 }
 
-.ml-command-list {
+.ml-command [cmdk-list] {
   flex: 1;
   min-height: 0;
   overflow-y: auto;
+  overscroll-behavior: contain;
   scrollbar-gutter: stable;
   padding: var(--ml-space-xs);
 }
 
-.ml-command-group + .ml-command-group {
-  margin-top: var(--ml-space-xs);
+.ml-command [cmdk-group] + [cmdk-group] {
+  margin-block-start: var(--ml-space-xs);
 }
 
-.ml-command-group-label {
-  padding: var(--ml-space-sm) var(--ml-space-sm) var(--ml-space-xs);
+.ml-command [cmdk-group-heading] {
+  padding-block: var(--ml-space-sm) var(--ml-space-xs);
+  padding-inline: var(--ml-space-sm);
   font-size: 12px;
   font-weight: 500;
   letter-spacing: 0.5px;
@@ -98,11 +113,12 @@
   color: var(--ml-text-muted);
 }
 
-.ml-command-item {
+.ml-command [cmdk-item] {
   display: flex;
   align-items: center;
   gap: var(--ml-space-sm);
-  padding: 8px 10px;
+  padding-block: 8px;
+  padding-inline: 10px;
   border-radius: var(--ml-radius-md);
   color: var(--ml-text);
   font-size: 14px;
@@ -112,9 +128,14 @@
   user-select: none;
 }
 
-/* Active row: surface shift, not blue. */
-.ml-command-item.is-active {
+/* Selected row: surface shift, not blue. */
+.ml-command [cmdk-item][data-selected="true"] {
   background: var(--ml-bg-surface);
+}
+
+.ml-command [cmdk-item][data-disabled="true"] {
+  color: var(--ml-text-faint);
+  cursor: default;
 }
 
 .ml-command-item-icon {
@@ -133,7 +154,7 @@
   white-space: nowrap;
 }
 
-.ml-command-empty {
+.ml-command [cmdk-empty] {
   padding: var(--ml-space-xl);
   text-align: center;
   color: var(--ml-text-muted);

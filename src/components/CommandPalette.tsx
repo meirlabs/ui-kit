@@ -1,12 +1,13 @@
 import {
   type ReactNode,
+  useCallback,
   useEffect,
-  useId,
   useMemo,
   useRef,
   useState,
 } from "react";
 import { createPortal } from "react-dom";
+import { Command, defaultFilter } from "cmdk";
 import { cn } from "../utils/cn";
 import { useFocusTrap } from "../hooks/useFocusTrap";
 import { useScrollLock } from "../hooks/useScrollLock";
@@ -54,18 +55,12 @@ function usePresence(open: boolean, duration: number) {
   return { mounted, visible };
 }
 
-function matches(item: CommandItem, query: string): boolean {
-  if (!query) return true;
-  const q = query.toLowerCase();
-  if (item.label.toLowerCase().includes(q)) return true;
-  return (item.keywords ?? []).some((k) => k.toLowerCase().includes(q));
-}
-
 /**
- * CommandPalette — a Cmd/Ctrl+K launcher. Renders a portal dialog with an inner
- * combobox/listbox: a filtered, grouped result list navigated with Arrow keys
- * (highlighted active row), Enter to select, Escape to close. Focus-trapped,
- * scroll-locked, returns focus on close. Highest overlay tier (`--ml-z-command`).
+ * CommandPalette — a Cmd/Ctrl+K launcher. The kit owns the shell (portal,
+ * backdrop, focus trap, scroll lock, `--ml-z-command` tier, open/close motion);
+ * cmdk's bare `<Command>` owns filtering (fuzzy `command-score` ranking over
+ * `label` + `keywords`), arrow-key navigation, and selection semantics.
+ * Escape closes, focus returns on close.
  */
 export function CommandPalette({
   open,
@@ -77,18 +72,13 @@ export function CommandPalette({
   className,
 }: CommandPaletteProps) {
   const [query, setQuery] = useState("");
-  const [activeIndex, setActiveIndex] = useState(0);
   const inputRef = useRef<HTMLInputElement>(null);
-  const listRef = useRef<HTMLDivElement>(null);
-  const optionRefs = useRef<Array<HTMLDivElement | null>>([]);
 
   const { mounted, visible } = usePresence(open, EXIT_MS);
-  const containerRef = useFocusTrap<HTMLDivElement>(open, { initialFocus: inputRef });
+  // Activate the trap only once the portal is mounted — opening from closed
+  // takes one render for `mounted` to flip, and the trap needs a live node.
+  const containerRef = useFocusTrap<HTMLDivElement>(open && mounted, { initialFocus: inputRef });
   useScrollLock(open);
-
-  const baseId = useId();
-  const listboxId = `${baseId}-listbox`;
-  const optionId = (i: number) => `${baseId}-opt-${i}`;
 
   // Global Cmd/Ctrl+K toggle.
   useEffect(() => {
@@ -103,81 +93,70 @@ export function CommandPalette({
     return () => document.removeEventListener("keydown", onKey);
   }, [enableShortcut, open, onOpenChange]);
 
-  // Reset transient state whenever the palette opens.
+  // Reset the search whenever the palette opens (it may reopen mid-exit,
+  // before the previous instance unmounts).
   useEffect(() => {
-    if (open) {
-      setQuery("");
-      setActiveIndex(0);
-    }
+    if (open) setQuery("");
   }, [open]);
 
-  const filtered = useMemo(() => items.filter((it) => matches(it, query)), [items, query]);
+  // Items are keyed into cmdk by `id` (stable + unique), but scoring should
+  // run against the human-readable label, so swap it in before delegating to
+  // cmdk's default `command-score` filter. `keywords` pass through untouched.
+  const labelById = useMemo(() => {
+    const map = new Map<string, string>();
+    for (const item of items) map.set(item.id, item.label);
+    return map;
+  }, [items]);
 
-  // Preserve group order of first appearance.
+  const filter = useCallback(
+    (value: string, search: string, keywords?: string[]) =>
+      defaultFilter(labelById.get(value) ?? value, search, keywords),
+    [labelById],
+  );
+
+  // Preserve group order of first appearance. cmdk handles per-query
+  // filtering/hiding, so grouping only depends on `items`.
   const groups = useMemo(() => {
     const order: string[] = [];
-    const map = new Map<string, Array<{ item: CommandItem; flatIndex: number }>>();
-    filtered.forEach((item, flatIndex) => {
+    const map = new Map<string, CommandItem[]>();
+    for (const item of items) {
       const key = item.group ?? "";
       if (!map.has(key)) {
         map.set(key, []);
         order.push(key);
       }
-      map.get(key)!.push({ item, flatIndex });
-    });
-    return order.map((key) => ({ key, entries: map.get(key)! }));
-  }, [filtered]);
-
-  // Clamp active row and scroll it into view.
-  useEffect(() => {
-    if (activeIndex > filtered.length - 1) {
-      setActiveIndex(filtered.length > 0 ? filtered.length - 1 : 0);
+      map.get(key)!.push(item);
     }
-  }, [filtered.length, activeIndex]);
-
-  useEffect(() => {
-    optionRefs.current[activeIndex]?.scrollIntoView({ block: "nearest" });
-  }, [activeIndex]);
-
-  function select(index: number) {
-    const item = filtered[index];
-    if (!item) return;
-    item.onSelect();
-    onOpenChange(false);
-  }
+    return order.map((key) => ({ key, items: map.get(key)! }));
+  }, [items]);
 
   function onKeyDown(e: React.KeyboardEvent) {
-    switch (e.key) {
-      case "ArrowDown":
-        e.preventDefault();
-        setActiveIndex((i) => (filtered.length ? (i + 1) % filtered.length : 0));
-        break;
-      case "ArrowUp":
-        e.preventDefault();
-        setActiveIndex((i) => (filtered.length ? (i - 1 + filtered.length) % filtered.length : 0));
-        break;
-      case "Home":
-        e.preventDefault();
-        setActiveIndex(0);
-        break;
-      case "End":
-        e.preventDefault();
-        setActiveIndex(Math.max(0, filtered.length - 1));
-        break;
-      case "Enter":
-        e.preventDefault();
-        select(activeIndex);
-        break;
-      case "Escape":
-        e.preventDefault();
-        onOpenChange(false);
-        break;
+    if (e.key === "Escape") {
+      e.preventDefault();
+      onOpenChange(false);
     }
   }
 
   if (!mounted || typeof document === "undefined") return null;
 
   const state = visible ? "open" : "closed";
+
+  const renderItem = (item: CommandItem) => (
+    <Command.Item
+      key={item.id}
+      value={item.id}
+      keywords={item.keywords}
+      className="ml-command-item"
+      onSelect={() => {
+        item.onSelect();
+        onOpenChange(false);
+      }}
+    >
+      {item.icon != null && <span className="ml-command-item-icon">{item.icon}</span>}
+      <span className="ml-command-item-label">{item.label}</span>
+      {item.shortcut && <Kbd keys={item.shortcut} />}
+    </Command.Item>
+  );
 
   return createPortal(
     <div
@@ -197,70 +176,43 @@ export function CommandPalette({
         tabIndex={-1}
         onKeyDown={onKeyDown}
       >
-        <div className="ml-command-search">
-          <svg
-            className="ml-command-search-icon"
-            width="18"
-            height="18"
-            viewBox="0 0 18 18"
-            fill="none"
-            aria-hidden="true"
-          >
-            <circle cx="8" cy="8" r="5" stroke="currentColor" strokeWidth="1.5" />
-            <path d="M12 12L15.5 15.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
-          </svg>
-          <input
-            ref={inputRef}
-            type="text"
-            className="ml-command-input"
-            role="combobox"
-            aria-expanded="true"
-            aria-controls={listboxId}
-            aria-activedescendant={filtered.length ? optionId(activeIndex) : undefined}
-            aria-autocomplete="list"
-            placeholder={placeholder}
-            value={query}
-            onChange={(e) => {
-              setQuery(e.target.value);
-              setActiveIndex(0);
-            }}
-          />
-        </div>
+        <Command label="Command palette" loop filter={filter}>
+          <div className="ml-command-search">
+            <svg
+              className="ml-command-search-icon"
+              width="18"
+              height="18"
+              viewBox="0 0 18 18"
+              fill="none"
+              aria-hidden="true"
+            >
+              <circle cx="8" cy="8" r="5" stroke="currentColor" strokeWidth="1.5" />
+              <path d="M12 12L15.5 15.5" stroke="currentColor" strokeWidth="1.5" strokeLinecap="round" />
+            </svg>
+            <Command.Input
+              ref={inputRef}
+              className="ml-command-input"
+              placeholder={placeholder}
+              value={query}
+              onValueChange={setQuery}
+            />
+          </div>
 
-        <div ref={listRef} id={listboxId} role="listbox" className="ml-command-list">
-          {filtered.length === 0 ? (
-            <div className="ml-command-empty" role="presentation">
+          <Command.List className="ml-command-list">
+            <Command.Empty className="ml-command-empty">
               {emptyState ?? "No results found."}
-            </div>
-          ) : (
-            groups.map((group) => (
-              <div key={group.key || "_"} className="ml-command-group" role="group">
-                {group.key && <div className="ml-command-group-label">{group.key}</div>}
-                {group.entries.map(({ item, flatIndex }) => {
-                  const isActive = flatIndex === activeIndex;
-                  return (
-                    <div
-                      key={item.id}
-                      ref={(el) => {
-                        optionRefs.current[flatIndex] = el;
-                      }}
-                      id={optionId(flatIndex)}
-                      role="option"
-                      aria-selected={isActive}
-                      className={cn("ml-command-item", isActive && "is-active")}
-                      onMouseMove={() => setActiveIndex(flatIndex)}
-                      onClick={() => select(flatIndex)}
-                    >
-                      {item.icon != null && <span className="ml-command-item-icon">{item.icon}</span>}
-                      <span className="ml-command-item-label">{item.label}</span>
-                      {item.shortcut && <Kbd keys={item.shortcut} />}
-                    </div>
-                  );
-                })}
-              </div>
-            ))
-          )}
-        </div>
+            </Command.Empty>
+            {groups.map((group) =>
+              group.key ? (
+                <Command.Group key={group.key} heading={group.key} className="ml-command-group">
+                  {group.items.map(renderItem)}
+                </Command.Group>
+              ) : (
+                group.items.map(renderItem)
+              ),
+            )}
+          </Command.List>
+        </Command>
       </div>
     </div>,
     document.body,

@@ -1,130 +1,95 @@
-/* @meir-labs/ui-kit — Toast + Toaster
-   Transient feedback. Neutral elevated surface; status tones tint an accent
-   only (functional, never decorative). Enter = slide+fade, exit = dissolve;
-   both reduced-motion guarded. */
+/* @meir-labs/ui-kit — Toast (Sonner-powered)
+   Sonner owns layout, stacking, swipe, and motion (its injected stylesheet
+   already zeroes animation/transition under prefers-reduced-motion). This file
+   themes it to the kit: every color routes through --ml-* tokens so light/dark
+   follow data-meirlabs-theme, never Sonner's own theme presets.
 
-/* ── Toaster region (portal) ── */
-.ml-toaster {
-  position: fixed;
+   Specificity notes: Sonner injects its stylesheet at runtime (possibly after
+   this one), so overrides must WIN on specificity, not order. Its theme var
+   blocks are (0,2,0) and its deepest child rules are (0,3,0); the selectors
+   below sit one level above each. */
+
+/* ── Token bridge — (0,3,0) beats Sonner's [data-sonner-toaster][data-sonner-theme] ── */
+.ml-toaster[data-sonner-toaster][data-sonner-theme] {
   z-index: var(--ml-z-toast);
-  display: flex;
-  flex-direction: column;
-  gap: var(--ml-space-md);
-  width: min(400px, calc(100vw - 32px));
-  margin: 0;
-  padding: 0;
-  list-style: none;
-  pointer-events: none; /* only the toasts catch events */
+  font-family: var(--ml-font-sans);
+
+  /* Core surface vars Sonner consumes */
+  --normal-bg: var(--ml-bg-elevated);
+  --normal-bg-hover: var(--ml-bg-surface);
+  --normal-border: var(--ml-border);
+  --normal-border-hover: var(--ml-text-muted);
+  --normal-text: var(--ml-text);
+  --border-radius: var(--ml-radius-lg);
+
+  /* Grays that reach rendered properties (close button, loader) */
+  --gray2: var(--ml-bg-surface); /* close hover bg */
+  --gray4: var(--ml-border); /* close border */
+  --gray5: var(--ml-border); /* close hover border */
+  --gray11: var(--ml-text-muted); /* loader */
+  --gray12: var(--ml-text-muted); /* close icon */
+
+  /* richColors palettes → functional tokens. info is deliberately neutral
+     gray (NOT blue) per the monochrome contract, matching Banner/Callout. */
+  --success-bg: color-mix(in srgb, var(--ml-color-success-muted) 60%, var(--ml-bg-elevated));
+  --success-border: var(--ml-color-success);
+  --success-text: var(--ml-text);
+  --warning-bg: color-mix(in srgb, var(--ml-color-warning-muted) 60%, var(--ml-bg-elevated));
+  --warning-border: var(--ml-color-warning);
+  --warning-text: var(--ml-text);
+  --error-bg: color-mix(in srgb, var(--ml-color-danger-muted) 60%, var(--ml-bg-elevated));
+  --error-border: var(--ml-color-danger);
+  --error-text: var(--ml-text);
+  --info-bg: var(--ml-bg-elevated);
+  --info-border: var(--ml-border);
+  --info-text: var(--ml-text);
 }
 
-/* Placement anchors */
-.ml-toaster-bottom-right {
-  bottom: var(--ml-space-xl);
-  right: var(--ml-space-xl);
-  align-items: flex-end;
-}
-.ml-toaster-bottom-left {
-  bottom: var(--ml-space-xl);
-  left: var(--ml-space-xl);
-  align-items: flex-start;
-}
-.ml-toaster-bottom-center {
-  bottom: var(--ml-space-xl);
-  left: 50%;
-  transform: translateX(-50%);
-  align-items: center;
-}
-.ml-toaster-top-right {
-  top: var(--ml-space-xl);
-  right: var(--ml-space-xl);
-  align-items: flex-end;
-  flex-direction: column-reverse;
-}
-.ml-toaster-top-left {
-  top: var(--ml-space-xl);
-  left: var(--ml-space-xl);
-  align-items: flex-start;
-  flex-direction: column-reverse;
-}
-.ml-toaster-top-center {
-  top: var(--ml-space-xl);
-  left: 50%;
-  transform: translateX(-50%);
-  align-items: center;
-  flex-direction: column-reverse;
-}
-
-/* ── Toast item ── */
-.ml-toast {
-  pointer-events: auto;
-  position: relative;
-  display: flex;
-  align-items: flex-start;
-  gap: var(--ml-space-md);
-  width: 100%;
+/* ── Toast surface — (0,3,0) beats Sonner's [data-styled] block (0,2,0) ── */
+.ml-toaster[data-sonner-toaster] .ml-toast {
   padding: var(--ml-space-md) var(--ml-space-lg);
-  background: var(--ml-bg-elevated);
-  border: 1px solid var(--ml-border);
-  border-radius: var(--ml-radius-lg);
+  gap: var(--ml-space-md);
   box-shadow: var(--ml-shadow-card);
-  color: var(--ml-text);
-  /* Enter/exit: slide from the vertical edge + fade. Never animate size. */
-  opacity: 0;
-  transform: translateY(8px);
-  transition:
-    opacity var(--ml-duration-slow) var(--ml-ease-out),
-    transform var(--ml-duration-slow) var(--ml-ease-out);
+  font-size: 14px;
 }
 
-/* Top placements slide down from above instead of up from below. */
-.ml-toaster-top-right .ml-toast,
-.ml-toaster-top-left .ml-toast,
-.ml-toaster-top-center .ml-toast {
-  transform: translateY(-8px);
+/* The always-on box-shadow above outranks Sonner's :focus-visible ring, so
+   provide the kit's focus treatment instead. */
+.ml-toaster[data-sonner-toaster] .ml-toast:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
 }
 
-.ml-toast[data-state="open"] {
-  opacity: 1;
-  transform: translateY(0);
+/* ── Status tones: tinted fill + functional inset accent bar; text stays
+      --ml-text. The bar rides box-shadow (clipped by the radius) because
+      Sonner already uses both ::before and ::after on the toast. ── */
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-success {
+  background: color-mix(in srgb, var(--ml-color-success-muted) 60%, var(--ml-bg-elevated));
+  box-shadow: inset 3px 0 0 var(--ml-color-success), var(--ml-shadow-card);
+}
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-warning {
+  background: color-mix(in srgb, var(--ml-color-warning-muted) 60%, var(--ml-bg-elevated));
+  box-shadow: inset 3px 0 0 var(--ml-color-warning), var(--ml-shadow-card);
+}
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-danger {
+  background: color-mix(in srgb, var(--ml-color-danger-muted) 60%, var(--ml-bg-elevated));
+  box-shadow: inset 3px 0 0 var(--ml-color-danger), var(--ml-shadow-card);
 }
 
-/* Exit = dissolve only (no position change), per motion §10. */
-.ml-toast[data-state="closed"] {
-  opacity: 0;
-  transform: translateY(0);
-  transition:
-    opacity var(--ml-duration-base) var(--ml-ease),
-    transform var(--ml-duration-base) var(--ml-ease);
+/* RTL: the accent bar hugs the reading-start edge. */
+.ml-toaster[data-sonner-toaster][dir="rtl"] .ml-toast.ml-toast-success {
+  box-shadow: inset -3px 0 0 var(--ml-color-success), var(--ml-shadow-card);
+}
+.ml-toaster[data-sonner-toaster][dir="rtl"] .ml-toast.ml-toast-warning {
+  box-shadow: inset -3px 0 0 var(--ml-color-warning), var(--ml-shadow-card);
+}
+.ml-toaster[data-sonner-toaster][dir="rtl"] .ml-toast.ml-toast-danger {
+  box-shadow: inset -3px 0 0 var(--ml-color-danger), var(--ml-shadow-card);
 }
 
-/* Status tones: a functional left accent + tinted fill; text stays --ml-text. */
-.ml-toast::before {
-  content: "";
-  position: absolute;
-  left: 0;
-  top: 0;
-  bottom: 0;
-  width: 3px;
-  border-radius: var(--ml-radius-lg) 0 0 var(--ml-radius-lg);
-  background: transparent;
-}
-.ml-toast-success::before { background: var(--ml-color-success); }
-.ml-toast-warning::before { background: var(--ml-color-warning); }
-.ml-toast-danger::before { background: var(--ml-color-danger); }
-.ml-toast-success { background: color-mix(in srgb, var(--ml-color-success-muted) 60%, var(--ml-bg-elevated)); }
-.ml-toast-warning { background: color-mix(in srgb, var(--ml-color-warning-muted) 60%, var(--ml-bg-elevated)); }
-.ml-toast-danger { background: color-mix(in srgb, var(--ml-color-danger-muted) 60%, var(--ml-bg-elevated)); }
-
-.ml-toast-content {
-  flex: 1 1 auto;
-  min-width: 0;
-  display: flex;
-  flex-direction: column;
-  gap: 2px;
-}
-
-.ml-toast-title {
-  margin: 0;
+/* ── Typography — (0,4,0) beats Sonner's [data-title]/[data-description]
+      rules (0,3,0) ── */
+.ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-title {
   font-size: 14px;
   font-weight: 500;
   line-height: 1.4;
@@ -132,8 +97,7 @@
   color: var(--ml-text);
 }
 
-.ml-toast-description {
-  margin: 0;
+.ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-description {
   font-size: 13px;
   font-weight: 400;
   line-height: 1.5;
@@ -141,10 +105,24 @@
   word-break: break-word;
 }
 
-/* Optional inline action button */
-.ml-toast-action {
-  flex: 0 0 auto;
-  align-self: center;
+/* ── Tone icons: the functional accent colors the icon, not the text.
+      Applies to Sonner's built-ins and injected (e.g. Hugeicons) nodes alike. ── */
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-success .ml-toast-icon {
+  color: var(--ml-color-success);
+}
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-warning .ml-toast-icon {
+  color: var(--ml-color-warning);
+}
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-danger .ml-toast-icon {
+  color: var(--ml-color-danger);
+}
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-info .ml-toast-icon {
+  color: var(--ml-text-muted);
+}
+
+/* ── Action button — secondary-button recipe, matching the old toast ── */
+.ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-action {
+  height: auto;
   padding: 6px 12px;
   border: 1px solid var(--ml-border);
   border-radius: var(--ml-radius-md);
@@ -153,70 +131,69 @@
   font-size: 13px;
   font-weight: 500;
   line-height: 1.2;
-  cursor: pointer;
   transition:
     background var(--ml-duration-base) var(--ml-ease),
     border-color var(--ml-duration-base) var(--ml-ease);
 }
-.ml-toast-action:hover {
+.ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-action:hover {
   background: var(--ml-bg-surface);
   border-color: var(--ml-text-muted);
 }
-.ml-toast-action:focus-visible {
+.ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-action:focus-visible {
   outline: 2px solid var(--ml-text);
   outline-offset: 2px;
+  box-shadow: none;
 }
 
-/* Dismiss button */
-.ml-toast-close {
-  flex: 0 0 auto;
-  display: flex;
-  align-items: center;
-  justify-content: center;
-  width: 24px;
-  height: 24px;
-  margin: -2px -4px -2px 0;
-  border: none;
+/* ── Cancel button — quiet ghost variant. Doubled classes reach (0,6,0) to
+      beat Sonner's dark-theme [data-cancel] rule (0,5,0) regardless of the
+      theme prop. ── */
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast .ml-toast-cancel.ml-toast-cancel {
+  height: auto;
+  padding: 6px 12px;
+  border: 1px solid transparent;
   border-radius: var(--ml-radius-md);
-  background: none;
+  background: transparent;
   color: var(--ml-text-muted);
-  cursor: pointer;
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.2;
   transition:
     background var(--ml-duration-base) var(--ml-ease),
     color var(--ml-duration-base) var(--ml-ease);
 }
-.ml-toast-close:hover {
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast .ml-toast-cancel.ml-toast-cancel:hover {
   background: color-mix(in srgb, var(--ml-text) 8%, transparent);
   color: var(--ml-text);
 }
-.ml-toast-close:focus-visible {
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast .ml-toast-cancel.ml-toast-cancel:focus-visible {
   outline: 2px solid var(--ml-text);
   outline-offset: 2px;
+  box-shadow: none;
 }
 
-/* Guarantee a ≥44px touch target on mobile (contract §12). */
-@media (max-width: 640px) {
-  .ml-toast-close {
-    min-width: 44px;
-    min-height: 44px;
+/* ── Close button: Sonner's corner circle, recolored via the gray bridge
+      above; only the focus ring needs replacing (raw rgba in Sonner). ── */
+.ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-close:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  box-shadow: none;
+}
+
+/* Extend the 20px close button to a ≥44px hit area on touch devices without
+   changing its visual size (contract §12). */
+@media (hover: none) and (pointer: coarse) {
+  .ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-close::after {
+    content: "";
+    position: absolute;
+    inset: -12px;
   }
 }
 
-/* Optional countdown text, if a consumer renders one */
-.ml-toast-countdown {
-  font-variant-numeric: tabular-nums;
-}
-
+/* Sonner's reduced-motion guard covers toasts and their children, but not the
+   toaster's own lift transform — finish the job. */
 @media (prefers-reduced-motion: reduce) {
-  .ml-toast {
-    transition-property: opacity;
-    transform: none;
+  .ml-toaster[data-sonner-toaster] {
+    transition: none;
   }
-  .ml-toaster-top-right .ml-toast,
-  .ml-toaster-top-left .ml-toast,
-  .ml-toaster-top-center .ml-toast {
-    transform: none;
-  }
-  .ml-toast[data-state="open"] { transform: none; }
-  .ml-toast[data-state="closed"] { transform: none; }
 }
