@@ -1,5 +1,4 @@
-import { act, render, screen } from "@testing-library/react";
-import { toast as sonnerToast } from "sonner";
+import { act, render, screen, waitFor } from "@testing-library/react";
 import { beforeEach, describe, expect, it, vi } from "vitest";
 import { Toaster, toast } from "./Toast";
 
@@ -25,10 +24,16 @@ beforeEach(() => {
 });
 
 describe("Toaster", () => {
-  it("re-exports sonner's toast API", () => {
-    expect(toast).toBe(sonnerToast);
+  it("exposes sonner's full toast API", () => {
+    expect(toast).toBeTypeOf("function");
     expect(toast.success).toBeTypeOf("function");
+    expect(toast.error).toBeTypeOf("function");
+    expect(toast.warning).toBeTypeOf("function");
+    expect(toast.info).toBeTypeOf("function");
+    expect(toast.message).toBeTypeOf("function");
+    expect(toast.loading).toBeTypeOf("function");
     expect(toast.promise).toBeTypeOf("function");
+    expect(toast.custom).toBeTypeOf("function");
     expect(toast.dismiss).toBeTypeOf("function");
   });
 
@@ -118,6 +123,103 @@ describe("Toaster", () => {
     });
 
     expect(await screen.findByTestId("custom-icon")).toBeInTheDocument();
+  });
+
+  it("shakes the existing toast instead of stacking a duplicate", async () => {
+    render(<Toaster />);
+    act(() => {
+      toast("Saved");
+    });
+    await screen.findByText("Saved");
+
+    act(() => {
+      toast("Saved");
+    });
+
+    const items = document.querySelectorAll(
+      '[data-sonner-toast]:not([data-removed="true"])',
+    );
+    expect(items).toHaveLength(1);
+    expect(items[0]).toHaveClass("ml-toast-shake");
+  });
+
+  it("brings a buried duplicate back to the front instead of stacking it", async () => {
+    render(<Toaster />);
+    act(() => {
+      toast("First message");
+    });
+    await screen.findByText("First message");
+    act(() => {
+      toast("Newer message");
+    });
+    await screen.findByText("Newer message");
+
+    // "First message" is now behind "Newer message" — re-firing it must move
+    // it to the front with a fresh timer, not add a copy.
+    act(() => {
+      toast("First message");
+    });
+
+    await waitFor(() => {
+      const front = document.querySelector(
+        '[data-sonner-toast][data-front="true"]:not([data-removed="true"])',
+      );
+      expect(front).toHaveTextContent("First message");
+    });
+    await waitFor(() => {
+      expect(
+        document.querySelectorAll(
+          '[data-sonner-toast]:not([data-removed="true"])',
+        ),
+      ).toHaveLength(2);
+    });
+  });
+
+  it("still stacks genuinely different messages", async () => {
+    render(<Toaster />);
+    act(() => {
+      toast("Saved");
+      toast("Saved", { description: "But with news." });
+      toast.error("Saved");
+    });
+    await screen.findByText("But with news.");
+
+    expect(
+      document.querySelectorAll(
+        '[data-sonner-toast]:not([data-removed="true"])',
+      ),
+    ).toHaveLength(3);
+  });
+
+  it("dedupes again after the duplicate is dismissed", async () => {
+    render(<Toaster />);
+    let id: string | number = "";
+    act(() => {
+      id = toast("Round trip");
+    });
+    await screen.findByText("Round trip");
+    act(() => {
+      toast.dismiss(id);
+    });
+    await waitFor(() => {
+      expect(
+        document.querySelectorAll(
+          '[data-sonner-toast]:not([data-removed="true"])',
+        ),
+      ).toHaveLength(0);
+    });
+
+    // Gone from screen → firing the same message shows a fresh toast again.
+    act(() => {
+      toast("Round trip");
+    });
+    await waitFor(() => {
+      const items = document.querySelectorAll(
+        '[data-sonner-toast]:not([data-removed="true"])',
+      );
+      expect(items).toHaveLength(1);
+      expect(items[0]).not.toHaveClass("ml-toast-shake");
+    });
   });
 
   it("fires the action button's handler", async () => {

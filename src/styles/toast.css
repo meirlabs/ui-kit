@@ -190,10 +190,40 @@
   }
 }
 
+/* ── Duplicate-message shake (motion.md §"Don't show the same snack bar twice").
+      Re-firing a message that is already the front toast shakes it instead of
+      stacking a copy. Rides the `translate` property, NOT `transform` — Sonner
+      owns `transform` for stack lift/scale and an animation on it would yank
+      the toast out of the stack mid-shake. Applied/removed by the kit's toast()
+      wrapper; re-triggerable via class remove + reflow + add. ── */
+@keyframes ml-toast-shake {
+  0%,
+  100% {
+    translate: 0 0;
+  }
+  25% {
+    translate: -5px 0;
+  }
+  50% {
+    translate: 4px 0;
+  }
+  75% {
+    translate: -2px 0;
+  }
+}
+
+.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-shake {
+  animation: ml-toast-shake var(--ml-duration-slow) var(--ml-ease);
+}
+
 /* Sonner's reduced-motion guard covers toasts and their children, but not the
    toaster's own lift transform — finish the job. */
 @media (prefers-reduced-motion: reduce) {
   .ml-toaster[data-sonner-toaster] {
     transition: none;
+  }
+
+  .ml-toaster[data-sonner-toaster] .ml-toast.ml-toast-shake {
+    animation: none;
   }
 }

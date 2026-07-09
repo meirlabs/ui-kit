@@ -231,10 +231,13 @@ OtpInput(props: OtpInputProps): JSX.Element
 // The only sanctioned segmented/OTP input; test with password managers. Never hand-roll segmented inputs.
 
 // Feedback
-Toaster(props: ToasterProps): JSX.Element / toast (re-export)
-// Rebuilt on Sonner: mount Toaster once at the app root and call the re-exported toast() / toast.promise().
+Toaster(props: ToasterProps): JSX.Element / toast (Sonner wrapper)
+// Rebuilt on Sonner: mount Toaster once at the app root and call the kit's toast() / toast.promise().
 // Themed to --ml-* tokens, Hugeicons Pro icons via the icons prop at the app layer, dir="auto" for Hebrew,
 // reduced-motion verified per motion.md. Never hand-roll toasts.
+// Dedupe (motion.md "Don't show the same snack bar twice"): re-firing a message already on screen never
+// stacks a copy — front toast shakes (transform-only) + timer resets; buried toast jumps back to the front
+// with a fresh timer. Keys on tone + title + description (string titles); pass your own id to opt out.
 // ToasterProps: { placement?: ToastPlacement ("bottom-right"); duration?: number (5000); icons?; dir? ("auto") } + Sonner Toaster passthrough
 // ToastPlacement: "top"|"bottom" x "left"|"right"|"center". ToastOptions aliases Sonner's ExternalToast.
 // The old ToastProvider/useToast hook API is gone; call toast(message, options) directly.
