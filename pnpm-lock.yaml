@@ -84,6 +84,9 @@ importers:
       storybook:
         specifier: ^10.3.3
         version: 10.3.3(@testing-library/dom@10.4.1)(react-dom@19.2.4(react@19.2.4))(react@19.2.4)
+      transitions-refine:
+        specifier: ^0.3.23
+        version: 0.3.23
       tsup:
         specifier: ^8.0.0
         version: 8.5.1(postcss@8.5.8)(typescript@5.9.3)(yaml@2.8.3)
@@ -2048,6 +2051,10 @@ packages:
   tr46@5.1.1:
     resolution: {integrity: sha512-hdF5ZgjTqgAntKkklYw0R03MG2x/bSzTtkxmIRw/sTNV8YXsCJ1tfLAX23lhxhHJlEf3CRCOCGGWw3vI3GaSPw==}
     engines: {node: '>=18'}
+
+  transitions-refine@0.3.23:
+    resolution: {integrity: sha512-dcNLgbbrsKMDLHU1S8vPZymCpFK3jWhxLRNTTXRWfibhZA/1JiVB0VDyjHIz5wIetm6JzXd0nNSXdaaHTuZurA==}
+    hasBin: true
 
   tree-kill@1.2.2:
     resolution: {integrity: sha512-L0Orpi8qGpRG//Nd+H90vFB+3iHnue1zSSGmNOOCh1GLJ7rUKVwV2HvijphGQS2UmhUZewS9VgvxYIdgr+fG1A==}
@@ -4077,6 +4084,8 @@ snapshots:
   tr46@5.1.1:
     dependencies:
       punycode: 2.3.1
+
+  transitions-refine@0.3.23: {}
 
   tree-kill@1.2.2: {}
 
