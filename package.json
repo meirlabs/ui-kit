@@ -41,6 +41,7 @@
     "dev": "concurrently \"tsup --watch\" \"postcss src/styles/index.css -o dist/styles.css --watch\" \"postcss src/styles/compat.css -o dist/compat.css --watch\"",
     "test": "vitest run",
     "test:watch": "vitest",
+    "test:all": "vitest run",
     "preview": "vite --config preview/vite.config.ts",
     "storybook": "storybook dev -p 6006",
     "build-storybook": "storybook build",
