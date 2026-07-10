@@ -132,7 +132,10 @@
   --ml-glass-bg: rgba(22, 27, 34, 0.82);
   --ml-glass-blur: blur(40px);
   --ml-glass-border: rgba(48, 54, 61, 0.6);
-  --ml-font-sans: -apple-system, BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  /* Geist is the brand sans (design/foundation/typography.md). Apps load it via
+     next/font (geist package) which defines --font-geist-sans; consumers without
+     it fall through to the system stack. Hebrew/Cyrillic always use the fallback. */
+  --ml-font-sans: var(--font-geist-sans, -apple-system), BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
   --ml-font-mono: "SF Mono", "Fira Code", "Courier New", monospace;
   --ml-text-xs: 0.68rem;
   --ml-text-sm: 0.78rem;
