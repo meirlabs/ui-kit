@@ -1,0 +1,201 @@
+/* @meir-labs/ui-kit — Onboarding Widget
+   A data-driven onboarding checklist card: progress summary + a list of steps
+   with completed/incomplete markers and optional per-step CTAs. No shadow at
+   rest (card rule §4): border + surface only. Monochrome — the completed marker
+   uses the functional success token, everything else is neutral. Light + dark
+   via tokens. */
+
+.ml-onboarding {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-lg);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  padding: var(--ml-space-xl);
+  background: var(--ml-bg-card);
+  color: var(--ml-text);
+}
+
+/* ── Header ── */
+.ml-onboarding-head {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ml-space-md);
+}
+
+.ml-onboarding-heading {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-xs);
+  min-width: 0;
+}
+
+.ml-onboarding-title {
+  margin: 0;
+  font-size: var(--ml-text-lg);
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.31px;
+  color: var(--ml-text);
+}
+
+.ml-onboarding-desc {
+  margin: 0;
+  font-size: 14px;
+  font-weight: 400;
+  line-height: 1.5;
+  letter-spacing: -0.31px;
+  color: var(--ml-text-muted);
+}
+
+.ml-onboarding-dismiss {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 20px;
+  height: 20px;
+  margin: 0 -2px 0 var(--ml-space-sm);
+  padding: 0;
+  border: none;
+  background: transparent;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  opacity: 0.75;
+  transition: opacity var(--ml-duration-base) var(--ml-ease);
+}
+.ml-onboarding-dismiss:hover {
+  opacity: 1;
+  color: var(--ml-text);
+}
+/* expand hit area to ≥32px without reflowing neighbors (contract §9) */
+.ml-onboarding-dismiss::before {
+  content: "";
+  position: absolute;
+  inset: -6px;
+}
+.ml-onboarding-dismiss:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+  opacity: 1;
+}
+.ml-onboarding-dismiss svg {
+  width: 14px;
+  height: 14px;
+}
+
+/* ── Progress ── */
+.ml-onboarding-progress {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-sm);
+}
+
+.ml-onboarding-progress-summary {
+  font-size: 13px;
+  font-weight: 500;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
+  font-variant-numeric: tabular-nums;
+}
+
+/* ── Steps ── */
+.ml-onboarding-steps {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-xs);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ml-onboarding-step {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-md);
+  padding: var(--ml-space-md);
+  border-radius: var(--ml-radius-md);
+  transition: background var(--ml-duration-base) var(--ml-ease);
+}
+.ml-onboarding-step:hover {
+  background: var(--ml-bg-surface);
+}
+
+/* Marker: a circle carrying the check (complete), a custom icon, or the
+   ordinal number (incomplete fallback). */
+.ml-onboarding-step-marker {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+  width: 24px;
+  height: 24px;
+  border-radius: var(--ml-radius-pill);
+  border: 1px solid var(--ml-border);
+  background: var(--ml-bg-surface);
+  color: var(--ml-text-muted);
+  line-height: 0;
+}
+.ml-onboarding-step-marker svg {
+  width: 14px;
+  height: 14px;
+}
+
+.ml-onboarding-step-index {
+  font-size: 12px;
+  font-weight: 600;
+  line-height: 1;
+  font-variant-numeric: tabular-nums;
+}
+
+/* Completed marker: filled with the functional success token. */
+.ml-onboarding-step[data-state="complete"] .ml-onboarding-step-marker {
+  border-color: transparent;
+  background: var(--ml-color-success);
+  color: #fff;
+}
+
+.ml-onboarding-step-body {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  min-width: 0;
+  flex: 1;
+}
+
+.ml-onboarding-step-title {
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.4;
+  letter-spacing: -0.31px;
+  color: var(--ml-text);
+}
+
+/* Completed steps read as "done": muted + struck. */
+.ml-onboarding-step[data-state="complete"] .ml-onboarding-step-title {
+  color: var(--ml-text-muted);
+  text-decoration: line-through;
+  text-decoration-color: var(--ml-border);
+}
+
+.ml-onboarding-step-desc {
+  font-size: 13px;
+  font-weight: 400;
+  line-height: 1.45;
+  letter-spacing: -0.31px;
+  color: var(--ml-text-muted);
+}
+
+.ml-onboarding-step-action {
+  flex-shrink: 0;
+  margin-left: auto;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-onboarding-step,
+  .ml-onboarding-dismiss {
+    transition-duration: 0.01ms;
+  }
+}
