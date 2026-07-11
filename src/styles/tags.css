@@ -66,6 +66,60 @@
   height: 12px;
 }
 
+/* ── StatusPill motion ──
+   Premium-but-restrained motion for a design-system primitive. Everything
+   animates only compositor-friendly props (transform / opacity) — never
+   layout — and every keyframe animation is gated behind
+   prefers-reduced-motion: no-preference, so reduced-motion users get a
+   completely static pill. Tone changes ride the sanctioned color/bg shift. */
+
+/* Smooth tone/color transition (sanctioned color/background shift only). */
+.ml-status-pill {
+  transition:
+    background-color var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+
+@media (prefers-reduced-motion: no-preference) {
+  /* Gentle entrance: a pill fades and settles into place when it mounts.
+     Runs once on insertion (not on re-render). Sub-300ms, ease-out. */
+  .ml-status-pill {
+    animation: ml-status-pill-enter var(--ml-duration-slow) var(--ml-ease-out) both;
+  }
+
+  /* Soft "breathing" dot — state indication that a status is live/active
+     right now (opt-in via the `pulse` prop; on by default for the `good`
+     tone). Deliberately slow and shallow so it reads as alive, not as an
+     attention-grabbing blink. Transform + opacity only. */
+  .ml-status-pill-dot-pulse {
+    transform-origin: center;
+    animation: ml-status-pill-pulse 2.4s var(--ml-ease) infinite;
+  }
+}
+
+@keyframes ml-status-pill-enter {
+  from {
+    opacity: 0;
+    transform: translateY(2px) scale(0.98);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0) scale(1);
+  }
+}
+
+@keyframes ml-status-pill-pulse {
+  0%,
+  100% {
+    opacity: 1;
+    transform: scale(1);
+  }
+  50% {
+    opacity: 0.6;
+    transform: scale(0.85);
+  }
+}
+
 /* ── Tag ──
    Default neutral = gray. Functional tones for success/warning/danger. */
 .ml-tag {
@@ -203,6 +257,13 @@
 
 @media (prefers-reduced-motion: reduce) {
   .ml-tag-remove {
+    transition-duration: 0.01ms;
+  }
+  /* Static pill for reduced-motion users: no entrance, no breathing dot,
+     and instant tone changes. (The entrance/pulse keyframes are already
+     gated behind prefers-reduced-motion: no-preference; this also flattens
+     the tone transition.) */
+  .ml-status-pill {
     transition-duration: 0.01ms;
   }
 }
