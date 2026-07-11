@@ -89,4 +89,15 @@ describe("OnboardingWidget", () => {
     expect(screen.queryByRole("progressbar")).toBeNull();
     expect(screen.queryByText("2 of 4 complete")).toBeNull();
   });
+
+  it("announces each step's completion state to screen readers", () => {
+    const { container } = render(<OnboardingWidget steps={STEPS} />);
+    const items = container.querySelectorAll(".ml-onboarding-step");
+    expect(items[0].querySelector(".ml-visually-hidden")).toHaveTextContent(
+      "Completed",
+    );
+    expect(items[2].querySelector(".ml-visually-hidden")).toHaveTextContent(
+      "Not completed",
+    );
+  });
 });

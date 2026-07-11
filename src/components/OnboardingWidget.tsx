@@ -196,6 +196,9 @@ export const OnboardingWidget = forwardRef<HTMLElement, OnboardingWidgetProps>(
                       {step.description}
                     </div>
                   )}
+                  <span className="ml-visually-hidden">
+                    {completed ? "Completed" : "Not completed"}
+                  </span>
                 </div>
 
                 {showAction && step.action != null && (
