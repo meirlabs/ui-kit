@@ -67,11 +67,13 @@
 }
 
 /* ── StatusPill motion ──
-   Premium-but-restrained motion for a design-system primitive. Everything
-   animates only compositor-friendly props (transform / opacity) — never
-   layout — and every keyframe animation is gated behind
-   prefers-reduced-motion: no-preference, so reduced-motion users get a
-   completely static pill. Tone changes ride the sanctioned color/bg shift. */
+   A design-system primitive that lives in tables/dashboards gets almost no
+   motion (per design/foundation/motion.md, SaaS surfaces get interaction
+   feedback and nothing else — no in-app entrance animation). Tone changes
+   ride the sanctioned color/bg transition below. The only other motion is
+   the opt-in "live" dot pulse, shaped as ambient/sub-attention motion (the
+   motion.md carve-out: cycle >= 6s, shallow amplitude, gated behind
+   prefers-reduced-motion). */
 
 /* Smooth tone/color transition (sanctioned color/background shift only). */
 .ml-status-pill {
@@ -81,30 +83,12 @@
 }
 
 @media (prefers-reduced-motion: no-preference) {
-  /* Gentle entrance: a pill fades and settles into place when it mounts.
-     Runs once on insertion (not on re-render). Sub-300ms, ease-out. */
-  .ml-status-pill {
-    animation: ml-status-pill-enter var(--ml-duration-slow) var(--ml-ease-out) both;
-  }
-
-  /* Soft "breathing" dot — state indication that a status is live/active
-     right now (opt-in via the `pulse` prop; on by default for the `good`
-     tone). Deliberately slow and shallow so it reads as alive, not as an
-     attention-grabbing blink. Transform + opacity only. */
+  /* Soft "breathing" dot — opt-in only via `pulse={true}` (never defaulted
+     from tone) to signal a status is live/active right now. Ambient motion:
+     6s cycle, opacity-only, no scale — shallow enough that it never draws
+     the eye on repeat. Transform is intentionally unused here. */
   .ml-status-pill-dot-pulse {
-    transform-origin: center;
-    animation: ml-status-pill-pulse 2.4s var(--ml-ease) infinite;
-  }
-}
-
-@keyframes ml-status-pill-enter {
-  from {
-    opacity: 0;
-    transform: translateY(2px) scale(0.98);
-  }
-  to {
-    opacity: 1;
-    transform: translateY(0) scale(1);
+    animation: ml-status-pill-pulse 6s var(--ml-ease) infinite;
   }
 }
 
@@ -112,11 +96,9 @@
   0%,
   100% {
     opacity: 1;
-    transform: scale(1);
   }
   50% {
-    opacity: 0.6;
-    transform: scale(0.85);
+    opacity: 0.82;
   }
 }
 
@@ -259,10 +241,10 @@
   .ml-tag-remove {
     transition-duration: 0.01ms;
   }
-  /* Static pill for reduced-motion users: no entrance, no breathing dot,
-     and instant tone changes. (The entrance/pulse keyframes are already
-     gated behind prefers-reduced-motion: no-preference; this also flattens
-     the tone transition.) */
+  /* Static pill for reduced-motion users: no breathing dot, and instant
+     tone changes. (The pulse keyframe is already gated behind
+     prefers-reduced-motion: no-preference; this also flattens the tone
+     transition.) */
   .ml-status-pill {
     transition-duration: 0.01ms;
   }

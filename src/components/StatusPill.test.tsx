@@ -48,13 +48,15 @@ describe("StatusPill", () => {
     expect(container.querySelector(".ml-status-pill-dot")).not.toBeInTheDocument();
   });
 
-  it("pulses the good-tone dot by default (live/active state)", () => {
+  it("does not pulse the good-tone dot by default (pulse is strictly opt-in)", () => {
     const { container } = render(
       <StatusPill tone="good" dot>
         Online
       </StatusPill>,
     );
-    expect(container.querySelector(".ml-status-pill-dot")).toHaveClass("ml-status-pill-dot-pulse");
+    expect(container.querySelector(".ml-status-pill-dot")).not.toHaveClass(
+      "ml-status-pill-dot-pulse",
+    );
   });
 
   it("does not pulse non-good tone dots by default", () => {
@@ -79,6 +81,15 @@ describe("StatusPill", () => {
     );
   });
 
+  it("pulses the good-tone dot when pulse is explicitly true", () => {
+    const { container } = render(
+      <StatusPill tone="good" dot pulse>
+        Online
+      </StatusPill>,
+    );
+    expect(container.querySelector(".ml-status-pill-dot")).toHaveClass("ml-status-pill-dot-pulse");
+  });
+
   it("forces the pulse on any tone when pulse is set", () => {
     const { container } = render(
       <StatusPill tone="danger" dot pulse>
@@ -98,23 +109,39 @@ describe("StatusPill", () => {
     expect(container.querySelector(".ml-status-pill-dot-pulse")).not.toBeInTheDocument();
   });
 
-  it("gates all keyframe motion behind prefers-reduced-motion: no-preference", () => {
-    // Entrance + pulse keyframes must only run when the user has not asked for
-    // reduced motion, so a reduced-motion user gets a completely static pill.
+  it("ships no unconditional entrance animation (in-app motion, not landing)", () => {
+    // Status pills live in tables/dashboards; per motion.md, in-app entrance
+    // motion is landing-only. The pill must not animate on every mount.
+    expect(tagsCss).not.toMatch(/ml-status-pill-enter/);
+    expect(tagsCss).not.toMatch(/^\s*animation:\s*ml-status-pill-enter/m);
+  });
+
+  it("gates the pulse keyframe behind prefers-reduced-motion: no-preference", () => {
+    // The pulse keyframe must only run when the user has not asked for
+    // reduced motion, so a reduced-motion user gets a completely static dot.
     expect(tagsCss).toMatch(/@media \(prefers-reduced-motion: no-preference\)/);
-    expect(tagsCss).toMatch(/animation: ml-status-pill-enter/);
     expect(tagsCss).toMatch(/animation: ml-status-pill-pulse/);
 
-    // Motion is compositor-only: the keyframe blocks must animate transform /
-    // opacity only, never layout properties.
-    const start = tagsCss.indexOf("@keyframes ml-status-pill-enter");
+    // Ambient carve-out shape (motion.md "Never animate"): cycle >= 6s,
+    // opacity-only (no scale), compositor-friendly.
+    const start = tagsCss.indexOf("@keyframes ml-status-pill-pulse");
     const end = tagsCss.indexOf("── Tag ──");
     expect(start).toBeGreaterThan(-1);
     expect(end).toBeGreaterThan(start);
     const keyframes = tagsCss.slice(start, end);
-    expect(keyframes).toMatch(/transform:/);
     expect(keyframes).toMatch(/opacity:/);
     expect(keyframes).not.toMatch(/(width|height|margin|padding|top|left):/);
+
+    const durationMatch = tagsCss.match(/animation:\s*ml-status-pill-pulse\s+(\d+(?:\.\d+)?)s/);
+    expect(durationMatch).not.toBeNull();
+    expect(Number(durationMatch?.[1])).toBeGreaterThanOrEqual(6);
+  });
+
+  it("still flattens the pulse to instant under prefers-reduced-motion: reduce", () => {
+    expect(tagsCss).toMatch(/@media \(prefers-reduced-motion: reduce\)/);
+    const reducedBlockStart = tagsCss.indexOf("@media (prefers-reduced-motion: reduce)");
+    const reducedBlock = tagsCss.slice(reducedBlockStart);
+    expect(reducedBlock).toMatch(/\.ml-status-pill\s*{[^}]*transition-duration:\s*0\.01ms/);
   });
 
   it("renders a provided icon", () => {

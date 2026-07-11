@@ -17,10 +17,9 @@ export interface StatusPillProps extends ComponentPropsWithoutRef<"span"> {
   dot?: boolean;
   /**
    * Soft "breathing" pulse on the leading dot to signal a live/active status.
-   * Defaults to on for the `good` tone when a dot is shown (the live state);
-   * pass `false` to disable it, or `true` to force it on any tone. No effect
-   * without `dot`. Honors `prefers-reduced-motion` — a reduced-motion user
-   * always sees a static dot.
+   * Strictly opt-in — pass `true` to enable it, on any tone. Never defaults
+   * on, including for the `good` tone. No effect without `dot`. Honors
+   * `prefers-reduced-motion` — a reduced-motion user always sees a static dot.
    */
   pulse?: boolean;
   /** Optional leading icon (icon-agnostic ReactNode). */
@@ -31,7 +30,7 @@ export const StatusPill = forwardRef<HTMLSpanElement, StatusPillProps>(function 
   { tone = "neutral", dot = false, pulse, icon, className, children, ...rest },
   ref,
 ) {
-  const shouldPulse = dot && (pulse ?? tone === "good");
+  const shouldPulse = dot && pulse === true;
   return (
     <span ref={ref} className={cn("ml-status-pill", toneClass[tone], className)} {...rest}>
       {dot ? (
