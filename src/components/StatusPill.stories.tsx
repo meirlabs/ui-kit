@@ -42,6 +42,24 @@ export const WithDot: StoryObj = {
   ),
 };
 
+export const LivePulse: StoryObj = {
+  render: () => (
+    <div style={{ display: "flex", gap: "0.5rem" }}>
+      {/* pulse is strictly opt-in — no dot breathes unless pulse is passed */}
+      <StatusPill tone="good" dot>
+        Online (no pulse)
+      </StatusPill>
+      {/* opt in on any tone */}
+      <StatusPill tone="good" dot pulse>
+        Online
+      </StatusPill>
+      <StatusPill tone="danger" dot pulse>
+        Critical
+      </StatusPill>
+    </div>
+  ),
+};
+
 export const AllTones: StoryObj = {
   render: () => (
     <div style={{ display: "flex", gap: "0.5rem" }}>
