@@ -95,6 +95,12 @@ export type {
 } from "./components/DataTable";
 export { StatCard } from "./components/StatCard";
 export type { StatCardProps, StatCardTrend } from "./components/StatCard";
+export { OnboardingWidget } from "./components/OnboardingWidget";
+export type {
+  OnboardingWidgetProps,
+  OnboardingStep,
+  OnboardingStepAction,
+} from "./components/OnboardingWidget";
 export { EmptyState } from "./components/EmptyState";
 export type { EmptyStateProps, EmptyStateVariant } from "./components/EmptyState";
 
