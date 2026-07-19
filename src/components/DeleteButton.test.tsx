@@ -1,6 +1,21 @@
+import { useState } from "react";
 import { act, fireEvent, render, screen } from "@testing-library/react";
 import { describe, it, expect, vi, beforeEach, afterEach } from "vitest";
-import { DeleteButton } from "./DeleteButton";
+import { DeleteButton, type DeleteButtonPhase } from "./DeleteButton";
+
+function mockRect(width: number): DOMRect {
+  return {
+    width,
+    height: 0,
+    top: 0,
+    left: 0,
+    right: 0,
+    bottom: 0,
+    x: 0,
+    y: 0,
+    toJSON: () => ({}),
+  };
+}
 
 describe("DeleteButton", () => {
   beforeEach(() => {
@@ -38,7 +53,11 @@ describe("DeleteButton", () => {
     expect(onDelete).toHaveBeenCalledTimes(1);
     const loadingBtn = screen.getByRole("button", { name: "Deleting…" });
     expect(loadingBtn).toHaveClass("ml-delete-btn-loading");
-    expect(loadingBtn).toBeDisabled();
+    // Not the native `disabled` attribute -- that would evict keyboard focus
+    // to <body> with no way back. aria-disabled communicates the same thing
+    // to assistive tech while keeping the element focusable.
+    expect(loadingBtn).not.toBeDisabled();
+    expect(loadingBtn).toHaveAttribute("aria-disabled", "true");
     expect(loadingBtn).toHaveAttribute("aria-busy", "true");
 
     await act(async () => {
@@ -132,5 +151,119 @@ describe("DeleteButton", () => {
 
     fireEvent.click(screen.getByRole("button", { name: "Delete" }));
     expect(onPhaseChange).toHaveBeenCalledWith("confirm");
+  });
+
+  it("does not re-fire onPhaseChange when only the callback's identity changes", () => {
+    const calls: DeleteButtonPhase[] = [];
+    function Wrapper() {
+      const [tick, setTick] = useState(0);
+      return (
+        <>
+          <DeleteButton onDelete={vi.fn()} onPhaseChange={(phase) => calls.push(phase)} />
+          <button onClick={() => setTick((t) => t + 1)}>rerender {tick}</button>
+        </>
+      );
+    }
+    render(<Wrapper />);
+    expect(calls).toEqual(["idle"]);
+
+    // Each click re-renders Wrapper, which passes a brand-new inline arrow
+    // as onPhaseChange -- the common call-site pattern. The phase itself
+    // never changes, so the callback must not fire again.
+    fireEvent.click(screen.getByRole("button", { name: /rerender/ }));
+    fireEvent.click(screen.getByRole("button", { name: /rerender/ }));
+
+    expect(calls).toEqual(["idle"]);
+  });
+
+  it("keeps keyboard focus on the button through a full Enter->Enter delete cycle", async () => {
+    let resolveDelete: () => void;
+    const onDelete = vi.fn(
+      () => new Promise<void>((resolve) => (resolveDelete = resolve)),
+    );
+    render(<DeleteButton onDelete={onDelete} doneTimeoutMs={500} />);
+
+    const idleBtn = screen.getByRole("button", { name: "Delete" });
+    idleBtn.focus();
+    expect(document.activeElement).toBe(idleBtn);
+
+    fireEvent.click(idleBtn);
+    fireEvent.click(screen.getByRole("button", { name: "Confirm delete" }));
+
+    const loadingBtn = screen.getByRole("button", { name: "Deleting…" });
+    expect(document.activeElement).toBe(loadingBtn);
+
+    await act(async () => {
+      resolveDelete();
+      await Promise.resolve();
+    });
+    const doneBtn = screen.getByRole("button", { name: "Deleted" });
+    expect(document.activeElement).toBe(doneBtn);
+
+    await act(async () => {
+      vi.advanceTimersByTime(500);
+    });
+    expect(document.activeElement).toBe(screen.getByRole("button", { name: "Delete" }));
+  });
+
+  it("does not pin an inline width on initial mount", () => {
+    const rectSpy = vi
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockReturnValue(mockRect(80));
+
+    render(<DeleteButton onDelete={vi.fn()} />);
+    expect(screen.getByRole("button", { name: "Delete" }).style.width).toBe("");
+
+    rectSpy.mockRestore();
+  });
+
+  it("clears the pinned width without relying on transitionend (prefers-reduced-motion safe)", async () => {
+    vi.useRealTimers();
+    let call = 0;
+    const rectSpy = vi
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockImplementation(() => {
+        call += 1;
+        return mockRect(call % 2 === 1 ? 80 : 200);
+      });
+
+    render(<DeleteButton onDelete={vi.fn()} />);
+    // The mount run is a no-op (didMountRef); this click is the first morph
+    // that actually assigns an inline width.
+    fireEvent.click(screen.getByRole("button", { name: "Delete" }));
+    await screen.findByRole("button", { name: "Confirm delete" });
+
+    // jsdom never fires a real `transitionend` -- exactly what happens under
+    // prefers-reduced-motion, where `width` is dropped from the CSS
+    // transition list. The fallback timer must clear the pin regardless.
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    expect(screen.getByRole("button", { name: "Confirm delete" }).style.width).toBe("");
+
+    rectSpy.mockRestore();
+  });
+
+  it("re-measures the width morph when only the label changes at the same phase", async () => {
+    vi.useRealTimers();
+    let call = 0;
+    const rectSpy = vi
+      .spyOn(HTMLElement.prototype, "getBoundingClientRect")
+      .mockImplementation(() => {
+        call += 1;
+        return mockRect(call % 2 === 1 ? 80 : 200);
+      });
+
+    const { rerender } = render(<DeleteButton onDelete={vi.fn()} label="Delete" />);
+    // Simulate a width left over from a still-in-flight morph -- with the
+    // old `[phase]`-only deps this would never get re-measured or cleared
+    // because the phase stays "idle" across the label change.
+    screen.getByRole("button", { name: "Delete" }).style.width = "40px";
+
+    rerender(<DeleteButton onDelete={vi.fn()} label="Delete permanently" />);
+    await new Promise((resolve) => setTimeout(resolve, 300));
+
+    expect(screen.getByRole("button", { name: "Delete permanently" }).style.width).toBe("");
+
+    rectSpy.mockRestore();
   });
 });

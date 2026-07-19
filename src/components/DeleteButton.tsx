@@ -49,6 +49,14 @@ const PHASE_ANNOUNCEMENT: Record<DeleteButtonPhase, string> = {
   done: "Deleted",
 };
 
+// Matches the `width` leg of .ml-delete-btn's transition (--ml-duration-slow,
+// see components.css). The inline width is cleared on this timer rather than
+// solely on `transitionend`, since that event never fires when start === end
+// (first mount) or when prefers-reduced-motion drops `width` from the
+// transition list — either way the label would otherwise stay pinned at a
+// stale px width and clip under overflow:hidden.
+const WIDTH_MORPH_CLEAR_MS = 250;
+
 /**
  * DeleteButton — a polished, no-modal destructive-action control. First
  * click arms it (morphs to a danger-filled confirm label with an auto-revert
@@ -89,9 +97,19 @@ export const DeleteButton = forwardRef<HTMLButtonElement, DeleteButtonProps>(
       else if (forwardedRef) forwardedRef.current = node;
     };
 
+    // Latest-ref pattern: an inline arrow at the call site (the common case)
+    // gets a new identity every render. Reading through a ref instead of
+    // depending on `onPhaseChange` directly keeps the announce-effect below
+    // keyed on `phase` alone, so it fires once per phase instead of once per
+    // render.
+    const onPhaseChangeRef = useRef(onPhaseChange);
     useEffect(() => {
-      onPhaseChange?.(phase);
-    }, [phase, onPhaseChange]);
+      onPhaseChangeRef.current = onPhaseChange;
+    });
+
+    useEffect(() => {
+      onPhaseChangeRef.current?.(phase);
+    }, [phase]);
 
     // Auto-revert the armed state if the user never confirms.
     useEffect(() => {
@@ -109,10 +127,21 @@ export const DeleteButton = forwardRef<HTMLButtonElement, DeleteButtonProps>(
 
     // Width morph: capture the current rendered width, let content update,
     // then measure the new natural width and transition to it. Cheap and
-    // reliable across browsers vs. animating `width: auto` directly.
+    // reliable across browsers vs. animating `width: auto` directly. Skipped
+    // on the very first paint (didMountRef) — start === end on mount, so the
+    // browser never starts a transition, and the assigned px width would
+    // otherwise sit there un-cleared until the first phase change (silently
+    // clipping a label that grows afterward, e.g. via a swapped-in webfont).
+    const didMountRef = useRef(false);
     useLayoutEffect(() => {
       const btn = btnRef.current;
       if (!btn) return;
+
+      if (!didMountRef.current) {
+        didMountRef.current = true;
+        return;
+      }
+
       const startWidth = btn.getBoundingClientRect().width;
       btn.style.width = "auto";
       const endWidth = btn.getBoundingClientRect().width;
@@ -121,9 +150,18 @@ export const DeleteButton = forwardRef<HTMLButtonElement, DeleteButtonProps>(
       const frame = requestAnimationFrame(() => {
         btn.style.width = `${endWidth}px`;
       });
-      return () => cancelAnimationFrame(frame);
-      // eslint-disable-next-line react-hooks/exhaustive-deps
-    }, [phase]);
+      // Belt-and-suspenders clear: `transitionend` (below) clears it in the
+      // normal case, but never fires at all under prefers-reduced-motion
+      // (width drops out of the transition list), so this timer is the only
+      // thing that unpins a reduced-motion user's label.
+      const clearTimer = window.setTimeout(() => {
+        btn.style.width = "";
+      }, WIDTH_MORPH_CLEAR_MS);
+      return () => {
+        cancelAnimationFrame(frame);
+        window.clearTimeout(clearTimer);
+      };
+    }, [phase, label, confirmLabel, loadingLabel, doneLabel]);
 
     function handleTransitionEnd(e: React.TransitionEvent<HTMLButtonElement>) {
       if (e.target !== e.currentTarget || e.propertyName !== "width") return;
@@ -145,6 +183,7 @@ export const DeleteButton = forwardRef<HTMLButtonElement, DeleteButtonProps>(
     }
 
     function handleClick() {
+      if (disabled || phase === "loading" || phase === "done") return;
       if (phase === "idle") setPhase("confirm");
       else if (phase === "confirm") confirmDelete();
     }
@@ -163,7 +202,13 @@ export const DeleteButton = forwardRef<HTMLButtonElement, DeleteButtonProps>(
     }
 
     const isBusy = phase === "loading";
-    const isInert = disabled || isBusy || phase === "done";
+    // `loading`/`done` are non-interactive beats, not "control unavailable" —
+    // deliberately NOT the `disabled` attribute. Disabling the focused
+    // element forces the browser to drop focus to <body>, which never comes
+    // back once the button re-enables at idle. aria-disabled communicates
+    // the same thing to assistive tech without evicting focus; handleClick
+    // above is the actual guard against action during these phases.
+    const isPending = isBusy || phase === "done";
     const content =
       phase === "confirm"
         ? confirmLabel
@@ -185,7 +230,8 @@ export const DeleteButton = forwardRef<HTMLButtonElement, DeleteButtonProps>(
             `ml-delete-btn-${phase}`,
             className,
           )}
-          disabled={isInert}
+          disabled={disabled}
+          aria-disabled={(disabled || isPending) || undefined}
           aria-busy={isBusy || undefined}
           onClick={handleClick}
           onKeyDown={handleKeyDown}

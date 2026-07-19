@@ -223,11 +223,16 @@
     width var(--ml-duration-slow) var(--ml-ease-out);
 }
 
-.ml-delete-btn:hover:not(:disabled) {
+/* loading/done are deliberately NOT :disabled (see DeleteButton.tsx —
+   disabling the focused element would evict focus), so these two rules must
+   explicitly exclude those phase classes or their higher specificity
+   (:hover + :not(:disabled)) would outrank .ml-delete-btn-loading/-done's
+   plain class selector and repaint the hover/press color over the fill. */
+.ml-delete-btn:hover:not(:disabled):not(.ml-delete-btn-loading):not(.ml-delete-btn-done) {
   background: color-mix(in srgb, var(--ml-color-danger) 18%, var(--ml-color-danger-muted));
 }
 
-.ml-delete-btn:active:not(:disabled) {
+.ml-delete-btn:active:not(:disabled):not(.ml-delete-btn-loading):not(.ml-delete-btn-done) {
   transform: scale(var(--ml-press-scale));
 }
 
@@ -241,9 +246,12 @@
   background: color-mix(in srgb, var(--ml-color-danger) 88%, black);
 }
 
-/* Loading and done are rendered `:disabled` (they're non-interactive beats,
-   not a "control unavailable" state) — override the base 50% disabled dim so
-   they stay fully legible. */
+/* Loading/done are non-interactive beats, not a "control unavailable" state,
+   so the component itself never sets the `disabled` attribute for them (see
+   DeleteButtonProps.disabled in DeleteButton.tsx — disabling the focused
+   element would evict focus to <body> and never give it back). This only
+   matters if the *consumer* also passes `disabled` while mid-delete; keep
+   these beats fully legible even then rather than applying the base 50% dim. */
 .ml-delete-btn-loading:disabled,
 .ml-delete-btn-done:disabled {
   opacity: 1;
