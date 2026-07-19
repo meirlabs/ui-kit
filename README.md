@@ -199,6 +199,39 @@ import { Button } from "@meir-labs/ui-kit";
 | `leftIcon` / `rightIcon` | `ReactNode` | -- | Icon slots either side of the label |
 | `as` / `href` | `"button" \| "a"` / `string` | -- | Set `href` to render an anchor with button styling |
 
+### DeleteButton
+
+A polished, no-modal destructive-action button: click once to arm it, click
+again to confirm. No dialog, no extra components to wire up.
+
+```tsx
+import { DeleteButton } from "@meir-labs/ui-kit";
+
+<DeleteButton onDelete={() => api.deleteWorkspace(id)} />
+<DeleteButton
+  label="Remove member"
+  confirmLabel="Really remove?"
+  onDelete={async () => { await api.removeMember(id); }}
+/>
+```
+
+Click 1 arms the button (danger fill, label morphs to `confirmLabel`, a
+countdown bar auto-reverts it after `confirmTimeoutMs` if you don't confirm).
+Click 2 fires `onDelete` and walks `loading` (spinner) → `done` (checkmark)
+→ back to `idle`. A rejected `onDelete` reverts straight to `idle`. `Escape`
+or blurring the button while armed cancels it. Width morphs between labels —
+the deliberate exception to "metrics never shift between states," since the
+morph is the whole point of the pattern.
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `onDelete` | `() => void \| Promise<void>` | required | Fires on the confirming click. Rejecting reverts to `idle`. |
+| `size` | `"sm" \| "md" \| "lg"` | `"md"` | Row height, matches `Button` |
+| `label` / `confirmLabel` / `loadingLabel` / `doneLabel` | `ReactNode` | `"Delete"` / `"Confirm delete"` / `"Deleting…"` / `"Deleted"` | Per-phase label |
+| `confirmTimeoutMs` | `number` | `4000` | How long the armed state stays live before auto-reverting |
+| `doneTimeoutMs` | `number` | `1200` | How long the checkmark shows before resetting to idle |
+| `onPhaseChange` | `(phase: DeleteButtonPhase) => void` | -- | `DeleteButtonPhase = "idle" \| "confirm" \| "loading" \| "done"` |
+
 ### Badge
 
 ```tsx

@@ -48,6 +48,17 @@ Button(props: ButtonProps): JSX.Element
 // size: "sm" | "md" | "lg"; loading?: boolean (reserves width, never collapses); leftIcon?/rightIcon?: ReactNode
 // as?: "button" | "a"; href?: string (renders <a role="button">)
 
+DeleteButton(props: DeleteButtonProps): JSX.Element
+// No-modal, inline confirm-to-delete control: idle -> confirm (armed, danger fill, auto-reverts
+// after confirmTimeoutMs) -> loading (spinner, onDelete in flight) -> done (checkmark, success
+// tint) -> idle. Width morphs between labels (the one deliberate exception to "metrics never
+// shift between states" — the morph is the pattern). Escape or blur while armed cancels back to
+// idle. Keyboard accessible, aria-live phase announcer, prefers-reduced-motion safe.
+// onDelete: () => void | Promise<void> (required) — fires on the confirming click; a rejection
+// reverts to idle. size?: "sm"|"md"|"lg" (default md). label?/confirmLabel?/loadingLabel?/doneLabel?: ReactNode
+// confirmTimeoutMs?: number (default 4000); doneTimeoutMs?: number (default 1200)
+// onPhaseChange?: (phase: DeleteButtonPhase) => void — DeleteButtonPhase = "idle"|"confirm"|"loading"|"done"
+
 Badge(props: BadgeProps): JSX.Element
 // tone?: "neutral" | "success" | "warning" | "danger" (default neutral/gray); size?: "sm" | "md"; dot?: boolean; icon?: ReactNode
 
