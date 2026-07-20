@@ -68,8 +68,16 @@
   border-block-end: 1px solid var(--ml-border);
 }
 
+/* Sized from font-size via --ml-icon-inline-size (1cap, LAB-125), overriding
+   the SVG's intrinsic width/height attributes. font-size is pinned to match
+   [cmdk-input] explicitly (16px, set below) rather than left to inherit —
+   a host app's own font-size reset must not desync the icon from the input
+   it sits next to. */
 .ml-command-search-icon {
   flex-shrink: 0;
+  font-size: 16px;
+  width: var(--ml-icon-inline-size);
+  height: var(--ml-icon-inline-size);
   color: var(--ml-text-faint);
 }
 

@@ -52,6 +52,30 @@ html {
   }
 }
 
+/* ── Inline icon sizing (1cap, LAB-125) ───────────────────────────────────────
+   Upgrades --ml-icon-inline-size (tokens.css, defaults to a 0.72em fallback)
+   to the real `1cap` unit where the browser supports it, so an inline icon's
+   height matches the cap-height of the surrounding text rather than an
+   approximation. Scoped to a single :root override + @supports check so every
+   consumer of the token (the .ml-icon-1cap utility below, or a component's own
+   CSS) upgrades together — no per-selector @supports duplication. */
+@supports (width: 1cap) {
+  :root {
+    --ml-icon-inline-size: 1cap;
+  }
+}
+
+/* Apply directly to an inline icon (SVG or icon-font glyph) that sits next to
+   text, e.g. `<HugeiconsIcon className="ml-icon-1cap" />`. Sizes both
+   dimensions from --ml-icon-inline-size so the icon tracks font-size instead
+   of carrying a hand-tuned pixel value. */
+.ml-icon-1cap {
+  display: inline-flex;
+  flex-shrink: 0;
+  width: var(--ml-icon-inline-size);
+  height: var(--ml-icon-inline-size);
+}
+
 /* ── Shared utilities ─────────────────────────────────────────────────────────
    Cross-workstream helpers so components don't re-invent them. */
 

@@ -3,6 +3,9 @@ import { createRoot } from "react-dom/client";
 import "../src/styles/index.css";
 import "./preview.css";
 
+// Foundation
+import { IconSizingDemo } from "./demos/IconSizingDemo";
+
 // Primitives
 import { ButtonDemo } from "./demos/ButtonDemo";
 import { BadgeDemo } from "./demos/BadgeDemo";
@@ -161,6 +164,12 @@ const categories: Category[] = [
       { name: "Checkbox & Radio", component: CheckboxRadioDemo },
       { name: "Stepper", component: StepperDemo },
       { name: "File Upload", component: FileUploadDemo },
+    ],
+  },
+  {
+    name: "Foundation",
+    items: [
+      { name: "Icon Sizing", component: IconSizingDemo },
     ],
   },
 ];
