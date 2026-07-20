@@ -66,6 +66,17 @@
   --ml-z-modal: 1500;
   --ml-z-toast: 1600;
   --ml-z-command: 1700;
+
+  /* ── Inline icon sizing (LAB-125) ──
+     Sizes an inline icon (SVG next to text) from the current font's cap-height,
+     so it tracks font-size without a hand-tuned pixel value per text size.
+     Consumed via `.ml-icon-1cap` (base.css) or directly by component CSS.
+     This fallback value is overridden with the real `1cap` unit inside an
+     `@supports` guard in base.css — `1cap` support is Safari 16.4+ / Chrome
+     109+ / Firefox 118+ (baseline 2023); 0.72em approximates cap-height (which
+     runs ~70-73% of the em box for the system/Geist stacks this kit ships) for
+     browsers that predate it. */
+  --ml-icon-inline-size: 0.72em;
 }
 
 :root[data-meirlabs-theme="dark"],

@@ -263,18 +263,20 @@
   flex-shrink: 0;
 }
 
-/* Leading icon — 12–14px, inherits tone color */
+/* Leading icon, inherits tone color. Sized from the badge's own font-size via
+   --ml-icon-inline-size (1cap, LAB-125) — no separate .ml-badge-sm override
+   needed, the smaller size falls out of .ml-badge-sm's smaller font-size. */
 .ml-badge-icon {
   display: inline-flex;
   align-items: center;
   justify-content: center;
-  width: 14px;
-  height: 14px;
+  width: var(--ml-icon-inline-size);
+  height: var(--ml-icon-inline-size);
   flex-shrink: 0;
 }
-.ml-badge-sm .ml-badge-icon {
-  width: 12px;
-  height: 12px;
+.ml-badge-icon svg {
+  width: 100%;
+  height: 100%;
 }
 
 /* ── Avatar ──

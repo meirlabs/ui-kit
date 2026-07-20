@@ -23,6 +23,10 @@
   height: 100vh;
   height: 100dvh;
   overflow-y: auto;
+  /* Keep this scroll region stable too (LAB-125) — .ml-shell-main already did;
+     a long nav item list growing a scrollbar here shifts icons/labels
+     sideways the same way an unstable main column does (spec §9). */
+  scrollbar-gutter: stable;
 }
 
 .ml-shell-main {

@@ -180,8 +180,6 @@ export function CommandPalette({
           <div className="ml-command-search">
             <svg
               className="ml-command-search-icon"
-              width="18"
-              height="18"
               viewBox="0 0 18 18"
               fill="none"
               aria-hidden="true"
