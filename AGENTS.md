@@ -44,7 +44,7 @@ useAnchoredPosition(anchorRef, floatingRef, options: UseAnchoredPositionOptions)
 
 // Components — basics
 Button(props: ButtonProps): JSX.Element
-// variant: "primary" | "secondary" | "ghost" | "danger" | "icon" (default primary — charcoal btn-dark surface)
+// variant: "primary" | "secondary" | "ghost" | "danger" | "icon" (default primary — charcoal btn-dark surface, layered shadow + press/hover motion)
 // size: "sm" | "md" | "lg"; loading?: boolean (reserves width, never collapses); leftIcon?/rightIcon?: ReactNode
 // as?: "button" | "a"; href?: string (renders <a role="button">)
 
