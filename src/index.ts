@@ -48,7 +48,7 @@ export type {
 } from "./components/MetricValue";
 
 // Layout
-export { Shell } from "./components/Shell";
+export { Shell, ShellSidebar, ShellMain } from "./components/Shell";
 export type { ShellProps, ShellSidebarProps, ShellMainProps } from "./components/Shell";
 export { Sidebar, SidebarItem } from "./components/Sidebar";
 export type { SidebarProps, SidebarSectionProps, SidebarItemProps } from "./components/Sidebar";

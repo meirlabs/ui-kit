@@ -44,27 +44,50 @@ const ShellMain = forwardRef<HTMLElement, ShellMainProps>(function ShellMain(
  * fluid `1fr` main column. Under `640px` it collapses to a single stacked
  * column (sidebar on top, main below).
  *
- * Compose it with the attached statics, which apply the wired grid classes:
+ * Compose it with the named exports `ShellSidebar` / `ShellMain`, which
+ * apply the wired grid classes:
  *
  * ```tsx
+ * import { Shell, ShellSidebar, ShellMain } from "@meir-labs/ui-kit";
+ *
  * <Shell>
- *   <Shell.Sidebar>
+ *   <ShellSidebar>
  *     <Sidebar>…</Sidebar>
- *   </Shell.Sidebar>
- *   <Shell.Main>
+ *   </ShellSidebar>
+ *   <ShellMain>
  *     <TopBar … />
  *     <PageHeader title="Dashboard" />
- *   </Shell.Main>
+ *   </ShellMain>
  * </Shell>
  * ```
  *
  * - `Shell` → `<div class="ml-shell">` (grid `240px 1fr`, `min-height: 100vh`)
- * - `Shell.Sidebar` → `<aside class="ml-shell-sidebar">` (grid column 1)
- * - `Shell.Main` → `<main class="ml-shell-main">` (scrollable, `scrollbar-gutter: stable`)
+ * - `ShellSidebar` → `<aside class="ml-shell-sidebar">` (grid column 1)
+ * - `ShellMain` → `<main class="ml-shell-main">` (scrollable, `scrollbar-gutter: stable`)
  *
  * All three forward refs and pass through native props / `className`.
+ *
+ * ⚠️ Do NOT use the `Shell.Sidebar` / `Shell.Main` dot-notation form in a
+ * Next.js App Router file that is a Server Component (no `"use client"`).
+ * This package's whole bundle is a client module (it needs `"use client"`
+ * at the top so its context/hooks don't crash on the server); when a
+ * *Server* Component imports `Shell` and references `Shell.Sidebar` /
+ * `Shell.Main` as a JSX element type, React's server renderer resolves
+ * `Shell` to a client-reference placeholder for the cross-boundary handoff
+ * — that placeholder does not carry runtime-attached statics, so the
+ * property access resolves to `undefined` ("Element type is invalid ...
+ * got: undefined"), even though `transpilePackages` is configured and the
+ * same code works fine under plain Node ESM or from a Client Component.
+ * The named exports above don't have this problem because each is its own
+ * top-level module export, so React can resolve it as a real client
+ * reference on its own. The dot-notation statics are kept for convenience
+ * in Client Components and non-RSC bundler contexts, but the named exports
+ * are the only form guaranteed to work everywhere, including a Server
+ * Component root layout.
  */
 export const Shell = Object.assign(ShellRoot, {
   Sidebar: ShellSidebar,
   Main: ShellMain,
 });
+
+export { ShellSidebar, ShellMain };

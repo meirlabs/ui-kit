@@ -66,6 +66,43 @@
   --ml-z-modal: 1500;
   --ml-z-toast: 1600;
   --ml-z-command: 1700;
+
+  /* ── Spacing scale (theme-independent) ──
+     Bug fix: previously defined only inside [data-meirlabs-theme="dark"], so
+     every var(--ml-space-*) resolved to nothing under the light theme (no
+     padding/gaps anywhere). Hoisted to plain :root — not duplicated into the
+     light block — because these values never change per theme. */
+  --ml-space-xs: 4px;
+  --ml-space-sm: 8px;
+  --ml-space-md: 12px;
+  --ml-space-lg: 16px;
+  --ml-space-xl: 24px;
+  --ml-space-2xl: 32px;
+
+  /* ── Radius scale (theme-independent) ── same bug/fix as spacing above. */
+  --ml-radius-sm: 6px;
+  --ml-radius-md: 8px;
+  --ml-radius-lg: 12px;
+  --ml-radius-xl: 16px;
+  --ml-radius-pill: 9999px;
+
+  /* ── Typography (theme-independent) ── same bug/fix as spacing above.
+     Geist is the brand sans (design/foundation/typography.md). Apps load it via
+     next/font (geist package) which defines --font-geist-sans; consumers without
+     it fall through to the system stack. Hebrew/Cyrillic always use the fallback. */
+  --ml-font-sans: var(--font-geist-sans, -apple-system), BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
+  --ml-font-mono: "SF Mono", "Fira Code", "Courier New", monospace;
+
+  /* ── Type scale (theme-independent) ── ADDITIONAL finding, same class of bug:
+     was dark-only and entirely absent from the light block (not even
+     duplicated there), so var(--ml-text-*) resolved to nothing in light too. */
+  --ml-text-xs: 0.68rem;
+  --ml-text-sm: 0.78rem;
+  --ml-text-base: 0.88rem;
+  --ml-text-lg: 1rem;
+  --ml-text-xl: 1.2rem;
+  --ml-text-2xl: 1.5rem;
+  --ml-text-3xl: 2rem;
 }
 
 :root[data-meirlabs-theme="dark"],
@@ -96,17 +133,6 @@
   --ml-color-warning-muted: rgba(210, 153, 34, 0.12);
   --ml-color-purple: var(--ml-text-muted);
   --ml-color-purple-muted: var(--ml-bg-surface);
-  --ml-space-xs: 4px;
-  --ml-space-sm: 8px;
-  --ml-space-md: 12px;
-  --ml-space-lg: 16px;
-  --ml-space-xl: 24px;
-  --ml-space-2xl: 32px;
-  --ml-radius-sm: 6px;
-  --ml-radius-md: 8px;
-  --ml-radius-lg: 12px;
-  --ml-radius-xl: 16px;
-  --ml-radius-pill: 9999px;
   /* Layered elevation (§4): doubling stack b∈{1,3,6}/{3,6,12,24}/{6,12,24,48},
      offsetY=b/2, spread=-b/2, + preserved inset top-ring highlight that
      intensifies as the surface lifts. Only sanctioned shadow source. */
@@ -132,18 +158,6 @@
   --ml-glass-bg: rgba(22, 27, 34, 0.82);
   --ml-glass-blur: blur(40px);
   --ml-glass-border: rgba(48, 54, 61, 0.6);
-  /* Geist is the brand sans (design/foundation/typography.md). Apps load it via
-     next/font (geist package) which defines --font-geist-sans; consumers without
-     it fall through to the system stack. Hebrew/Cyrillic always use the fallback. */
-  --ml-font-sans: var(--font-geist-sans, -apple-system), BlinkMacSystemFont, "Segoe UI", Helvetica, Arial, sans-serif;
-  --ml-font-mono: "SF Mono", "Fira Code", "Courier New", monospace;
-  --ml-text-xs: 0.68rem;
-  --ml-text-sm: 0.78rem;
-  --ml-text-base: 0.88rem;
-  --ml-text-lg: 1rem;
-  --ml-text-xl: 1.2rem;
-  --ml-text-2xl: 1.5rem;
-  --ml-text-3xl: 2rem;
   color-scheme: dark;
 }
 
