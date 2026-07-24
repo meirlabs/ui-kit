@@ -56,6 +56,13 @@ existing component's interaction states, keyboard model, and motion.
   component (accordion, choice controls, combobox, command palette, data
   display, drawer, file upload, navigation, overlays, popover, progress,
   select, skeleton, spinner, stepper, table, tags, toast, tooltip).
+- **`Button` primary polish:** the `primary` variant's raised surface now uses
+  a layered shadow (tight contact shadow + soft ambient lift, instead of one
+  flat drop shadow) and a brighter inset top highlight, with hover lifting the
+  surface and active press collapsing the shadow/highlight so it reads as
+  physically pushed in. Same gradient, text color, and box metrics as before —
+  shadow/motion-only, so existing consumers don't visually break.
+  `prefers-reduced-motion` still suppresses the transform.
 
 ## 0.1.1
 

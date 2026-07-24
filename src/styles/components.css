@@ -56,33 +56,52 @@
 }
 
 /* Primary = the "btn-dark" treatment: a soft charcoal gradient with a 1px ring,
-   inset top highlight + bottom shadow — a raised, tactile surface, not a flat
-   fill. Built-in hover (brighten), active (dim + 0.5px nudge), disabled (50%).
-   Don't shadow-fork this elsewhere — apply .ml-btn-primary and add only
-   shape/size utilities. */
+   inset top highlight + a layered shadow stack (tight contact shadow + soft
+   ambient lift) — a raised, tactile surface, not a flat fill. Built-in hover
+   (lift + brighten), active (dim + press down, highlight/shadow collapse),
+   disabled (50%). Don't shadow-fork this elsewhere — apply .ml-btn-primary and
+   add only shape/size utilities.
+   Polish recipe (stolen per LAB-164, adapted to existing tokens): layered
+   shadows > single flat one, a brighter top-edge highlight for the bevel, and
+   press/hover motion that reads as physically pushed rather than just
+   recolored. Resting/hover/active only change shadow + transform + filter —
+   never the base gradient/text color — so contrast and existing snapshots of
+   the flat charcoal surface don't shift. */
 .ml-btn-primary {
   background: var(--ml-btn-primary-bg, linear-gradient(180deg, #323232 0%, #222222 100%));
   color: #ffffff;
   box-shadow:
-    inset 0 0 0 1px rgba(255, 255, 255, 0.06), /* 1px ring */
-    inset 0 1px 0 0 rgba(255, 255, 255, 0.1), /* top highlight */
-    0 1px 2px 0 rgba(0, 0, 0, 0.45); /* bottom shadow */
-  transition: filter var(--ml-duration-base), transform var(--ml-duration-press), box-shadow var(--ml-duration-base), opacity var(--ml-duration-base);
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07), /* 1px ring */
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.14), /* top highlight (bevel) */
+    0 1px 1px -0.5px rgba(0, 0, 0, 0.4), /* tight contact shadow */
+    0 3px 6px -2px rgba(0, 0, 0, 0.32); /* soft ambient lift */
+  transition: filter var(--ml-duration-base), transform var(--ml-duration-press) var(--ml-ease-out), box-shadow var(--ml-duration-base) var(--ml-ease-out), opacity var(--ml-duration-base);
 }
 
 .ml-btn-primary:hover:not(:disabled) {
   filter: brightness(1.12);
+  transform: translateY(-0.5px);
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.16),
+    0 1px 1px -0.5px rgba(0, 0, 0, 0.42),
+    0 5px 10px -3px rgba(0, 0, 0, 0.38); /* ambient shadow deepens on lift */
 }
 
 .ml-btn-primary:active:not(:disabled) {
   filter: brightness(0.95);
-  transform: translateY(0.5px);
+  transform: translateY(0.5px) scale(var(--ml-press-scale));
+  box-shadow:
+    inset 0 0 0 1px rgba(255, 255, 255, 0.07),
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.06), /* highlight dims — light "pressed out" */
+    0 1px 1px -0.5px rgba(0, 0, 0, 0.35); /* shadow stack collapses */
 }
 
 @media (prefers-reduced-motion: reduce) {
   .ml-btn-primary {
     transition: none;
   }
+  .ml-btn-primary:hover:not(:disabled),
   .ml-btn-primary:active:not(:disabled) {
     transform: none;
   }
