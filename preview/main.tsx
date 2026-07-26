@@ -25,6 +25,7 @@ import { SectionDemo } from "./demos/SectionDemo";
 import { DetailListDemo } from "./demos/DetailListDemo";
 import { DangerZoneDemo } from "./demos/DangerZoneDemo";
 import { AccordionDemo } from "./demos/AccordionDemo";
+import { ScrollFadeDemo } from "./demos/ScrollFadeDemo";
 
 // Navigation
 import { TabsDemo } from "./demos/TabsDemo";
@@ -105,6 +106,7 @@ const categories: Category[] = [
       { name: "Detail List", component: DetailListDemo },
       { name: "Danger Zone", component: DangerZoneDemo },
       { name: "Accordion", component: AccordionDemo },
+      { name: "Scroll Fade", component: ScrollFadeDemo },
     ],
   },
   {

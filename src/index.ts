@@ -68,6 +68,8 @@ export { DangerZone } from "./components/DangerZone";
 export type { DangerZoneProps, DangerZoneItemProps } from "./components/DangerZone";
 export { Accordion } from "./components/Accordion";
 export type { AccordionProps, AccordionItemProps } from "./components/Accordion";
+export { ScrollFade } from "./components/ScrollFade";
+export type { ScrollFadeProps, ScrollFadeAxis } from "./components/ScrollFade";
 
 // Navigation
 export { Tabs, TabsPanel } from "./components/Tabs";
