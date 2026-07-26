@@ -1,0 +1,157 @@
+/* ScrollFade — edge fade/mask for scroll containers.
+   Driven entirely by CSS scroll-driven animations (`animation-timeline:
+   scroll()`), not a scroll event listener: the mask position is a function
+   of scroll offset, so the fade only shows at an edge that still has more
+   content to scroll to (no top fade at scrollTop 0, no bottom fade at the
+   end, etc.).
+
+   Progressive enhancement: everything under the `@supports` guard below is
+   additive. In a browser without scroll-driven-animation support the
+   container just scrolls normally, unmasked. */
+
+@property --ml-scroll-fade-top {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --ml-scroll-fade-bottom {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --ml-scroll-fade-left {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+@property --ml-scroll-fade-right {
+  syntax: "<length>";
+  inherits: false;
+  initial-value: 0px;
+}
+
+.ml-scroll-fade-y,
+.ml-scroll-fade-x,
+.ml-scroll-fade-both {
+  --ml-scroll-fade-size: 48px;
+}
+
+.ml-scroll-fade-y {
+  overflow-y: auto;
+}
+.ml-scroll-fade-x {
+  overflow-x: auto;
+}
+.ml-scroll-fade-both {
+  overflow: auto;
+}
+
+/* Not gated behind `prefers-reduced-motion`: the mask tracks the user's own
+   scroll position 1:1 with no independent duration/easing of its own, so
+   there's no autoplaying motion to reduce (WCAG 2.3.3 targets motion that
+   continues beyond the interaction that triggered it). */
+@supports (animation-timeline: scroll()) {
+  .ml-scroll-fade-y {
+    mask-image: linear-gradient(
+      to bottom,
+      transparent,
+      black var(--ml-scroll-fade-top),
+      black calc(100% - var(--ml-scroll-fade-bottom)),
+      transparent
+    );
+    animation:
+      ml-scroll-fade-top-in linear,
+      ml-scroll-fade-bottom-in linear;
+    animation-timeline: scroll(self block), scroll(self block);
+    animation-range:
+      0 var(--ml-scroll-fade-size),
+      calc(100% - var(--ml-scroll-fade-size)) 100%;
+    animation-fill-mode: both;
+  }
+
+  .ml-scroll-fade-x {
+    mask-image: linear-gradient(
+      to right,
+      transparent,
+      black var(--ml-scroll-fade-left),
+      black calc(100% - var(--ml-scroll-fade-right)),
+      transparent
+    );
+    animation:
+      ml-scroll-fade-left-in linear,
+      ml-scroll-fade-right-in linear;
+    animation-timeline: scroll(self inline), scroll(self inline);
+    animation-range:
+      0 var(--ml-scroll-fade-size),
+      calc(100% - var(--ml-scroll-fade-size)) 100%;
+    animation-fill-mode: both;
+  }
+
+  .ml-scroll-fade-both {
+    mask-image:
+      linear-gradient(
+        to bottom,
+        transparent,
+        black var(--ml-scroll-fade-top),
+        black calc(100% - var(--ml-scroll-fade-bottom)),
+        transparent
+      ),
+      linear-gradient(
+        to right,
+        transparent,
+        black var(--ml-scroll-fade-left),
+        black calc(100% - var(--ml-scroll-fade-right)),
+        transparent
+      );
+    mask-composite: intersect;
+    animation:
+      ml-scroll-fade-top-in linear,
+      ml-scroll-fade-bottom-in linear,
+      ml-scroll-fade-left-in linear,
+      ml-scroll-fade-right-in linear;
+    animation-timeline:
+      scroll(self block),
+      scroll(self block),
+      scroll(self inline),
+      scroll(self inline);
+    animation-range:
+      0 var(--ml-scroll-fade-size),
+      calc(100% - var(--ml-scroll-fade-size)) 100%,
+      0 var(--ml-scroll-fade-size),
+      calc(100% - var(--ml-scroll-fade-size)) 100%;
+    animation-fill-mode: both;
+  }
+}
+
+@keyframes ml-scroll-fade-top-in {
+  from {
+    --ml-scroll-fade-top: 0px;
+  }
+  to {
+    --ml-scroll-fade-top: var(--ml-scroll-fade-size);
+  }
+}
+@keyframes ml-scroll-fade-bottom-in {
+  from {
+    --ml-scroll-fade-bottom: var(--ml-scroll-fade-size);
+  }
+  to {
+    --ml-scroll-fade-bottom: 0px;
+  }
+}
+@keyframes ml-scroll-fade-left-in {
+  from {
+    --ml-scroll-fade-left: 0px;
+  }
+  to {
+    --ml-scroll-fade-left: var(--ml-scroll-fade-size);
+  }
+}
+@keyframes ml-scroll-fade-right-in {
+  from {
+    --ml-scroll-fade-right: var(--ml-scroll-fade-size);
+  }
+  to {
+    --ml-scroll-fade-right: 0px;
+  }
+}

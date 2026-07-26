@@ -325,6 +325,28 @@ import { Accordion } from "@meir-labs/ui-kit";
 
 `Accordion.Item` takes `value` (required), `title`, and `disabled`.
 
+### ScrollFade
+
+```tsx
+import { ScrollFade } from "@meir-labs/ui-kit";
+
+<ScrollFade axis="y" style={{ maxHeight: 320 }}>
+  {longList}
+</ScrollFade>
+```
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `axis` | `"x" \| "y" \| "both"` | `"y"` | Which scroll axis gets the edge fade |
+| `size` | `number` | `48` | Fade length in px at each scrollable edge |
+
+A scroll container whose edges fade out only where there's more content to
+scroll to — no fade at an edge you're already at (e.g. no top fade at
+scrollTop 0). Driven by CSS scroll-driven animations
+(`animation-timeline: scroll()`), not a scroll listener. Progressive
+enhancement: browsers without scroll-driven-animation support just get a
+normal, unmasked scrollable container.
+
 ### Shell, Sidebar, TopBar, PageHeader
 
 ```tsx
@@ -1042,6 +1064,7 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `DetailList` | Component | Label/value definition list |
 | `DangerZone`, `DangerZoneItem` | Component | Destructive-actions panel |
 | `Accordion` (+ `.Item`) | Component | Expand/collapse groups |
+| `ScrollFade` | Component | Scroll container with scroll-driven edge fade/mask |
 | `Tabs`, `TabsPanel` | Component | Tabbed navigation |
 | `Toggle` | Component | Radiogroup value-picker |
 | `SegmentedControl` | Component | 2–3 view switcher with a sliding thumb |

@@ -54,6 +54,7 @@ and design tokens — read it for details.
 - **DetailList** — label/value definition list. `items[]` (each can set `onCopy`/`copyValue`), `columns` 1|2.
 - **DangerZone / DangerZoneItem** — destructive-actions panel. Item takes `title`, `description`, `actionLabel`, `onConfirm`, `loading`, or a full `action` override.
 - **Accordion / AccordionItem** — expand/collapse groups. `type` single/multiple, controlled `value`/`onValueChange`; item takes `value`, `title`, `disabled`.
+- **ScrollFade** — scroll container with a scroll-driven edge fade/mask (no fade at an edge you're already at). `axis` x/y/both (default y), `size` fade length in px (default 48). Progressive enhancement — degrades to a plain scroller without `animation-timeline: scroll()` support.
 
 ### Navigation
 - **Tabs / TabsPanel** — `tabs[]` (value/label/icon/disabled), controlled `value`/`onChange`, required `aria-label`. Roving-tabindex + arrow-key model.
