@@ -806,6 +806,36 @@ import { Progress } from "@meir-labs/ui-kit";
 
 Omit `value` for an indeterminate bar. `tone`: `"neutral" | "success" | "warning" | "danger"` (defaults to monochrome `--ml-text`). `showValue` renders the numeric percentage beside the track.
 
+## Patterns
+
+CSS-only techniques with no matching React component — just add the classes to plain markup.
+
+### Magnetic nav link
+
+A shared highlight glides between nav links using CSS anchor positioning (`anchor-name` + `anchor()`), not JS measuring `DOMRect`s. It rests under the `aria-current="page"` link and moves to whichever link is hovered or keyboard-focused.
+
+```tsx
+<nav className="ml-magnetic-nav" aria-label="Primary">
+  <a href="/" className="ml-magnetic-nav-link" aria-current="page">Overview</a>
+  <a href="/reports" className="ml-magnetic-nav-link">Reports</a>
+  <a href="/settings" className="ml-magnetic-nav-link">Settings</a>
+  <span className="ml-magnetic-nav-highlight" aria-hidden="true" />
+</nav>
+```
+
+Mark exactly one link `aria-current="page"` so the highlight has a resting position. Where `anchor-name`/`anchor()` aren't supported, the highlight never renders and each link falls back to a plain `:hover`/`:focus-visible` text-color change. Motion respects `prefers-reduced-motion` automatically (the kit's global guard); hover-driven changes are gated behind `(hover: hover) and (pointer: fine)` so a touch tap doesn't stick the slide.
+
+### Hit-area extension
+
+Grow a small control's clickable region with `::before` instead of padding, so the visible box and sibling spacing never change.
+
+```tsx
+<button type="button" className="ml-hit-area" aria-label="Dismiss">
+  <CloseIcon />
+</button>
+```
+
+Default `-10px` inset matches the 24px-icon-button → 44px-hit-area tap-target guidance (bumps to `-14px` on coarse/touch pointers); override `--ml-hit-area-inset` / `--ml-hit-area-inset-coarse` per instance for a different visual size. Only apply it to a control with at least 2× that inset of clear space from the nearest *following* sibling control — a later sibling's hit-area can paint over an earlier one and intercept its clicks (see the comment in `patterns.css` for the full rule).
 
 ## CSS Classes
 

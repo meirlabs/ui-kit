@@ -67,6 +67,10 @@ import { CheckboxRadioDemo } from "./demos/CheckboxRadioDemo";
 import { StepperDemo } from "./demos/StepperDemo";
 import { FileUploadDemo } from "./demos/FileUploadDemo";
 
+// Patterns
+import { MagneticNavDemo } from "./demos/MagneticNavDemo";
+import { HitAreaDemo } from "./demos/HitAreaDemo";
+
 interface ComponentEntry {
   name: string;
   component: React.ComponentType;
@@ -161,6 +165,13 @@ const categories: Category[] = [
       { name: "Checkbox & Radio", component: CheckboxRadioDemo },
       { name: "Stepper", component: StepperDemo },
       { name: "File Upload", component: FileUploadDemo },
+    ],
+  },
+  {
+    name: "Patterns",
+    items: [
+      { name: "Magnetic Nav", component: MagneticNavDemo },
+      { name: "Hit Area", component: HitAreaDemo },
     ],
   },
 ];

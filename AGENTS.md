@@ -313,6 +313,11 @@ LiveChart(props): JSX.Element                        // from "@meir-labs/ui-kit/
 - `.ml-metric-positive` -- Green text (usually used via MetricValue component)
 - `.ml-metric-negative` -- Red text
 
+### Patterns (CSS-only, no React component)
+
+- `.ml-magnetic-nav` / `.ml-magnetic-nav-link` / `.ml-magnetic-nav-highlight` -- shared highlight that glides between nav links via CSS anchor positioning; rests on the `aria-current="page"` link; degrades to a plain hover/focus color change where anchor positioning is unsupported. See README "Magnetic nav link".
+- `.ml-hit-area` -- extends a small control's clickable region via `::before` (no layout shift). Tune with `--ml-hit-area-inset` (default 10px) / `--ml-hit-area-inset-coarse` (default 14px). Only safe with >= 2x that inset of clear space from the next control in DOM order -- see README "Hit-area extension" and the comment in `src/styles/patterns.css`.
+
 ## Design Tokens
 
 All tokens are CSS custom properties. The values below are the **dark** theme
