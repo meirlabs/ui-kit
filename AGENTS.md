@@ -55,6 +55,13 @@ Avatar(props: AvatarProps): JSX.Element
 // src?/alt?/fallback?: string; size?: "xs"|"sm"|"md"|"lg"; status?: "online"|"offline"|"away"|"busy"
 // interactive?: boolean (focusable button wrapper); round?: boolean (default true; false = 8px-radius square)
 
+BlurImage(props: BlurImageProps): JSX.Element
+// src: string; alt: string; width?/height?: number (intrinsic px; combine to reserve a fixed-size box);
+// aspectRatio?: string | number (fluid-width box instead of width/height); fallback?: ReactNode (overlaid on error)
+// className?/style? apply to the sized container, not the <img> — everything else in the (Omit<img props,...>) set passes through to the <img>
+// Fades from blurred+transparent to sharp+opaque on the real `load` event (never a timer); cached-on-mount and
+// error both resolve to the sharp/opaque end state (no stuck blur); prefers-reduced-motion skips the effect entirely.
+
 Label(props: LabelProps): JSX.Element
 // { size?: "sm" | "md"; tone?: "muted" | "default" } & span props
 

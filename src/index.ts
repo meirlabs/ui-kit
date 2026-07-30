@@ -20,6 +20,8 @@ export { Badge } from "./components/Badge";
 export type { BadgeProps, BadgeTone } from "./components/Badge";
 export { Avatar } from "./components/Avatar";
 export type { AvatarProps, AvatarSize, AvatarStatus } from "./components/Avatar";
+export { BlurImage } from "./components/BlurImage";
+export type { BlurImageProps } from "./components/BlurImage";
 export { Label } from "./components/Label";
 export type { LabelProps } from "./components/Label";
 export { Divider } from "./components/Divider";
