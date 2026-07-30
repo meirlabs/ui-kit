@@ -230,6 +230,30 @@ import { Avatar } from "@meir-labs/ui-kit";
 | `interactive` | `boolean` | `false` | Renders a focusable `<button>` wrapper with a focus ring, for avatar-menu triggers |
 | `round` | `boolean` | `true` | `false` renders an 8px-radius square instead of a circle |
 
+### BlurImage
+
+```tsx
+import { BlurImage } from "@meir-labs/ui-kit";
+
+<BlurImage src="/photo.jpg" alt="A photo" width={480} height={320} />
+```
+
+An image that fades from blurred + transparent to sharp + opaque once it
+actually finishes loading (the real `load` event — never a fixed timer, so
+cached and slow images both behave correctly). The container reserves the
+image's aspect ratio so the fade-in never shifts surrounding layout. An error
+resolves to the same sharp/opaque end state instead of a stuck blur; pass
+`fallback` to overlay a replacement. Respects `prefers-reduced-motion` (the
+effect is skipped entirely — the image just renders).
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `src` / `alt` | `string` | -- | Required, as on a native `<img>` |
+| `width` / `height` | `number` | -- | Intrinsic px size; combine both to reserve a fixed-size box (also set as native `<img>` attributes) |
+| `aspectRatio` | `string \| number` | -- | Container aspect ratio (e.g. `"16 / 9"`) for a fluid-width box instead of `width`/`height` |
+| `fallback` | `ReactNode` | -- | Overlaid on the image if it fails to load |
+| `className` / `style` | -- | -- | Apply to the sized container, not the `<img>` — every other prop (`id`, `aria-*`, `loading`, `decoding`, `srcSet`, …) passes through to the `<img>` |
+
 ### Label
 
 ```tsx
@@ -1026,6 +1050,7 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `Button` | Component | Primary interactive control |
 | `Badge` | Component | Small status/count label |
 | `Avatar` | Component | Image/initials with presence status |
+| `BlurImage` | Component | Image that fades from blurred to sharp on load |
 | `Label` | Component | Standalone text label |
 | `Divider` | Component | Horizontal/vertical rule |
 | `EditableDocument`, `parseDocFields` | Component, Utility | Fill-in-the-blank document editor |

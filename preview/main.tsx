@@ -7,6 +7,7 @@ import "./preview.css";
 import { ButtonDemo } from "./demos/ButtonDemo";
 import { BadgeDemo } from "./demos/BadgeDemo";
 import { AvatarDemo } from "./demos/AvatarDemo";
+import { BlurImageDemo } from "./demos/BlurImageDemo";
 import { LabelDemo } from "./demos/LabelDemo";
 import { DividerDemo } from "./demos/DividerDemo";
 import { TagDemo } from "./demos/TagDemo";
@@ -84,6 +85,7 @@ const categories: Category[] = [
       { name: "Button", component: ButtonDemo },
       { name: "Badge", component: BadgeDemo },
       { name: "Avatar", component: AvatarDemo },
+      { name: "Blur Image", component: BlurImageDemo },
       { name: "Label", component: LabelDemo },
       { name: "Divider", component: DividerDemo },
       { name: "Tag", component: TagDemo },
