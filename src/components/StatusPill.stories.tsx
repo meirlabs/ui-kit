@@ -42,6 +42,25 @@ export const WithDot: StoryObj = {
   ),
 };
 
+export const Live: StoryObj = {
+  render: () => (
+    <div style={{ display: "flex", gap: "0.5rem", alignItems: "center" }}>
+      <StatusPill tone="good" dot live>
+        Working
+      </StatusPill>
+      <StatusPill tone="warn" dot live>
+        Reviewing
+      </StatusPill>
+      <StatusPill tone="neutral" dot>
+        Ready
+      </StatusPill>
+      <StatusPill tone="good" dot>
+        Done
+      </StatusPill>
+    </div>
+  ),
+};
+
 export const AllTones: StoryObj = {
   render: () => (
     <div style={{ display: "flex", gap: "0.5rem" }}>

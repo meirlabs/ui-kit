@@ -56,6 +56,16 @@
   border-radius: var(--ml-radius-pill);
   background: currentColor;
 }
+
+/* Live status (`live` prop) — a soft ring around the dot so "something is
+   happening right now" reads at a glance in a list of pills. Static by
+   design: spec §"Never animate" bans looping elements ("nothing that draws
+   the eye on repeat"), so this is a ring, never a pulse. The extra left
+   margin keeps the ring clear of the pill's inner edge. */
+.ml-status-pill-dot-live {
+  margin-left: 2px;
+  box-shadow: 0 0 0 3px color-mix(in srgb, currentColor 22%, transparent);
+}
 .ml-status-pill-icon {
   display: inline-flex;
   flex: none;

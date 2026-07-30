@@ -48,6 +48,34 @@ describe("StatusPill", () => {
     expect(container.querySelector(".ml-status-pill-dot")).not.toBeInTheDocument();
   });
 
+  it("rings the dot when marked live", () => {
+    const { container } = render(
+      <StatusPill tone="good" dot live>
+        Working
+      </StatusPill>,
+    );
+    expect(container.querySelector(".ml-status-pill-dot-live")).toBeInTheDocument();
+  });
+
+  it("does not mark the dot live by default", () => {
+    const { container } = render(
+      <StatusPill tone="good" dot>
+        Ready
+      </StatusPill>,
+    );
+    expect(container.querySelector(".ml-status-pill-dot-live")).not.toBeInTheDocument();
+  });
+
+  it("keeps the live treatment static — no looping animation", () => {
+    // Contract: design spec §"Never animate" bans looping elements ("nothing
+    // that draws the eye on repeat"). A status pill in a list is exactly what
+    // that protects, so `live` must never grow an animation or keyframes.
+    const liveRule = tagsCss.slice(tagsCss.indexOf(".ml-status-pill-dot-live"));
+    const block = liveRule.slice(0, liveRule.indexOf("}"));
+    expect(block).not.toMatch(/animation/);
+    expect(tagsCss).not.toMatch(/@keyframes[^{]*status-pill/);
+  });
+
   it("renders a provided icon", () => {
     render(
       <StatusPill tone="warn" icon={<svg data-testid="icon" />}>
