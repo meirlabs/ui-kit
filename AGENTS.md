@@ -253,6 +253,21 @@ CometLoader(props: CometLoaderProps): JSX.Element
 // AI/agentic loading indicator — 4×4 currentColor dot grid, bright head + fading tail orbiting a
 // clockwise spiral. Use when the wait is AI thinking/generating; Spinner stays the generic async default.
 
+DotsLoader(props: DotsLoaderProps): JSX.Element
+// { size?: "sm"|"md"|"lg" (16/20/24px); label?: string (visually-hidden a11y name) } & span props
+// Three currentColor dots pulsing in sequence — the minimal loader for tight inline spaces (a send
+// button, an inline "typing" state).
+
+BarsLoader(props: BarsLoaderProps): JSX.Element
+// { size?: "sm"|"md"|"lg" (14/18/24px tall); label?: string (visually-hidden a11y name) } & span props
+// Four currentColor bars scaling in a staggered equalizer rhythm — reads as active background work
+// (an upload, a render, a sync).
+
+PulseRingLoader(props: PulseRingLoaderProps): JSX.Element
+// { size?: "sm"|"md"|"lg" (16/20/26px); label?: string (visually-hidden a11y name) } & span props
+// A solid currentColor core with a ring that expands and fades outward on loop — reads as a
+// live/listening/connecting state (a websocket handshake, a call connecting).
+
 Skeleton(props: SkeletonProps) / SkeletonText(props: SkeletonTextProps): JSX.Element
 // SkeletonProps: { variant?: "text"|"rect"|"circle"; width?; height?; radius? } & span props
 // SkeletonTextProps: Omit<SkeletonProps,"variant"> & { lines?: number }

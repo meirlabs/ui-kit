@@ -1,0 +1,54 @@
+/* @meir-labs/ui-kit — DotsLoader
+   Three currentColor dots pulsing in sequence. Inherits --ml-text-muted by
+   default. Reduced-motion freezes the sequence to a static opacity pulse
+   (no transform). */
+
+.ml-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ml-text-muted);
+  vertical-align: middle;
+}
+
+.ml-dots-row {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-dots-gap, 4px);
+}
+
+.ml-dots-dot {
+  display: block;
+  width: var(--ml-dots-size, 6px);
+  height: var(--ml-dots-size, 6px);
+  border-radius: var(--ml-radius-pill);
+  background: currentColor;
+  opacity: 0.3;
+  animation: ml-dots-bounce 1s ease-in-out infinite;
+}
+
+.ml-dots-dot:nth-child(2) { animation-delay: 0.15s; }
+.ml-dots-dot:nth-child(3) { animation-delay: 0.3s; }
+
+.ml-dots-sm { --ml-dots-size: 5px; --ml-dots-gap: 3px; }
+.ml-dots-md { --ml-dots-size: 6px; --ml-dots-gap: 4px; }
+.ml-dots-lg { --ml-dots-size: 8px; --ml-dots-gap: 5px; }
+
+@keyframes ml-dots-bounce {
+  0%, 80%, 100% { opacity: 0.3; transform: translateY(0); }
+  40% { opacity: 1; transform: translateY(-35%); }
+}
+
+/* Reduced-motion: drop the bounce, keep only a staggered opacity pulse. */
+@media (prefers-reduced-motion: reduce) {
+  .ml-dots-dot {
+    animation: ml-dots-pulse 1.4s ease-in-out infinite;
+    transform: none;
+  }
+  .ml-dots-dot:nth-child(2) { animation-delay: 0.2s; }
+  .ml-dots-dot:nth-child(3) { animation-delay: 0.4s; }
+  @keyframes ml-dots-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.35; }
+  }
+}

@@ -29,6 +29,9 @@
 @import "./callout.css";
 @import "./spinner.css";
 @import "./comet.css";
+@import "./dots.css";
+@import "./bars.css";
+@import "./pulse-ring.css";
 @import "./skeleton.css";
 @import "./progress.css";
 @import "./onboarding.css";

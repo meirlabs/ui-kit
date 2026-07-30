@@ -2,6 +2,12 @@
 
 ## Unreleased
 
+- **New components:** `DotsLoader` (minimal 3-dot sequential-pulse loader),
+  `BarsLoader` (4-bar equalizer-style loader), `PulseRingLoader`
+  (expanding-ring loader). Rounds out the loading-state story alongside
+  `Spinner`/`CometLoader`/`Skeleton`/`Progress` — each has `size` sm/md/lg,
+  a `label` prop, `role="status"`, and a reduced-motion fallback.
+
 Major upgrade: ~20 new components, 3 new hooks, and a full rewrite of every
 existing component's interaction states, keyboard model, and motion.
 
