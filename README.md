@@ -784,6 +784,36 @@ import { CometLoader } from "@meir-labs/ui-kit";
 
 Indeterminate loader for AI / agentic work-in-progress: a 4×4 `currentColor` dot grid whose bright head and fading tail orbit a clockwise spiral. Inherits the text color of its parent (defaults to `--ml-text-muted`), so wrap it in an element with the color you want. `size`: `"sm" | "md" | "lg"` (16/20/24px). Reduced-motion freezes the orbit to a static grid with a soft opacity pulse. Use `Spinner` for generic async waits; reach for `CometLoader` when the wait is an AI thinking or generating.
 
+### DotsLoader
+
+```tsx
+import { DotsLoader } from "@meir-labs/ui-kit";
+
+<DotsLoader size="md" label="Assistant is typing" />
+```
+
+Three `currentColor` dots pulsing in sequence — the most minimal indeterminate loader, for tight inline spaces (a send button, an inline "typing" state). `size`: `"sm" | "md" | "lg"` (16/20/24px). Reduced-motion freezes the sequence to a static staggered opacity pulse.
+
+### BarsLoader
+
+```tsx
+import { BarsLoader } from "@meir-labs/ui-kit";
+
+<BarsLoader size="md" label="Uploading file" />
+```
+
+Four `currentColor` bars scaling in a staggered equalizer rhythm — reads as active background work (an upload, a render, a sync). `size`: `"sm" | "md" | "lg"` (14/18/24px tall). Reduced-motion freezes the bars to a static uneven skyline with a soft whole-group opacity pulse.
+
+### PulseRingLoader
+
+```tsx
+import { PulseRingLoader } from "@meir-labs/ui-kit";
+
+<PulseRingLoader size="md" label="Connecting" />
+```
+
+A solid `currentColor` core with a ring that expands and fades outward on loop — reads as a live/listening/connecting state (a websocket handshake, a call connecting). `size`: `"sm" | "md" | "lg"` (16/20/26px). Reduced-motion holds the ring at rest and pulses its opacity only.
+
 ### Skeleton / SkeletonText
 
 ```tsx
@@ -1071,6 +1101,9 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `Callout` | Component | Inline tone-colored note block |
 | `Spinner` | Component | Inline loading indicator |
 | `CometLoader` | Component | AI/agentic loading indicator (spiral dot grid) |
+| `DotsLoader` | Component | Minimal 3-dot sequential-pulse loading indicator |
+| `BarsLoader` | Component | 4-bar equalizer-style loading indicator |
+| `PulseRingLoader` | Component | Expanding-ring loading indicator (live/connecting state) |
 | `Skeleton`, `SkeletonText` | Component | Loading placeholder |
 | `Progress` | Component | Determinate/indeterminate progress bar |
 
