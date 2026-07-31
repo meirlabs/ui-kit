@@ -242,8 +242,24 @@ function Chevron() {
  * `Accordion.Item` — a single header + collapsible panel. The header is a
  * `<button>` (`aria-expanded` / `aria-controls`); the panel is a
  * `role="region"` labelled by the header.
+ *
+ * ⚠️ Do NOT use the `Accordion.Item` dot-notation form in a Next.js App
+ * Router file that is a Server Component (no `"use client"`). This
+ * package's whole bundle is a client module; when a *Server* Component
+ * imports `Accordion` and references `Accordion.Item` as a JSX element
+ * type, React's server renderer resolves `Accordion` to a client-reference
+ * placeholder for the cross-boundary handoff — that placeholder does not
+ * carry runtime-attached statics, so the property access resolves to
+ * `undefined` ("Element type is invalid ... got: undefined"), even though
+ * the same code works fine from a Client Component (see `Shell`'s JSDoc
+ * for the full explanation of this class of bug). Import the named
+ * `AccordionItem` export instead — it's its own top-level module export,
+ * so React can resolve it as a real client reference on its own. The
+ * dot-notation static is kept for convenience in Client Components and
+ * non-RSC bundler contexts, but the named export is the only form
+ * guaranteed to work everywhere, including a Server Component.
  */
-const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
+export const AccordionItem = forwardRef<HTMLDivElement, AccordionItemProps>(
   function AccordionItem(
     { value, title, disabled, className, children, ...rest },
     ref,

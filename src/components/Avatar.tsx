@@ -1,6 +1,7 @@
 import {
   forwardRef,
   useEffect,
+  useRef,
   useState,
   type ComponentPropsWithoutRef,
   type Ref,
@@ -63,11 +64,19 @@ export const Avatar = forwardRef<HTMLDivElement | HTMLButtonElement, AvatarProps
   ) {
     const [errored, setErrored] = useState(false);
     const [loaded, setLoaded] = useState(false);
+    const imgRef = useRef<HTMLImageElement>(null);
 
-    // Reset load/error state whenever the source changes.
+    // Reset load/error state whenever the source changes — then re-check
+    // `complete`: with SSR/cached images the browser can finish loading before
+    // React attaches onLoad, which would leave the shimmer running forever.
     useEffect(() => {
       setErrored(false);
       setLoaded(false);
+      const img = imgRef.current;
+      if (img?.complete) {
+        if (img.naturalWidth > 0) setLoaded(true);
+        else setErrored(true);
+      }
     }, [src]);
 
     const showImage = Boolean(src) && !errored;
@@ -87,6 +96,7 @@ export const Avatar = forwardRef<HTMLDivElement | HTMLButtonElement, AvatarProps
       <>
         {showImage ? (
           <img
+            ref={imgRef}
             src={src}
             alt={alt ?? ""}
             onLoad={() => setLoaded(true)}
