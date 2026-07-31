@@ -102,8 +102,10 @@ export interface DataTableProps<Row> {
   caption?: ReactNode;
   "aria-label"?: string;
 
-  /** Slot below the table body — drop a <Pagination> or summary here. */
+  /** Slot below the table body — drop a <Pagination>/<PaginationFooter> or summary here. */
   footer?: ReactNode;
+  /** Slot above the table — drop a <FilterBar> (search + Filters button) or any toolbar here. */
+  toolbar?: ReactNode;
   className?: string;
 }
 
@@ -223,6 +225,7 @@ export function DataTable<Row>({
   caption,
   "aria-label": ariaLabel,
   footer,
+  toolbar,
   className,
 }: DataTableProps<Row>) {
   /* ── Sort state (controlled | uncontrolled) ── */
@@ -481,6 +484,7 @@ export function DataTable<Row>({
 
   return (
     <div className={cn("ml-dt-root", className)}>
+      {toolbar != null && <div className="ml-dt-toolbar">{toolbar}</div>}
       {stickyHeader ? <div className="ml-dt-scroll">{table}</div> : table}
       {footer != null && <div className="ml-dt-footer">{footer}</div>}
     </div>

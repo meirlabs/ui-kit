@@ -1,5 +1,38 @@
 # Changelog
 
+## 0.3.0
+
+Lands the "mailgail" owner standards (chat composer + table anatomy) as kit
+defaults — additive props/components only, no existing public API broken.
+
+- **New component `Composer`:** the chat-composer pattern — an auto-growing
+  `Textarea` with an icon-only send button living INSIDE the field
+  (bottom-right in `ltr`, bottom-left in `rtl` via the `dir` prop). Enter
+  sends (Shift+Enter or IME composition inserts a newline instead);
+  `disabled`/`loading` states; accessible labels throughout; light + dark.
+- **New component `FilterBar`:** the "top-right search + Filters button"
+  table toolbar — a search `Input` (optionally `collapsible`, mailgail's
+  icon-trigger-that-expands pattern), a `Filters`/`Filters (N)` button, extra
+  left/right slots, and an active-filter chip row. Drop it into `DataTable`'s
+  new `toolbar` slot.
+- **New component `PaginationFooter`:** the mailgail table-footer
+  convention — `"Show N ▾ results (X total)"` on the left (page-size
+  `<select>` + noun/nounPlural copy), `"Page x of y"` chevrons on the right,
+  deliberately no numbered page buttons. Drop it into `DataTable`'s `footer`
+  slot.
+- **`DataTable`:** new optional `toolbar` prop — a slot rendered above the
+  table (bordered, matches the header band) for a `FilterBar` or any other
+  toolbar content. Purely additive; omitting it renders exactly as before.
+- **`Textarea`:** `autoResize` fields now force `resize: none` (new
+  `.ml-textarea--autoresize` class) — a manual drag handle previously fought
+  the imperative auto-grow and left a resize handle in the corner, which
+  contradicted the "never mouse-resizable" rule everywhere `autoResize` was
+  already used (e.g. chat composers). Non-`autoResize` textareas are
+  unaffected and keep `resize: vertical`.
+- **Tests:** `Composer.test.tsx`, `FilterBar.test.tsx`,
+  `PaginationFooter.test.tsx`, `Textarea.test.tsx` (new — `Textarea` had no
+  test file before); `DataTable.test.tsx` gained toolbar-slot coverage.
+
 ## Unreleased
 
 Major upgrade: ~20 new components, 3 new hooks, and a full rewrite of every

@@ -85,6 +85,38 @@ function ItemList({ items }: { items: Item[] }) {
 | `pageCount` | `number` | Total number of pages |
 | `onPage` | `(index: number) => void` | Callback when a page is selected |
 
+### PaginationFooter
+
+The table-footer convention: `"Show N ▾ results (X total)"` on the left, `"Page x of y"` chevrons on the right — deliberately no numbered page buttons (page counts under this pattern are small by construction; a table that needs jump-to-page wants a filter instead). Drop it straight into `DataTable`'s `footer` slot.
+
+```tsx
+import { DataTable, PaginationFooter } from "@meir-labs/ui-kit";
+
+<DataTable
+  columns={columns}
+  data={pageRows}
+  footer={
+    <PaginationFooter
+      pageIndex={pageIndex}
+      pageCount={pageCount}
+      onPage={setPageIndex}
+      total={leads.length}
+      pageSize={pageSize}
+      onPageSizeChange={setPageSize}
+      noun="lead"
+    />
+  }
+/>
+```
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `pageIndex` / `pageCount` / `onPage` | `number` / `number` / `(index) => void` | -- | Same contract as `Pagination` |
+| `total` | `number` | -- | Feeds the `"(N total)"` copy |
+| `pageSize` / `onPageSizeChange` | `number` / `(size) => void` | -- | Omit the handler and the size `<select>` renders disabled instead of disappearing |
+| `pageSizeOptions` | `number[]` | `[10, 25, 50, 100]` | Options offered in the size `<select>` |
+| `noun` / `nounPlural` | `string` | `"row"` / `${noun}s` | Singular/plural label, e.g. `"lead"` / `"leads"` |
+
 ### StatusPill
 
 A small colored pill for status indicators.
@@ -473,13 +505,31 @@ const columns: Column<Client>[] = [
 
 <DataTable
   columns={columns}
-  data={clients}
+  data={pageRows}
   defaultSort={{ columnId: "mrr", direction: "desc" }}
   selectable="multiple"
   onRowClick={(row) => openClient(row.id)}
   loading={isLoading}
   emptyState={<EmptyState title="No clients yet" />}
-  footer={<Pagination pageIndex={pageIndex} pageCount={pageCount} onPage={setPage} />}
+  toolbar={
+    <FilterBar
+      searchValue={query}
+      onSearchChange={setQuery}
+      onFiltersClick={() => setDrawerOpen(true)}
+      filterCount={activeFilterCount}
+    />
+  }
+  footer={
+    <PaginationFooter
+      pageIndex={pageIndex}
+      pageCount={pageCount}
+      onPage={setPageIndex}
+      total={clients.length}
+      pageSize={pageSize}
+      onPageSizeChange={setPageSize}
+      noun="client"
+    />
+  }
 />
 ```
 
@@ -493,7 +543,45 @@ The React table component (the `.ml-dt-*` CSS classes below still work if you'd 
 | `stickyHeader` / `compact` | `boolean` | Layout & density |
 | `loading` / `loadingRowCount` / `error` / `emptyState` | -- | Loading skeleton rows (default 5), error slot, empty slot |
 | `onRowClick` | `(row: Row) => void` | -- |
-| `footer` | `ReactNode` | Slot below the body — drop a `<Pagination>` or summary here |
+| `toolbar` | `ReactNode` | Slot above the body (bordered, matches the header band) — drop a `<FilterBar>` here |
+| `footer` | `ReactNode` | Slot below the body — drop a `<Pagination>`/`<PaginationFooter>` or summary here |
+
+### FilterBar
+
+The "top-right search + Filters button" table toolbar. Left slot for extra controls (e.g. a segmented `Toggle`), a right cluster (search, then `Filters`/`Filters (N)`, then any extra `actions`), and an optional active-filter chip row underneath. Drop it into `DataTable`'s `toolbar` slot.
+
+```tsx
+import { FilterBar, Toggle, Tag, ChipRow } from "@meir-labs/ui-kit";
+
+<FilterBar
+  searchValue={query}
+  onSearchChange={setQuery}
+  searchPlaceholder="Search clients"
+  onFiltersClick={() => setDrawerOpen(true)}
+  filterCount={activeFilterCount}
+  activeFilters={
+    activeFilterCount > 0 && (
+      <ChipRow>
+        <Tag onRemove={clearTier}>Tier: A</Tag>
+      </ChipRow>
+    )
+  }
+>
+  <Toggle options={TIER_OPTIONS} active={tier} onChange={setTier} />
+</FilterBar>
+```
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `searchValue` / `onSearchChange` | `string` / `(value) => void` | -- | Controlled search text |
+| `searchPlaceholder` / `searchLabel` | `string` | `"Search"` / `"Search"` | Placeholder and accessible label |
+| `collapsible` | `boolean` | `false` | `true` renders an icon trigger that expands to the field on click and collapses back on blur only while empty |
+| `searchWidth` | `number` | `260` | Width of the expanded field, in px |
+| `onFiltersClick` | `() => void` | -- | Omit to hide the Filters button entirely |
+| `filterCount` | `number` | `0` | Shown as `"Filters (N)"` once greater than 0 |
+| `children` | `ReactNode` | -- | Extra left-side controls, e.g. a segmented `Toggle` |
+| `actions` | `ReactNode` | -- | Extra right-side controls, after the Filters button |
+| `activeFilters` | `ReactNode` | -- | Chip row rendered on its own line below the toolbar |
 
 ### StatCard
 
@@ -705,7 +793,34 @@ import { Textarea } from "@meir-labs/ui-kit";
 <Textarea autoResize minRows={3} maxRows={8} />
 ```
 
-`autoResize` grows the field to fit its content between `minRows` and `maxRows` (beyond which it scrolls). `invalid` matches `Input`.
+`autoResize` grows the field to fit its content between `minRows` and `maxRows` (beyond which it scrolls) and forces `resize: none` — a manual drag handle would fight the auto-grow. `invalid` matches `Input`.
+
+### Composer
+
+The chat-composer pattern: an auto-growing `Textarea` with an icon-only send button living INSIDE the field (bottom-right in `ltr`, bottom-left in `rtl`). Controlled like the rest of the kit — the caller owns `value` and clears it after `onSend` fires.
+
+```tsx
+import { Composer } from "@meir-labs/ui-kit";
+
+<Composer
+  value={draft}
+  onChange={setDraft}
+  onSend={(value) => { sendMessage(value); setDraft(""); }}
+  placeholder="Message the agent…"
+  minRows={1}
+  maxRows={6}
+  loading={sending}
+/>
+```
+
+| Prop | Type | Default | Description |
+| --- | --- | --- | --- |
+| `value` / `onChange` | `string` / `(value) => void` | -- | Controlled draft text |
+| `onSend` | `(value) => void` | -- | Fires on Enter (no Shift, not IME-composing) or a send-button click |
+| `minRows` / `maxRows` | `number` | `1` / `6` | Auto-grow bounds, in rows |
+| `dir` | `"ltr" \| "rtl"` | `"ltr"` | Flips the send button to the opposite corner |
+| `disabled` / `loading` | `boolean` | `false` | Disables the field + button; `loading` also blocks Enter-to-send |
+| `sendLabel` / `sendIcon` | `string` / `ReactNode` | `"Send"` / paper-plane | Override the button's accessible label / icon |
 
 ### Checkbox
 
@@ -1046,8 +1161,10 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `Toggle` | Component | Radiogroup value-picker |
 | `SegmentedControl` | Component | 2–3 view switcher with a sliding thumb |
 | `Pagination`, `getPaginationRange`, `PAGINATION_DOTS` | Component, Utility | Page navigation UI |
+| `PaginationFooter` | Component | "Show N results (X total)" + "Page x of y" table footer |
 | `Breadcrumbs` | Component | Collapsible trail |
 | `DataTable`, `Column`, `SortState` | Component, Type | Sortable/selectable data table |
+| `FilterBar` | Component | Search + "Filters" button table toolbar |
 | `StatCard` | Component | KPI tile with delta/trend |
 | `EmptyState` | Component | No-data/no-results/error block |
 | `Modal` | Component | Focus-trapped dialog |
@@ -1063,6 +1180,7 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `Wizard` | Component | Multi-step flow shell |
 | `Input` | Component | Text field |
 | `Textarea` | Component | Multi-line field |
+| `Composer` | Component | Auto-growing chat composer with an in-field send button |
 | `Checkbox` | Component | Checkbox with indeterminate state |
 | `Radio`, `RadioGroup` | Component | Radio group |
 | `Stepper` | Component | Numbered step progress |

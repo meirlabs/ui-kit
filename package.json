@@ -1,6 +1,6 @@
 {
   "name": "@meir-labs/ui-kit",
-  "version": "0.2.1",
+  "version": "0.3.0",
   "description": "Themeable (light & dark) presentational component library for React",
   "type": "module",
   "main": "./dist/index.js",

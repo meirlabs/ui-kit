@@ -134,6 +134,13 @@
   box-shadow: 0 0 0 2px var(--ml-text);
 }
 
+/* autoResize fields grow imperatively — a manual drag handle would fight that,
+   so autoResize always drops the native resize handle (owner rule: "never
+   mouse-resizable"). */
+.ml-textarea--autoresize {
+  resize: none;
+}
+
 .ml-textarea--invalid {
   border-color: var(--ml-color-danger);
 }

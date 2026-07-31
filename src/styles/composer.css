@@ -1,0 +1,31 @@
+/* @meir-labs/ui-kit — Composer
+   Chat-composer pattern: an auto-growing textarea with an icon-only send
+   button living INSIDE the field (bottom-right in ltr, bottom-left in rtl —
+   `[dir="rtl"]` on the root flips it). The field itself gets `resize: none`
+   from Textarea's `--autoresize` modifier (see inputs.css) — growth is
+   handled imperatively, never a mouse drag handle. */
+
+.ml-composer {
+  position: relative;
+  width: 100%;
+}
+
+.ml-composer-field.ml-textarea {
+  padding-right: 44px;
+}
+
+.ml-composer[dir="rtl"] .ml-composer-field.ml-textarea {
+  padding-right: 12px;
+  padding-left: 44px;
+}
+
+.ml-composer-send {
+  position: absolute;
+  right: 6px;
+  bottom: 6px;
+}
+
+.ml-composer[dir="rtl"] .ml-composer-send {
+  right: auto;
+  left: 6px;
+}

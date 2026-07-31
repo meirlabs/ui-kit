@@ -4,6 +4,7 @@
 @import "./table.css";
 @import "./virtual-table.css";
 @import "./pagination.css";
+@import "./filterbar.css";
 @import "./tags.css";
 @import "./layout.css";
 @import "./accordion.css";
@@ -21,6 +22,7 @@
 @import "./combobox.css";
 @import "./forms.css";
 @import "./inputs.css";
+@import "./composer.css";
 @import "./otp.css";
 @import "./choice.css";
 @import "./stepper.css";

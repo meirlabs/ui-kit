@@ -66,7 +66,7 @@ export { DetailList } from "./components/DetailList";
 export type { DetailListProps, DetailListItem } from "./components/DetailList";
 export { DangerZone } from "./components/DangerZone";
 export type { DangerZoneProps, DangerZoneItemProps } from "./components/DangerZone";
-export { Accordion } from "./components/Accordion";
+export { Accordion, AccordionItem } from "./components/Accordion";
 export type { AccordionProps, AccordionItemProps } from "./components/Accordion";
 
 // Navigation
@@ -81,6 +81,8 @@ export type {
 } from "./components/SegmentedControl";
 export { Pagination, getPaginationRange, PAGINATION_DOTS } from "./components/Pagination";
 export type { PaginationProps } from "./components/Pagination";
+export { PaginationFooter } from "./components/PaginationFooter";
+export type { PaginationFooterProps } from "./components/PaginationFooter";
 export { Breadcrumbs } from "./components/Breadcrumbs";
 export type { BreadcrumbsProps, BreadcrumbItem } from "./components/Breadcrumbs";
 
@@ -93,6 +95,8 @@ export type {
   SortState,
   SortDirection,
 } from "./components/DataTable";
+export { FilterBar } from "./components/FilterBar";
+export type { FilterBarProps } from "./components/FilterBar";
 export { StatCard } from "./components/StatCard";
 export type { StatCardProps, StatCardTrend } from "./components/StatCard";
 export { EmptyState } from "./components/EmptyState";
@@ -145,6 +149,8 @@ export { Input } from "./components/Input";
 export type { InputProps } from "./components/Input";
 export { Textarea } from "./components/Textarea";
 export type { TextareaProps } from "./components/Textarea";
+export { Composer } from "./components/Composer";
+export type { ComposerProps } from "./components/Composer";
 export { Checkbox } from "./components/Checkbox";
 export type { CheckboxProps } from "./components/Checkbox";
 export { Radio, RadioGroup } from "./components/Radio";

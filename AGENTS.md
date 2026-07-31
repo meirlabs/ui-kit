@@ -3,7 +3,7 @@
 ## Package
 
 - **Name:** @meir-labs/ui-kit
-- **Version:** 0.1.0
+- **Version:** 0.3.0
 - **Location:** ~/Documents/business/meirlabs/product/ui-kit/
 - **Purpose:** Themeable presentational component library for React (light & dark)
 - **Install:** `pnpm add @meir-labs/ui-kit` or `"@meir-labs/ui-kit": "file:../meirlabs/ui-kit"` for local dev
@@ -141,6 +141,10 @@ getPaginationRange(...) / PAGINATION_DOTS
 // { pageIndex; pageCount; onPage; siblingCount?: number (1); showEdges?: boolean; pageSize?: number; pageSizeOptions?: number[]; onPageSizeChange?: (size) => void } & nav props
 // Returns null when pageCount <= 1
 
+PaginationFooter(props: PaginationFooterProps): JSX.Element
+// { pageIndex; pageCount; onPage; total: number; pageSize: number; onPageSizeChange?: (size) => void; pageSizeOptions?: number[] ([10,25,50,100]); noun?: string ("row"); nounPlural?: string (`${noun}s`) } & div props
+// The mailgail table-footer pattern: "Show N ▾ results (X total)" left, "Page x of y" chevrons right — no numbered page buttons. Drop into DataTable's `footer` slot. `onPageSizeChange` omitted → the size <select> renders disabled (space reserved, not hidden).
+
 Breadcrumbs(props: BreadcrumbsProps): JSX.Element
 // { items: BreadcrumbItem[]; maxItems?: number; separator?: ReactNode } & nav props
 // BreadcrumbItem: { label; href?; onClick? }. Collapses the middle into a "…" menu past maxItems; first/last always visible.
@@ -154,7 +158,12 @@ DataTable<Row>(props: DataTableProps<Row>): JSX.Element
 // columns: Column<Row>[] — { id; header; accessor?: ((row) => ReactNode) | keyof Row; sortable?; align?: "left"|"right"|"center"; width?; numeric?; sortFn? }
 // data: Row[]; getRowId?; sortState?/onSortChange? (controlled) or defaultSort? (uncontrolled); manualSort?
 // selectable?: "single"|"multiple"; selectedIds?/onSelectionChange?/defaultSelectedIds?
-// stickyHeader?; compact?; loading?; loadingRowCount? (5); error?; emptyState?; onRowClick?; caption?; "aria-label"?; footer?: ReactNode
+// stickyHeader?; compact?; loading?; loadingRowCount? (5); error?; emptyState?; onRowClick?; caption?; "aria-label"?; footer?: ReactNode; toolbar?: ReactNode
+// footer: drop a <Pagination>/<PaginationFooter> or summary below the body. toolbar: drop a <FilterBar> or any toolbar above the table (bordered band, matches the header). Both purely additive — omitting either renders exactly as before.
+
+FilterBar(props: FilterBarProps): JSX.Element
+// { searchValue: string; onSearchChange: (value) => void; searchPlaceholder?; searchLabel? ("Search"); searchIcon?: ReactNode; collapsible?: boolean (false); searchWidth?: number (260); onFiltersClick?: () => void; filterCount?: number; filtersLabel? ("Filters"); filtersIcon?: ReactNode; children?: ReactNode (left slot, e.g. a Toggle); actions?: ReactNode (right slot after Filters); activeFilters?: ReactNode (chip row below) } & div props
+// The "top-right search + Filters button" table toolbar (mailgail pattern). `collapsible` renders an icon trigger that expands to the Input on click and collapses back on blur only when empty. `onFiltersClick` omitted → no Filters button rendered. Drop into DataTable's `toolbar` slot.
 
 StatCard(props: StatCardProps): JSX.Element
 // { value: ReactNode; label: string; icon?; delta?: number; trend?: StatCardTrend; deltaFormatter?; loading?: boolean } & div props
@@ -213,6 +222,11 @@ Input(props: InputProps): JSX.Element
 
 Textarea(props: TextareaProps): JSX.Element
 // { autoResize?: boolean; minRows?: number; maxRows?: number; invalid?: boolean } & textarea props
+// autoResize also forces resize:none (.ml-textarea--autoresize) — a manual drag handle would fight the imperative auto-grow.
+
+Composer(props: ComposerProps): JSX.Element
+// { value: string; onChange: (value) => void; onSend: (value) => void; minRows?: number (1); maxRows?: number (6); dir?: "ltr"|"rtl" ("ltr"); disabled?: boolean; loading?: boolean; sendLabel?: string ("Send"); sendIcon?: ReactNode } & textarea props (minus value/onChange/defaultValue/dir/rows)
+// The chat-composer pattern: an auto-growing Textarea with an icon-only send Button INSIDE the field (bottom-right in ltr, bottom-left in rtl — dir flips it). Enter sends; Shift+Enter or IME composition inserts a newline. Controlled like the rest of the kit — the caller clears `value` itself after `onSend` fires.
 
 Checkbox(props: CheckboxProps): JSX.Element
 // { indeterminate?: boolean; label?: ReactNode; description?: ReactNode } & input[type=checkbox] props
