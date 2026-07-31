@@ -95,6 +95,12 @@ Accordion(props: AccordionProps) / AccordionItem(props: AccordionItemProps): JSX
 // type?: "single" (value/defaultValue: string) | "multiple" (value/defaultValue: string[]); onValueChange
 // AccordionItemProps: { value: string; title: ReactNode; disabled?: boolean } & div props
 
+OnboardingWidget(props: OnboardingWidgetProps): JSX.Element
+// { title?: ReactNode ("Get started"); description?: ReactNode; steps: OnboardingStep[]; onStepAction?: (stepId, index) => void; onDismiss?: () => void; hideProgress?: boolean; progressLabel?: (done, total) => ReactNode } & section props
+// OnboardingStep: { id: string; title: ReactNode; description?; completed?: boolean; current?: boolean; icon?: ReactNode; action?: OnboardingStepAction }
+// OnboardingStepAction: { label: ReactNode; href?: string; showWhenComplete?: boolean }
+// Data-driven checklist card. `current` (ignored once `completed`) renders an emphasized marker + aria-current="step", matching Stepper's current state.
+
 // Layout
 Shell / ShellSidebarProps / ShellMainProps — thin div/aside/main wrappers for the app-shell grid (no extra props)
 Sidebar(props: SidebarProps) / SidebarItem(props: SidebarItemProps): JSX.Element

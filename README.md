@@ -325,6 +325,38 @@ import { Accordion } from "@meir-labs/ui-kit";
 
 `Accordion.Item` takes `value` (required), `title`, and `disabled`.
 
+### OnboardingWidget
+
+```tsx
+import { OnboardingWidget, type OnboardingStep } from "@meir-labs/ui-kit";
+
+const steps: OnboardingStep[] = [
+  { id: "profile", title: "Complete your profile", completed: true },
+  { id: "workspace", title: "Name your workspace", current: true },
+  { id: "invite", title: "Invite a teammate", action: { label: "Invite" } },
+];
+
+<OnboardingWidget
+  title="Set up your workspace"
+  steps={steps}
+  onStepAction={(id, index) => go(id)}
+  onDismiss={() => hide()}
+/>
+```
+
+A data-driven onboarding checklist card: a progress summary ("2 of 4 complete" + a bar) over a list of steps. Controlled — `steps` and each step's state come in via props; the widget only renders and emits `onStepAction(id, index)`.
+
+| Prop | Type | Description |
+| --- | --- | --- |
+| `steps` | `OnboardingStep[]` | `{ id; title; description?; completed?; current?; icon?; action? }` — `current` is ignored once `completed` is true; `icon` is the incomplete-state marker (falls back to the step's ordinal number) |
+| `title` / `description` | `ReactNode` | Card heading (default `"Get started"`) and optional subheading |
+| `onStepAction` | `(stepId, index) => void` | Fires when a step's `action` CTA is activated |
+| `onDismiss` | `() => void` | When set, renders a dismiss button |
+| `hideProgress` | `boolean` | Hides the progress summary + bar |
+| `progressLabel` | `(done, total) => ReactNode` | Overrides the default `"{done} of {total} complete"` summary |
+
+Each step's completed/current/incomplete state is conveyed to assistive tech via visually-hidden text (not color alone); the current step also gets `aria-current="step"`. Themed via tokens — light + dark both correct.
+
 ### Shell, Sidebar, TopBar, PageHeader
 
 ```tsx

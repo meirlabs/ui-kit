@@ -100,4 +100,30 @@ describe("OnboardingWidget", () => {
       "Not completed",
     );
   });
+
+  it("marks a step as current with aria-current, a current state, and announced text", () => {
+    const steps: OnboardingStep[] = [
+      { id: "a", title: "Done step", completed: true },
+      { id: "b", title: "On this one", current: true },
+      { id: "c", title: "Later step" },
+    ];
+    const { container } = render(<OnboardingWidget steps={steps} />);
+    const items = container.querySelectorAll(".ml-onboarding-step");
+    expect(items[1]).toHaveAttribute("data-state", "current");
+    expect(items[1]).toHaveAttribute("aria-current", "step");
+    expect(items[1].querySelector(".ml-visually-hidden")).toHaveTextContent(
+      "In progress",
+    );
+    expect(items[2]).not.toHaveAttribute("aria-current");
+  });
+
+  it("ignores current when the step is already completed", () => {
+    const steps: OnboardingStep[] = [
+      { id: "a", title: "Done but marked current", completed: true, current: true },
+    ];
+    const { container } = render(<OnboardingWidget steps={steps} />);
+    const item = container.querySelector(".ml-onboarding-step");
+    expect(item).toHaveAttribute("data-state", "complete");
+    expect(item).not.toHaveAttribute("aria-current");
+  });
 });
