@@ -28,6 +28,15 @@
    approximating the 1→3→6→12→24→48 doubling intent (blur=b, offsetY=b/2,
    spread=-b/2), preserving the dark-mode inset top-ring highlight. These tokens
    are the ONLY sanctioned shadow source — never write a raw box-shadow in app CSS.
+
+   --ml-shadow-inner-glow (LAB-221) — a realistic glow built from layered
+   `inset` shadows only (crisp top hairline + soft perimeter ring + a broad
+   soft bloom fading in from the top), monochrome per G10. It's additive: stack
+   it alongside an elevation shadow, e.g.
+     box-shadow: var(--ml-shadow-elevated), var(--ml-shadow-inner-glow);
+   Never use it standalone in place of -card/-elevated/-modal, and never as a
+   Card/StatCard resting-state default (spec §4 "no shadow at rest" still
+   applies) — it's an opt-in accent for a surface that should read as lit.
    ───────────────────────────────────────────────────────────────────────────── */
 
 /* ── Motion (theme-independent) ──
@@ -128,6 +137,12 @@
     0 24px 48px -24px rgba(0, 0, 0, 0.5),
     inset 0 0 0 1px rgba(255, 255, 255, 0.04);
   --ml-shadow-glow: 0 0 20px rgba(0, 0, 0, 0.25);
+  /* Inner-shadow glow (LAB-221) — additive accent, stack with an elevation
+     shadow rather than using alone. See tokens.css header note. */
+  --ml-shadow-inner-glow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.08),
+    inset 0 0 0 1px rgba(255, 255, 255, 0.05),
+    inset 0 12px 24px -12px rgba(255, 255, 255, 0.16);
   --ml-dt-thead-bg: rgba(255, 255, 255, 0.03);
   --ml-glass-bg: rgba(22, 27, 34, 0.82);
   --ml-glass-blur: blur(40px);
@@ -195,6 +210,12 @@
     0 12px 24px -12px rgba(31, 35, 40, 0.1),
     0 24px 48px -24px rgba(31, 35, 40, 0.16);
   --ml-shadow-glow: 0 0 20px rgba(31, 35, 40, 0.06);
+  /* Inner-shadow glow (LAB-221) — additive accent, stack with an elevation
+     shadow rather than using alone. See tokens.css header note. */
+  --ml-shadow-inner-glow:
+    inset 0 1px 0 0 rgba(255, 255, 255, 0.7),
+    inset 0 0 0 1px rgba(31, 35, 40, 0.06),
+    inset 0 12px 24px -12px rgba(31, 35, 40, 0.1);
   --ml-dt-thead-bg: rgba(0, 0, 0, 0.02);
   --ml-glass-bg: rgba(255, 255, 255, 0.85);
   --ml-glass-blur: blur(40px);

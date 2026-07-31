@@ -67,6 +67,26 @@ export function CardDemo() {
           </Card>
         </div>
       </div>
+
+      <div className="demo-section">
+        <div className="demo-label">
+          Glow elevation (opt-in) — --ml-shadow-inner-glow stacked on --ml-shadow-elevated
+        </div>
+        <Card
+          style={{
+            boxShadow: "var(--ml-shadow-elevated), var(--ml-shadow-inner-glow)",
+          }}
+        >
+          <span style={labelStyle}>Featured</span>
+          <p style={{ fontSize: 14, color: "var(--ml-text-muted)", margin: "var(--ml-space-xs) 0 0" }}>
+            A realistic glow built from layered inset shadows — a top hairline
+            highlight, a soft perimeter ring, and a broad bloom fading in from
+            the top. Additive: it composes with an elevation shadow rather
+            than replacing it, and the surface still resolves correctly with
+            the token alone stripped back out.
+          </p>
+        </Card>
+      </div>
     </>
   );
 }
