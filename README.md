@@ -557,7 +557,29 @@ import { Dropdown } from "@meir-labs/ui-kit";
 />
 ```
 
-`trigger` is cloned to receive button semantics + handlers. Items are `{ label, value, icon?, disabled?, destructive? }` or `{ separator: true }`. `align`: `"start" | "end"` (default `start`).
+`trigger` is cloned to receive button semantics + handlers. Items are `{ label, value, icon?, disabled?, destructive?, items? }` or `{ separator: true }`. `align`: `"start" | "end"` (default `start`).
+
+An item's own `items` renders it as a submenu trigger (one level deep — a submenu item's `items` is ignored):
+
+```tsx
+<Dropdown
+  trigger={<Button variant="ghost">Actions</Button>}
+  items={[
+    { label: "Edit", value: "edit" },
+    {
+      label: "Share",
+      value: "share",
+      items: [
+        { label: "Copy link", value: "copy-link" },
+        { label: "Invite by email", value: "invite-email" },
+      ],
+    },
+  ]}
+  onSelect={(value) => handleAction(value)}
+/>
+```
+
+Opens on hover via a triangle "safe zone" — moving the cursor diagonally toward the open submenu keeps it open through brief drift off the trigger row — or with `ArrowRight`/`Enter`; `ArrowLeft`/`Escape` backs out. A submenu item's own `onSelect` fires and closes the whole menu, same as a top-level item.
 
 ### Drawer
 

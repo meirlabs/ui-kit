@@ -169,7 +169,10 @@ Modal(props: ModalProps): JSX.Element
 
 Dropdown(props: DropdownProps): JSX.Element
 // { trigger: ReactNode; items: DropdownMenuItem[]; active?: string; onSelect: (value) => void; align?: "start"|"end" } & div props
-// DropdownItem: { label; value; icon?; disabled?; destructive? } | DropdownSeparator: { separator: true }
+// DropdownItem: { label; value; icon?; disabled?; destructive?; items?: DropdownMenuItem[] } | DropdownSeparator: { separator: true }
+// items on a DropdownItem renders it as a submenu trigger (one level deep; its own onSelect never fires).
+// Opens on hover with a triangle "safe zone" (moving the cursor diagonally toward the submenu keeps it
+// open through brief drift off the trigger) or via ArrowRight/Enter; ArrowLeft/Escape backs out.
 
 Drawer(props: DrawerProps): JSX.Element
 // { open: boolean; onClose: () => void; side?: "left"|"right"|"top"|"bottom"; size?: "sm"|"md"|"lg"; title?; footer?; initialFocusRef?; closeOnOverlayClick?; closeOnEscape? } & div props

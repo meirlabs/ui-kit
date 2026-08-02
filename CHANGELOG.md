@@ -56,6 +56,11 @@ existing component's interaction states, keyboard model, and motion.
   component (accordion, choice controls, combobox, command palette, data
   display, drawer, file upload, navigation, overlays, popover, progress,
   select, skeleton, spinner, stepper, table, tags, toast, tooltip).
+- **`Dropdown`:** items can now carry nested `items` to render as a hover-opened
+  submenu (one level deep), positioned like the root menu and kept open while
+  the cursor moves diagonally toward it via a triangle "safe zone" — brief
+  drift off the trigger row no longer flickers it shut. `ArrowRight`/`Enter`
+  opens and focuses it from the keyboard; `ArrowLeft`/`Escape` backs out.
 
 ## 0.1.1
 
