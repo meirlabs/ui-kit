@@ -282,6 +282,21 @@
   color: var(--ml-text-muted);
 }
 
+.ml-dropdown-item-chevron {
+  flex-shrink: 0;
+  color: var(--ml-text-faint);
+}
+
+/* Submenu — same panel styling as the root menu; placement flips the
+   transform origin to the near edge so it lifts from the side it opens on. */
+.ml-dropdown-submenu {
+  transform-origin: left center;
+}
+
+.ml-dropdown-submenu[data-placement="left"] {
+  transform-origin: right center;
+}
+
 .ml-dropdown-separator {
   height: 1px;
   margin: var(--ml-space-xs) 0;
