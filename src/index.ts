@@ -103,6 +103,15 @@ export type {
 } from "./components/OnboardingWidget";
 export { EmptyState } from "./components/EmptyState";
 export type { EmptyStateProps, EmptyStateVariant } from "./components/EmptyState";
+export { InvoiceTable } from "./components/InvoiceTable";
+export type { InvoiceTableProps, InvoiceRow, InvoiceStatus } from "./components/InvoiceTable";
+export { InvoiceSummaryPanel } from "./components/InvoiceSummaryPanel";
+export type {
+  InvoiceSummaryPanelProps,
+  InvoiceLineItem,
+} from "./components/InvoiceSummaryPanel";
+export { InvoicePortal } from "./components/InvoicePortal";
+export type { InvoicePortalProps } from "./components/InvoicePortal";
 
 // Overlays
 export { Modal } from "./components/Modal";

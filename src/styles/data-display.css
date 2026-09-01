@@ -1,4 +1,4 @@
-/* @meir-labs/ui-kit — Data Display (StatCard, EmptyState) */
+/* @meir-labs/ui-kit — Data Display (StatCard, EmptyState, Invoice Portal) */
 
 /* ── Stat Card ──
    No shadow at rest (card rule §4): border + surface only. Value is semibold
@@ -145,4 +145,120 @@
     animation: none;
     background: var(--ml-bg-surface);
   }
+}
+
+/* ── Invoice Portal ──
+   Client-portal invoice pattern: an InvoiceTable (DataTable underneath) next
+   to an InvoiceSummaryPanel (Card underneath). Two panes on wide viewports,
+   one column under 900px so it fits a narrow client-facing layout. */
+.ml-invoice-portal {
+  display: grid;
+  grid-template-columns: minmax(0, 1.6fr) minmax(0, 1fr);
+  gap: var(--ml-space-xl);
+  align-items: start;
+}
+
+@media (max-width: 900px) {
+  .ml-invoice-portal {
+    grid-template-columns: 1fr;
+  }
+}
+
+.ml-invoice-portal-list,
+.ml-invoice-portal-summary {
+  min-width: 0;
+}
+
+/* ── Invoice Summary Panel ── */
+.ml-invoice-summary {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-lg);
+}
+
+.ml-invoice-summary-header {
+  display: flex;
+  align-items: flex-start;
+  justify-content: space-between;
+  gap: var(--ml-space-md);
+}
+
+.ml-invoice-summary-title {
+  margin: 0;
+  font-size: 18px;
+  font-weight: 600;
+  line-height: 1.3;
+  letter-spacing: -0.4px;
+  color: var(--ml-text);
+}
+
+.ml-invoice-summary-subtitle {
+  margin: 2px 0 0;
+  font-size: 13px;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
+}
+
+.ml-invoice-summary-amount {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+  padding: var(--ml-space-md) var(--ml-space-lg);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  background: var(--ml-bg-surface);
+}
+
+.ml-invoice-summary-amount-label {
+  font-size: 12px;
+  font-weight: 500;
+  letter-spacing: 0.04em;
+  text-transform: uppercase;
+  color: var(--ml-text-muted);
+}
+
+.ml-invoice-summary-amount-value {
+  font-size: 24px;
+  font-weight: 600;
+  line-height: 1.2;
+  letter-spacing: -0.6px;
+  color: var(--ml-text);
+}
+
+.ml-invoice-summary-items-title {
+  margin: 0 0 var(--ml-space-sm);
+  font-size: 13px;
+  font-weight: 500;
+  color: var(--ml-text-muted);
+}
+
+.ml-invoice-summary-items-list {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-sm);
+  margin: 0;
+  padding: 0;
+  list-style: none;
+}
+
+.ml-invoice-summary-item {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  gap: var(--ml-space-md);
+  font-size: 14px;
+  color: var(--ml-text);
+}
+
+.ml-invoice-summary-item--total {
+  margin-top: var(--ml-space-sm);
+  padding-top: var(--ml-space-sm);
+  border-top: 1px solid var(--ml-border);
+  font-weight: 600;
+}
+
+.ml-invoice-summary-actions {
+  display: flex;
+  flex-wrap: wrap;
+  gap: var(--ml-space-sm);
 }
