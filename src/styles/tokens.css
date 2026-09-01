@@ -16,7 +16,13 @@
    never a numeric literal, so stacking stays coordinated:
      --ml-z-dropdown 1000 · --ml-z-sticky 1100 · --ml-z-popover 1200 ·
      --ml-z-tooltip 1300 · --ml-z-drawer 1400 · --ml-z-modal 1500 ·
-     --ml-z-toast 1600 · --ml-z-command 1700
+     --ml-z-anchored 1550 · --ml-z-toast 1600 · --ml-z-command 1700
+
+   --ml-z-anchored is for BODY-PORTALED anchored surfaces (Select/Combobox
+   popovers, Dropdown menus): they can be opened from inside a Drawer or Modal
+   (z 1400/1500), so they must clear those scrims or the options render behind
+   the overlay and every click lands on it. In-page (non-portaled) menus keep
+   --ml-z-dropdown — raising those would float them over a scrim they sit under.
 
    Monochrome neutralization (G10): --ml-color-primary / --ml-color-purple (and
    their -muted) are still DEFINED (compat.css + legacy classes reference them)
@@ -64,6 +70,7 @@
   --ml-z-tooltip: 1300;
   --ml-z-drawer: 1400;
   --ml-z-modal: 1500;
+  --ml-z-anchored: 1550;
   --ml-z-toast: 1600;
   --ml-z-command: 1700;
 
