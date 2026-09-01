@@ -1,0 +1,36 @@
+/* @meir-labs/ui-kit — StreamingText
+   JS drives which characters are shown (see StreamingText.tsx); this file only
+   styles the inline blinking cursor. The component already skips rendering
+   the cursor under prefers-reduced-motion — the media query here is a
+   defensive fallback, matching the rest of the kit's motion convention. */
+
+.ml-streamingtext {
+  display: inline;
+  white-space: pre-wrap;
+}
+
+.ml-streamingtext-cursor {
+  display: inline-block;
+  width: 2px;
+  height: 1em;
+  margin-left: 1px;
+  vertical-align: text-bottom;
+  background: currentColor;
+  animation: ml-streamingtext-blink 1s step-end infinite;
+}
+
+@keyframes ml-streamingtext-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-streamingtext-cursor {
+    animation: none;
+  }
+}

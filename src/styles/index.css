@@ -31,6 +31,8 @@
 @import "./comet.css";
 @import "./skeleton.css";
 @import "./progress.css";
+@import "./streaming-text.css";
+@import "./selection-toolbar.css";
 @import "./onboarding.css";
 @import "./sortable.css";
 @import "./charts.css";

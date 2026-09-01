@@ -1,0 +1,57 @@
+/* @meir-labs/ui-kit — SelectionToolbar
+   A small floating action bar anchored to a text-selection Range (see
+   SelectionToolbar.tsx for positioning). Same surface/elevation language as
+   Popover/Dropdown menus. */
+
+.ml-selection-toolbar {
+  display: inline-flex;
+  align-items: center;
+  gap: 2px;
+  padding: 4px;
+  background: var(--ml-bg-elevated);
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-md);
+  box-shadow: var(--ml-shadow-elevated);
+}
+
+.ml-selection-toolbar-action {
+  display: inline-flex;
+  align-items: center;
+  gap: 6px;
+  padding: 6px 10px;
+  border: none;
+  border-radius: var(--ml-radius-sm);
+  background: transparent;
+  color: var(--ml-text);
+  font: 500 13px var(--ml-font-sans);
+  white-space: nowrap;
+  cursor: pointer;
+  transition:
+    background-color var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-selection-toolbar-action:hover:not(:disabled) {
+  background: var(--ml-bg-surface);
+}
+
+.ml-selection-toolbar-action:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-selection-toolbar-action:disabled {
+  color: var(--ml-text-muted);
+  cursor: not-allowed;
+}
+
+.ml-selection-toolbar-icon {
+  display: inline-flex;
+  align-items: center;
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-selection-toolbar-action {
+    transition: none;
+  }
+}
