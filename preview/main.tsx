@@ -46,6 +46,7 @@ import { CalloutDemo } from "./demos/CalloutDemo";
 import { SpinnerDemo } from "./demos/SpinnerDemo";
 import { SkeletonDemo } from "./demos/SkeletonDemo";
 import { ProgressDemo } from "./demos/ProgressDemo";
+import { StreamingTextDemo } from "./demos/StreamingTextDemo";
 
 // Overlays
 import { ModalDemo } from "./demos/ModalDemo";
@@ -57,6 +58,7 @@ import { TooltipDemo } from "./demos/TooltipDemo";
 import { PopoverDemo } from "./demos/PopoverDemo";
 import { SelectDemo } from "./demos/SelectDemo";
 import { ComboboxDemo } from "./demos/ComboboxDemo";
+import { SelectionToolbarDemo } from "./demos/SelectionToolbarDemo";
 
 // Forms
 import { FieldDemo } from "./demos/FieldDemo";
@@ -135,6 +137,7 @@ const categories: Category[] = [
       { name: "Spinner", component: SpinnerDemo },
       { name: "Skeleton", component: SkeletonDemo },
       { name: "Progress", component: ProgressDemo },
+      { name: "Streaming Text", component: StreamingTextDemo },
     ],
   },
   {
@@ -149,6 +152,7 @@ const categories: Category[] = [
       { name: "Popover", component: PopoverDemo },
       { name: "Select", component: SelectDemo },
       { name: "Combobox", component: ComboboxDemo },
+      { name: "Selection Toolbar", component: SelectionToolbarDemo },
     ],
   },
   {

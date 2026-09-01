@@ -656,6 +656,27 @@ import { Combobox } from "@meir-labs/ui-kit";
 
 Filterable input + listbox. `aria-label` is required. `value`/`onValueChange` are `string` (or `string[]` when `multiple`); `onFilter` overrides the default case-insensitive substring match; `allowCustomValue` lets users commit free text not in `options`; `renderChip` customizes multi-select chips.
 
+### SelectionToolbar
+
+```tsx
+import { useRef } from "react";
+import { SelectionToolbar } from "@meir-labs/ui-kit";
+
+const containerRef = useRef<HTMLDivElement>(null);
+
+<div ref={containerRef}>{content}</div>
+<SelectionToolbar
+  containerRef={containerRef}
+  aria-label="Text selection actions"
+  actions={[
+    { id: "explain", label: "Explain", onSelect: (text) => explain(text) },
+    { id: "shorten", label: "Shorten", onSelect: (text) => shorten(text) },
+  ]}
+/>
+```
+
+A floating action bar that appears above (or below, if clipped) a text selection made inside `containerRef`; selections outside it are ignored. Unlike `Popover`/`Tooltip`, it anchors to a live selection `Range`, not a persistent element — it re-measures on every `selectionchange` and dismisses on scroll, resize, an outside pointer-down, or Escape. `minLength` (default `1`) sets the minimum selected character count before it appears. `aria-label` is required.
+
 ### Field
 
 ```tsx
@@ -805,6 +826,16 @@ import { Progress } from "@meir-labs/ui-kit";
 ```
 
 Omit `value` for an indeterminate bar. `tone`: `"neutral" | "success" | "warning" | "danger"` (defaults to monochrome `--ml-text`). `showValue` renders the numeric percentage beside the track.
+
+### StreamingText
+
+```tsx
+import { StreamingText } from "@meir-labs/ui-kit";
+
+<StreamingText text={message} speed={40} onComplete={() => setDone(true)} />
+```
+
+Reveals `text` a character at a time (typewriter effect), e.g. for an AI response arriving progressively. Restarts whenever `text` changes. `speed` is characters revealed per second (default `40`); `cursor` shows a blinking caret while streaming (default `true`). A screen reader gets the full text immediately via a visually-hidden `role="status"` node instead of a stream of partial announcements. `prefers-reduced-motion` renders the full text instantly with no cursor.
 
 
 ## CSS Classes
@@ -1059,6 +1090,7 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `Popover` (+ `.Trigger`, `.Content`) | Component | Anchored interactive panel |
 | `Select` (+ `.Trigger`, `.Content`, `.Item`, `.Group`) | Component | Custom listbox |
 | `Combobox` | Component | Filterable input + listbox |
+| `SelectionToolbar` | Component | Floating action bar anchored to a text selection |
 | `Field` | Component | Label/hint/error wiring for a form control |
 | `Wizard` | Component | Multi-step flow shell |
 | `Input` | Component | Text field |
@@ -1073,6 +1105,7 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `CometLoader` | Component | AI/agentic loading indicator (spiral dot grid) |
 | `Skeleton`, `SkeletonText` | Component | Loading placeholder |
 | `Progress` | Component | Determinate/indeterminate progress bar |
+| `StreamingText` | Component | Typewriter-style progressive text reveal |
 
 CSS classes (`.ml-*`) and design tokens (`--ml-*`) are also part of the public API.
 

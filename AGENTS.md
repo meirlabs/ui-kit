@@ -201,6 +201,12 @@ Combobox(props: ComboboxProps): JSX.Element
 // inputValue?/onInputChange?; onFilter?: (options, query) => options; allowCustomValue?; loading?; emptyState?; multiple?; renderChip?
 // placeholder?; disabled?; name?; placement?: AnchoredPlacement; "aria-label": string (required)
 
+SelectionToolbar(props: SelectionToolbarProps): JSX.Element
+// { containerRef: RefObject<HTMLElement | null>; actions: SelectionToolbarAction[]; minLength?: number (1); "aria-label": string (required); className? }
+// SelectionToolbarAction: { id: string; label: string; icon?: ReactNode; onSelect: (selectedText: string) => void; disabled? }
+// Floating action bar anchored to a live text-selection Range inside containerRef (not a persistent element, unlike Popover/Tooltip).
+// Re-measures on selectionchange; dismisses on scroll/resize, outside pointerdown, or Escape.
+
 // Forms
 Field(props: FieldProps): JSX.Element
 // { label: ReactNode; children: ReactNode (single control — auto-gets id/aria-describedby/aria-invalid/aria-required); htmlFor?; id?; hint?; error?; required? } & div props
@@ -260,6 +266,11 @@ Skeleton(props: SkeletonProps) / SkeletonText(props: SkeletonTextProps): JSX.Ele
 Progress(props: ProgressProps): JSX.Element
 // { value?: number; max?: number; size?: "sm"|"md"|"lg"; tone?: "neutral"|"success"|"warning"|"danger"; label?: string; showValue?: boolean } & div props
 // Omit value for an indeterminate bar.
+
+StreamingText(props: StreamingTextProps): JSX.Element
+// { text: string; speed?: number (40, chars/sec); cursor?: boolean (true); onComplete?: () => void } & span props (minus children)
+// Typewriter-style reveal of `text`; restarts when `text` changes. Full text is exposed immediately to assistive tech via a
+// visually-hidden role="status" node. prefers-reduced-motion renders the full text instantly with no cursor.
 
 // Subpath exports (optional peer deps — install the peer only where the subpath is used)
 VirtualDataTable<Row>(props): JSX.Element            // from "@meir-labs/ui-kit/virtual"

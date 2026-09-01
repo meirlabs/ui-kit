@@ -1,6 +1,6 @@
 ---
 name: ui-kit
-description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette), toasts, pagination, status pills, tags, badges, metric values, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg.
+description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette, selection toolbar), toasts, pagination, status pills, tags, badges, metric values, streaming/typewriter text, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, selection toolbar, text selection actions, streaming text, typewriter, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg.
 ---
 
 # @meir-labs/ui-kit
@@ -78,6 +78,7 @@ and design tokens — read it for details.
 - **Popover** — anchored interactive panel. Compound `Popover` / `Popover.Trigger` / `Popover.Content`; controlled/uncontrolled `open`, `placement`, external `anchor`.
 - **Select** — custom listbox. Compound `Select` / `Select.Trigger` / `Select.Content` / `Select.Item` / `Select.Group`; controlled/uncontrolled `value`, `placeholder`, `name` (posts via hidden input), `placement`.
 - **Combobox** — filterable input + listbox. `options[]`, controlled `value`/`onValueChange` (string, or `string[]` with `multiple`), `inputValue`/`onInputChange`, `onFilter`, `allowCustomValue`, `loading`, required `aria-label`.
+- **SelectionToolbar** — floating action bar anchored to a text-selection `Range` inside `containerRef` (e.g. "Explain/Shorten/Improve" over highlighted text). `actions[]` (id/label/icon/onSelect/disabled), `minLength`, required `aria-label`. Dismisses on scroll/resize, outside pointerdown, or Escape.
 
 ### Forms
 - **Field** — label + hint/error wiring. `label`, single-child `children` (auto-gets `id`/`aria-describedby`/`aria-invalid`/`aria-required`), `hint`, `error`, `required`.
@@ -93,6 +94,7 @@ and design tokens — read it for details.
 - **Spinner** — inline loading indicator. `size` sm/md/lg, `label` (visually-hidden a11y name).
 - **Skeleton / SkeletonText** — loading placeholder. `variant` text/rect/circle, `width`/`height`/`radius`; `SkeletonText` adds `lines`.
 - **Progress** — determinate (`value`/`max`) or indeterminate bar. `size`, `tone`, `label`, `showValue`.
+- **StreamingText** — typewriter-style progressive text reveal (e.g. an AI response arriving over time). `text`, `speed` (chars/sec), `cursor`, `onComplete`. Full text goes to assistive tech immediately; `prefers-reduced-motion` renders it instantly.
 
 ## Hooks
 
