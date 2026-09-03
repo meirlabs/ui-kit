@@ -3,7 +3,7 @@ import { cn } from "../utils/cn";
 
 /* ────────────────────────────────────────────────────────────────────────────
    PaginationFooter — the mailgail table-footer convention: a page-size picker
-   reading "Show N ▾ results (X total)" on the left, and a "Page x of y"
+   reading "Show N ▾ of X results" on the left, and a "Page x of y"
    chevron stepper on the right. Deliberately no numbered page buttons (that's
    what the plain `<Pagination>` component is for) — page counts under this
    pattern are small by construction, so a stepper is enough; a table that
@@ -25,7 +25,7 @@ export interface PaginationFooterProps
   onPageSizeChange?: (size: number) => void;
   /** Options offered in the page-size `<select>`. Default `[10, 25, 50, 100]`. */
   pageSizeOptions?: number[];
-  /** Singular noun for the count, e.g. `"lead"`. Default `"row"`. */
+  /** Singular noun for the count, e.g. `"lead"`. Default `"result"`. */
   noun?: string;
   /** Plural noun. Defaults to `${noun}s`. */
   nounPlural?: string;
@@ -84,7 +84,7 @@ export function PaginationFooter({
   pageSize,
   onPageSizeChange,
   pageSizeOptions = DEFAULT_SIZE_OPTIONS,
-  noun = "row",
+  noun = "result",
   nounPlural,
   className,
   ...rest
@@ -116,7 +116,7 @@ export function PaginationFooter({
           <ChevronDown />
         </span>
         <span>
-          results ({total} {label} total)
+          of {total} {label}
         </span>
       </span>
 

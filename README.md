@@ -87,7 +87,7 @@ function ItemList({ items }: { items: Item[] }) {
 
 ### PaginationFooter
 
-The table-footer convention: `"Show N ▾ results (X total)"` on the left, `"Page x of y"` chevrons on the right — deliberately no numbered page buttons (page counts under this pattern are small by construction; a table that needs jump-to-page wants a filter instead). Drop it straight into `DataTable`'s `footer` slot.
+The table-footer convention: `"Show N ▾ of X results"` on the left, `"Page x of y"` chevrons on the right — deliberately no numbered page buttons (page counts under this pattern are small by construction; a table that needs jump-to-page wants a filter instead). Drop it straight into `DataTable`'s `footer` slot.
 
 ```tsx
 import { DataTable, PaginationFooter } from "@meir-labs/ui-kit";
@@ -112,7 +112,7 @@ import { DataTable, PaginationFooter } from "@meir-labs/ui-kit";
 | Prop | Type | Default | Description |
 | --- | --- | --- | --- |
 | `pageIndex` / `pageCount` / `onPage` | `number` / `number` / `(index) => void` | -- | Same contract as `Pagination` |
-| `total` | `number` | -- | Feeds the `"(N total)"` copy |
+| `total` | `number` | -- | Feeds the `"of N results"` copy |
 | `pageSize` / `onPageSizeChange` | `number` / `(size) => void` | -- | Omit the handler and the size `<select>` renders disabled instead of disappearing |
 | `pageSizeOptions` | `number[]` | `[10, 25, 50, 100]` | Options offered in the size `<select>` |
 | `noun` / `nounPlural` | `string` | `"row"` / `${noun}s` | Singular/plural label, e.g. `"lead"` / `"leads"` |
@@ -1161,7 +1161,7 @@ tone/variant/size unions, which aren't listed line-by-line below.
 | `Toggle` | Component | Radiogroup value-picker |
 | `SegmentedControl` | Component | 2–3 view switcher with a sliding thumb |
 | `Pagination`, `getPaginationRange`, `PAGINATION_DOTS` | Component, Utility | Page navigation UI |
-| `PaginationFooter` | Component | "Show N results (X total)" + "Page x of y" table footer |
+| `PaginationFooter` | Component | "Show N of X results" + "Page x of y" table footer |
 | `Breadcrumbs` | Component | Collapsible trail |
 | `DataTable`, `Column`, `SortState` | Component, Type | Sortable/selectable data table |
 | `FilterBar` | Component | Search + "Filters" button table toolbar |

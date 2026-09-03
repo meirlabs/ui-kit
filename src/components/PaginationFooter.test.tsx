@@ -3,7 +3,7 @@ import { describe, it, expect, vi } from "vitest";
 import { PaginationFooter } from "./PaginationFooter";
 
 describe("PaginationFooter", () => {
-  it('renders the "Show N results (X total)" summary with the default noun', () => {
+  it('renders the "Show N of X results" summary with the default noun', () => {
     render(
       <PaginationFooter
         pageIndex={0}
@@ -13,7 +13,7 @@ describe("PaginationFooter", () => {
         pageSize={10}
       />,
     );
-    expect(screen.getByText(/results \(42 rows total\)/)).toBeInTheDocument();
+    expect(screen.getByText(/of 42 results/)).toBeInTheDocument();
   });
 
   it("singularizes the noun when total is 1", () => {
@@ -27,7 +27,7 @@ describe("PaginationFooter", () => {
         noun="lead"
       />,
     );
-    expect(screen.getByText(/results \(1 lead total\)/)).toBeInTheDocument();
+    expect(screen.getByText(/of 1 lead/)).toBeInTheDocument();
   });
 
   it("pluralizes with the custom noun/nounPlural pair", () => {
@@ -42,7 +42,7 @@ describe("PaginationFooter", () => {
         nounPlural="people"
       />,
     );
-    expect(screen.getByText(/results \(5 people total\)/)).toBeInTheDocument();
+    expect(screen.getByText(/of 5 people/)).toBeInTheDocument();
   });
 
   it('renders "Page x of y"', () => {
