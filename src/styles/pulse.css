@@ -1,0 +1,60 @@
+/* @meir-labs/ui-kit — PulseLoader
+   Indeterminate "still working" loader: a static currentColor core with rings
+   that expand outward and fade like a sonar ping. Inherits --ml-text-muted by
+   default. Reduced-motion freezes to a single static ring at rest (opacity
+   only in the fallback — no transform). */
+
+.ml-pulse {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ml-pulse-size, 20px);
+  height: var(--ml-pulse-size, 20px);
+  color: var(--ml-text-muted);
+  vertical-align: middle;
+}
+
+.ml-pulse-sm { --ml-pulse-size: 16px; }
+.ml-pulse-md { --ml-pulse-size: 20px; }
+.ml-pulse-lg { --ml-pulse-size: 24px; }
+
+.ml-pulse-rings {
+  position: absolute;
+  inset: 0;
+}
+
+.ml-pulse-ring {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--ml-radius-pill);
+  border: 1.5px solid currentColor;
+  opacity: 0;
+  animation: ml-pulse-ring 1.8s ease-out infinite;
+}
+
+.ml-pulse-core {
+  position: relative;
+  width: 28%;
+  height: 28%;
+  border-radius: var(--ml-radius-pill);
+  background: currentColor;
+}
+
+@keyframes ml-pulse-ring {
+  0% { transform: scale(0.4); opacity: 0.55; }
+  100% { transform: scale(1); opacity: 0; }
+}
+
+/* Reduced-motion: no expanding rings, just one static ring at rest around
+   the core. */
+@media (prefers-reduced-motion: reduce) {
+  .ml-pulse-ring {
+    animation: none;
+    opacity: 0.35;
+    transform: scale(1);
+  }
+  .ml-pulse-ring:not(:first-child) {
+    display: none;
+  }
+}
