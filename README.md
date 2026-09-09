@@ -656,6 +656,21 @@ import { Combobox } from "@meir-labs/ui-kit";
 
 Filterable input + listbox. `aria-label` is required. `value`/`onValueChange` are `string` (or `string[]` when `multiple`); `onFilter` overrides the default case-insensitive substring match; `allowCustomValue` lets users commit free text not in `options`; `renderChip` customizes multi-select chips.
 
+### DatePicker
+
+```tsx
+import { DatePicker } from "@meir-labs/ui-kit";
+
+<DatePicker
+  aria-label="Appointment date"
+  value={date}
+  onValueChange={setDate}
+  minDate={new Date()}
+/>
+```
+
+An input-styled trigger opens an anchored calendar panel (`role="dialog"` with a `role="grid"` of days), following the APG date-picker-dialog pattern: arrow keys move by day/week, Home/End jump to the start/end of the week, PageUp/PageDown change month (Shift for year), Escape closes and returns focus to the trigger. `value`/`defaultValue`/`onValueChange` take a `Date | null`; `minDate`/`maxDate`/`isDateDisabled` constrain selectable days; `name` emits a hidden `yyyy-mm-dd` input for native forms. No date-range or time selection — single date only.
+
 ### Field
 
 ```tsx

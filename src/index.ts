@@ -141,6 +141,8 @@ export type {
 } from "./components/Select";
 export { Combobox } from "./components/Combobox";
 export type { ComboboxProps, ComboboxOption } from "./components/Combobox";
+export { DatePicker } from "./components/DatePicker";
+export type { DatePickerProps } from "./components/DatePicker";
 
 // Forms
 export { Field } from "./components/Field";
