@@ -201,6 +201,14 @@ Combobox(props: ComboboxProps): JSX.Element
 // inputValue?/onInputChange?; onFilter?: (options, query) => options; allowCustomValue?; loading?; emptyState?; multiple?; renderChip?
 // placeholder?; disabled?; name?; placement?: AnchoredPlacement; "aria-label": string (required)
 
+DatePicker(props: DatePickerProps): JSX.Element
+// value?/defaultValue?/onValueChange?: Date | null; placeholder?; disabled?; name? (hidden yyyy-mm-dd input)
+// minDate?/maxDate?/isDateDisabled?: (date) => boolean; placement?: AnchoredPlacement; formatDate?: (date) => string
+// weekStartsOn?: 0 | 1 (default 0); "aria-label"?: string
+// APG date-picker-dialog pattern: role="grid" with roving-tabindex day cells, Arrow/Home/End/PageUp/PageDown/Escape
+// keyboard support, Tab-trapped (useFocusTrap) + anchored (useAnchoredPosition) like Popover/Select. Month changes
+// get a short slide+fade (prefers-reduced-motion disables it). No date-range or time selection — single date only.
+
 // Forms
 Field(props: FieldProps): JSX.Element
 // { label: ReactNode; children: ReactNode (single control — auto-gets id/aria-describedby/aria-invalid/aria-required); htmlFor?; id?; hint?; error?; required? } & div props

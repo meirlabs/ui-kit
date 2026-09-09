@@ -57,6 +57,7 @@ import { TooltipDemo } from "./demos/TooltipDemo";
 import { PopoverDemo } from "./demos/PopoverDemo";
 import { SelectDemo } from "./demos/SelectDemo";
 import { ComboboxDemo } from "./demos/ComboboxDemo";
+import { DatePickerDemo } from "./demos/DatePickerDemo";
 
 // Forms
 import { FieldDemo } from "./demos/FieldDemo";
@@ -149,6 +150,7 @@ const categories: Category[] = [
       { name: "Popover", component: PopoverDemo },
       { name: "Select", component: SelectDemo },
       { name: "Combobox", component: ComboboxDemo },
+      { name: "Date Picker", component: DatePickerDemo },
     ],
   },
   {
