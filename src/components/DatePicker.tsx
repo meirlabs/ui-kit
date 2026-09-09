@@ -25,6 +25,24 @@ function addMonths(d: Date, n: number): Date {
   return new Date(d.getFullYear(), d.getMonth() + n, 1);
 }
 
+/** Like {@link addMonths} but keeps the day of month, clamped to the target
+ *  month's last day (e.g. Jan 31 + 1 month → Feb 28). Used for the *focused*
+ *  date, where jumping to the 1st on every PageUp/PageDown would lose the
+ *  user's place. */
+function addMonthsPreserveDay(d: Date, n: number): Date {
+  const targetFirst = addMonths(d, n);
+  const daysInTarget = new Date(
+    targetFirst.getFullYear(),
+    targetFirst.getMonth() + 1,
+    0,
+  ).getDate();
+  return new Date(
+    targetFirst.getFullYear(),
+    targetFirst.getMonth(),
+    Math.min(d.getDate(), daysInTarget),
+  );
+}
+
 function addDays(d: Date, n: number): Date {
   const r = new Date(d);
   r.setDate(r.getDate() + n);
@@ -183,6 +201,12 @@ export function DatePicker({
   const triggerRef = useRef<HTMLButtonElement | null>(null);
   const floatingRef = useRef<HTMLDivElement | null>(null);
   const dayRefs = useRef(new Map<string, HTMLButtonElement>());
+  // Only the day-grid keyboard handlers (arrows/Home/End/PageUp/PageDown) should
+  // pull DOM focus onto the roving cell. Header nav-button clicks update the
+  // grid too, but must leave focus on the button that was activated.
+  const followFocusRef = useRef(false);
+  const latestValueRef = useRef(value);
+  latestValueRef.current = value;
 
   const contentId = useId();
   const titleId = useId();
@@ -216,6 +240,7 @@ export function DatePicker({
 
   const commitFocusedDate = useCallback(
     (next: Date, dir: "next" | "prev" | null = null) => {
+      followFocusRef.current = true;
       setFocusedDate(next);
       if (!isSameMonth(next, viewMonth)) goToMonth(next, dir ?? (isAfter(next, viewMonth) ? "next" : "prev"));
     },
@@ -234,14 +259,17 @@ export function DatePicker({
     [isControlled, isDisabled, onValueChange, setOpen],
   );
 
-  // Reset the view/focus to the current value each time the panel opens.
+  // Reset the view/focus to the current value on the closed->open edge only.
+  // Reads `value` via a ref (not a dependency) so a controlled `value` that's a
+  // fresh Date instance each render (e.g. `new Date(iso)`) doesn't reset an
+  // already-open panel's navigation on every unrelated parent re-render.
   useEffect(() => {
     if (!open) return;
-    const anchor = value ?? today;
+    const anchor = latestValueRef.current ?? today;
     setViewMonth(startOfMonth(anchor));
     setFocusedDate(anchor);
     setDirection(null);
-  }, [open, value, today]);
+  }, [open, today]);
 
   // Mount/unmount around the enter/exit transition (matches Popover/Select).
   useEffect(() => {
@@ -255,9 +283,14 @@ export function DatePicker({
     return () => clearTimeout(t);
   }, [open]);
 
-  // Move DOM focus to the roving cell whenever it changes while open.
+  // Move DOM focus to the roving cell whenever it changes while open — but
+  // only when the change came from a grid keyboard interaction. Header
+  // nav-button clicks also move `focusedDate`/`viewMonth`, and must leave
+  // focus on the button that was activated instead of stealing it.
   useEffect(() => {
     if (!mounted || !open) return;
+    if (!followFocusRef.current) return;
+    followFocusRef.current = false;
     const el = dayRefs.current.get(dateKey(focusedDate));
     el?.focus({ preventScroll: true });
   }, [mounted, open, focusedDate, viewMonth]);
@@ -327,14 +360,16 @@ export function DatePicker({
       }
       case "PageUp": {
         e.preventDefault();
-        const next = addMonths(focusedDate, e.shiftKey ? -12 : -1);
+        const next = addMonthsPreserveDay(focusedDate, e.shiftKey ? -12 : -1);
+        followFocusRef.current = true;
         setFocusedDate(next);
         goToMonth(next, "prev");
         break;
       }
       case "PageDown": {
         e.preventDefault();
-        const next = addMonths(focusedDate, e.shiftKey ? 12 : 1);
+        const next = addMonthsPreserveDay(focusedDate, e.shiftKey ? 12 : 1);
+        followFocusRef.current = true;
         setFocusedDate(next);
         goToMonth(next, "next");
         break;
@@ -414,7 +449,7 @@ export function DatePicker({
                   onClick={() => {
                     const next = addMonths(viewMonth, -1);
                     goToMonth(next, "prev");
-                    setFocusedDate((prev) => addMonths(prev, -1));
+                    setFocusedDate((prev) => addMonthsPreserveDay(prev, -1));
                   }}
                 >
                   <ChevronIcon dir="left" />
@@ -429,7 +464,7 @@ export function DatePicker({
                   onClick={() => {
                     const next = addMonths(viewMonth, 1);
                     goToMonth(next, "next");
-                    setFocusedDate((prev) => addMonths(prev, 1));
+                    setFocusedDate((prev) => addMonthsPreserveDay(prev, 1));
                   }}
                 >
                   <ChevronIcon dir="right" />

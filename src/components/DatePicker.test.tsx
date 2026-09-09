@@ -1,3 +1,4 @@
+import { useState } from "react";
 import { render, screen, fireEvent, waitFor } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { DatePicker } from "./DatePicker";
@@ -113,6 +114,52 @@ describe("DatePicker", () => {
     expect(disabledDay).toHaveAttribute("aria-disabled", "true");
     fireEvent.click(disabledDay);
     expect(onValueChange).not.toHaveBeenCalled();
+  });
+
+  it("keeps focus on a month-nav button after activating it, instead of stealing it into the grid", () => {
+    const { trigger } = renderDatePicker({ defaultValue: TODAY });
+    fireEvent.click(trigger);
+
+    const nextButton = screen.getByRole("button", { name: "Next month" });
+    nextButton.focus();
+    fireEvent.click(nextButton);
+
+    expect(screen.getByText("October 2026")).toBeInTheDocument();
+    expect(document.activeElement).toBe(nextButton);
+  });
+
+  it("PageDown/PageUp month navigation preserves the day of month", () => {
+    const { trigger } = renderDatePicker({ defaultValue: TODAY });
+    fireEvent.click(trigger);
+    const grid = screen.getByRole("grid");
+
+    fireEvent.keyDown(grid, { key: "PageDown" });
+    expect(document.activeElement).toHaveAccessibleName(label(new Date(2026, 9, 9)));
+
+    fireEvent.keyDown(document.activeElement!, { key: "PageUp" });
+    expect(document.activeElement).toHaveAccessibleName(label(new Date(2026, 8, 9)));
+  });
+
+  it("does not reset an open panel's navigation when a controlled value re-renders as a new Date instance", () => {
+    function Wrapper() {
+      const [, forceRerender] = useState(0);
+      return (
+        <>
+          <DatePicker aria-label="Appointment date" value={new Date(2026, 8, 9)} onValueChange={() => {}} />
+          <button type="button" onClick={() => forceRerender((n) => n + 1)}>
+            rerender
+          </button>
+        </>
+      );
+    }
+    render(<Wrapper />);
+
+    fireEvent.click(screen.getByRole("button", { name: "Appointment date" }));
+    fireEvent.click(screen.getByRole("button", { name: "Next month" }));
+    expect(screen.getByText("October 2026")).toBeInTheDocument();
+
+    fireEvent.click(screen.getByRole("button", { name: "rerender" }));
+    expect(screen.getByText("October 2026")).toBeInTheDocument();
   });
 
   it("emits a hidden input with an ISO date when name is set", () => {
