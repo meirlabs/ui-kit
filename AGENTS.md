@@ -383,13 +383,16 @@ tokens.
 - `--ml-radius-xl`: 16px
 - `--ml-radius-pill`: 999px
 
-**Squircle corners (opt-in):** add the `ml-squircle` class alongside any
-element that already sets a `border-radius` (or pass `squircle` to `Card`) to
-soften it into a continuous-curve "squircle" instead of a circular arc. It's
-a progressive enhancement gated on `@supports (corner-shape: squircle)` — on
-browsers that don't support `corner-shape` yet, the element just keeps its
-plain circular radius, unchanged. No SVG mask/clip-path is used, so borders,
-focus rings and shadows aren't clipped.
+**Squircle corners (opt-in):** pass `squircle` to `Card` to soften its
+corners into a continuous-curve "squircle" instead of a circular arc. It's a
+progressive enhancement gated on `@supports (corner-shape: squircle)` —
+currently Chromium-based browsers (Chrome/Edge 139+); on browsers that don't
+support `corner-shape` yet, the card just keeps its plain 12px circular
+radius, unchanged. `corner-shape: squircle` is mathematically *squarer* than
+a circular arc at the same radius, so where it's supported the radius is
+also scaled up (12px → 21px, via `--ml-squircle-radius-scale: 1.75`) so the
+corner reads as softer, not sharper. No SVG mask/clip-path is used, so
+borders, focus rings and shadows aren't clipped.
 
 ### Shadows
 

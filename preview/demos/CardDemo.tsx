@@ -33,8 +33,9 @@ export function CardDemo() {
 
       <div className="demo-section">
         <div className="demo-label">
-          Squircle corners (opt-in) vs. plain — identical if your browser
-          doesn&apos;t support <code>corner-shape</code> yet
+          Squircle corners (opt-in) vs. plain — 12px scales to 21px so it
+          reads softer; identical to plain if your browser (Chromium-based
+          only, for now) doesn&apos;t support <code>corner-shape</code> yet
         </div>
         <div style={{ display: "flex", gap: "var(--ml-space-md)" }}>
           <Card style={{ flex: 1 }}>
@@ -46,7 +47,7 @@ export function CardDemo() {
           <Card squircle style={{ flex: 1 }}>
             <span style={labelStyle}>Squircle</span>
             <p style={{ fontSize: 14, color: "var(--ml-text-muted)", marginTop: 4 }}>
-              Same 12px radius, continuous-curve corners.
+              12px radius scaled to 21px, continuous-curve corners.
             </p>
           </Card>
         </div>

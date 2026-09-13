@@ -19,7 +19,10 @@ export interface CardProps extends ComponentPropsWithoutRef<"div"> {
   /**
    * Opt in to soft "squircle" (continuous-curve) corners instead of the
    * plain circular radius. Progressive enhancement via `corner-shape` —
-   * browsers without support render the normal 12px radius, unchanged.
+   * currently Chromium-based browsers (Chrome/Edge 139+); browsers without
+   * support render the normal 12px radius, unchanged. Where supported, the
+   * radius also scales up to 21px (12px * `--ml-squircle-radius-scale`) so
+   * the corner reads as softer, not sharper, than the plain radius.
    */
   squircle?: boolean;
 }
@@ -36,7 +39,9 @@ export interface CardProps extends ComponentPropsWithoutRef<"div"> {
  * (or an `onClick`) to make the whole card an accessible, focus-ringed target.
  *
  * Pass `squircle` to soften the corners into a continuous "squircle" curve
- * (progressive enhancement — no-op on browsers without `corner-shape`).
+ * and scale the radius up to 21px so it reads softer than the plain 12px
+ * radius (progressive enhancement — no-op on browsers without
+ * `corner-shape`, currently Chromium-based browsers only).
  */
 export const Card = forwardRef<HTMLElement, CardProps>(function Card(
   {
