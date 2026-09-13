@@ -32,6 +32,27 @@ export function CardDemo() {
       </div>
 
       <div className="demo-section">
+        <div className="demo-label">
+          Squircle corners (opt-in) vs. plain — identical if your browser
+          doesn&apos;t support <code>corner-shape</code> yet
+        </div>
+        <div style={{ display: "flex", gap: "var(--ml-space-md)" }}>
+          <Card style={{ flex: 1 }}>
+            <span style={labelStyle}>Plain</span>
+            <p style={{ fontSize: 14, color: "var(--ml-text-muted)", marginTop: 4 }}>
+              Default 12px circular radius.
+            </p>
+          </Card>
+          <Card squircle style={{ flex: 1 }}>
+            <span style={labelStyle}>Squircle</span>
+            <p style={{ fontSize: 14, color: "var(--ml-text-muted)", marginTop: 4 }}>
+              Same 12px radius, continuous-curve corners.
+            </p>
+          </Card>
+        </div>
+      </div>
+
+      <div className="demo-section">
         <div className="demo-label">Interactive (hover border) — as button</div>
         <div style={{ display: "flex", gap: "var(--ml-space-md)" }}>
           <Card

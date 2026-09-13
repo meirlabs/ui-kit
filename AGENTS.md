@@ -108,7 +108,7 @@ PageHeader(props: PageHeaderProps): JSX.Element
 // { title: ReactNode; subtitle?; breadcrumb?; actions?; backHref?: string; onBack?: () => void; backLabel?: string } & div props
 
 Card(props: CardProps): JSX.Element
-// as?: ElementType (use "button"/"a" for clickable cards); interactive?: boolean; padding?: "compact" | "default"
+// as?: ElementType (use "button"/"a" for clickable cards); interactive?: boolean; padding?: "compact" | "default"; squircle?: boolean (soft continuous-curve corners, progressive enhancement)
 
 Grid(props: GridProps): JSX.Element
 // columns?: number | "auto" (default); minColWidth?: number (default 180); gap?: "sm"|"md"|"lg" (default md)
@@ -382,6 +382,14 @@ tokens.
 - `--ml-radius-lg`: 12px
 - `--ml-radius-xl`: 16px
 - `--ml-radius-pill`: 999px
+
+**Squircle corners (opt-in):** add the `ml-squircle` class alongside any
+element that already sets a `border-radius` (or pass `squircle` to `Card`) to
+soften it into a continuous-curve "squircle" instead of a circular arc. It's
+a progressive enhancement gated on `@supports (corner-shape: squircle)` — on
+browsers that don't support `corner-shape` yet, the element just keeps its
+plain circular radius, unchanged. No SVG mask/clip-path is used, so borders,
+focus rings and shadows aren't clipped.
 
 ### Shadows
 
