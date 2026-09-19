@@ -1,0 +1,235 @@
+/* @meir-labs/ui-kit — LiveFaq
+   An FAQ list whose last row is a question box; the answer opens inside that
+   same card, laid out like an open row.
+
+   Two class families on purpose. The FAQ rows take the host page's prefix
+   (`ml-faq-*` by default, `pr-faq-*` / `sec-faq-*` when a page already styles
+   its own FAQ), so adopting the component never forks a page's existing card
+   styling. The ask row and the answer are always `ml-ask-*` — they are new on
+   every page, so there is exactly one copy of them.
+
+   Everything is in logical properties, so RTL mirrors without a second rule. */
+
+/* ─── The rows (default styling; skipped when a page passes its own prefix) ── */
+
+.ml-faq {
+  margin-block-start: var(--ml-space-2xl);
+  margin-inline: auto;
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-sm);
+  max-inline-size: 44rem;
+  text-align: start;
+}
+
+.ml-faq-item {
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-lg);
+  background: var(--ml-bg-card, var(--ml-bg-surface));
+  overflow: hidden;
+  transition: border-color var(--ml-duration-fast) ease;
+}
+
+@media (hover: hover) {
+  .ml-faq-item:has(.ml-faq-q:hover) {
+    border-color: color-mix(in srgb, var(--ml-text) 20%, var(--ml-border));
+  }
+}
+
+.ml-faq-q {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.3rem;
+  font-size: var(--ml-text-lg);
+  font-weight: 600;
+  letter-spacing: -0.011em;
+  color: var(--ml-text);
+  list-style: none;
+  cursor: pointer;
+}
+
+.ml-faq-q::-webkit-details-marker {
+  display: none;
+}
+
+/* The marker column. A fixed 2rem box with the glyph centred, never a bare
+   glyph hugging the content edge: "+" and "−" are different widths (10.72px
+   vs 9.98px at this size), so an edge-aligned glyph shifts the column when a
+   row opens, and nothing else placed in that column — like the ask row's 2rem
+   send button — can line up with it. One box, one centre, every state. */
+.ml-faq-q::after {
+  content: "+";
+  margin-inline-start: auto;
+  flex: none;
+  inline-size: 2rem;
+  text-align: center;
+  font-size: 1.2rem;
+  font-weight: 400;
+  color: var(--ml-text-muted);
+}
+
+.ml-faq-item[open] .ml-faq-q::after {
+  content: "\2212"; /* minus */
+}
+
+.ml-faq-q:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: -2px;
+}
+
+.ml-faq-a {
+  margin: 0;
+  padding: 0 1.3rem 1.2rem;
+  font-size: var(--ml-text-base);
+  line-height: 1.68;
+  color: var(--ml-text-muted);
+}
+
+/* ─── The ask row (always ml-ask-*) ───────────────────────────────────────── */
+
+/* Mirrors an open row: the form matches the question's padding, the answer
+   matches the answer's, and the send button matches the 2rem marker box. */
+.ml-ask {
+  display: flex;
+  align-items: center;
+  gap: 1rem;
+  padding: 1.1rem 1.3rem;
+}
+
+.ml-ask-input {
+  flex: 1;
+  min-inline-size: 0;
+  border: 0;
+  background: transparent;
+  padding: 0;
+  /* Auto-grown in JS; these keep it reading as a line of text, not a control. */
+  resize: none;
+  overflow: hidden;
+  line-height: 1.45;
+  /* Matches the question row exactly, so what you typed reads as a question
+     heading rather than as form input. */
+  font: inherit;
+  font-size: var(--ml-text-lg);
+  font-weight: 600;
+  letter-spacing: -0.011em;
+  color: var(--ml-text);
+}
+
+.ml-ask-input::placeholder {
+  color: var(--ml-text-muted);
+  font-weight: 600;
+  opacity: 1;
+}
+
+.ml-ask-input:focus {
+  outline: none;
+}
+
+/* The card takes the focus ring — the field has no border of its own, so a
+   ring on it would sit inside the card edge. */
+.ml-ask-shell:focus-within {
+  border-color: color-mix(in srgb, var(--ml-text) 34%, var(--ml-border));
+}
+
+.ml-ask-send {
+  flex: none;
+  display: grid;
+  place-items: center;
+  /* Same 2rem box the "+"/"−" sits in — that is the marker column. */
+  inline-size: 2rem;
+  block-size: 2rem;
+  border: 0;
+  border-radius: var(--ml-radius-pill);
+  background: transparent;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition:
+    background-color var(--ml-duration-fast) ease,
+    color var(--ml-duration-fast) ease,
+    opacity var(--ml-duration-fast) ease;
+}
+
+/* A send arrow points the way the language runs. Mirrored here so a caller
+   passes one icon and never has to branch on direction. */
+[dir="rtl"] .ml-ask-send > * {
+  transform: scaleX(-1);
+}
+
+/* Inert until there is something to send, but kept in the layout at reduced
+   contrast — hiding it would shift the row on the first keystroke. */
+.ml-ask-send:disabled {
+  cursor: default;
+  opacity: 0.45;
+}
+
+.ml-ask-send[data-active] {
+  background: var(--ml-text);
+  color: var(--ml-bg);
+}
+
+.ml-ask-send:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* ─── The answer ──────────────────────────────────────────────────────────── */
+
+.ml-ask-answer {
+  padding: 0 1.3rem 1.2rem;
+}
+
+/* The paragraphs keep the host page's answer type so they read as part of the
+   list, but not its padding — the panel already supplies that, and a page's
+   own stylesheet may load after this one, so the reset out-specifies it
+   rather than merely following it. */
+.ml-ask-answer .ml-ask-para {
+  padding: 0;
+}
+
+.ml-ask-answer .ml-ask-para + .ml-ask-para {
+  margin-block-start: 0.75rem;
+}
+
+.ml-ask-para a {
+  color: var(--ml-text);
+  text-decoration: underline;
+  text-underline-offset: 3px;
+}
+
+/* A soft caret while tokens are still arriving, so a pause in the stream
+   reads as "still writing" rather than "finished". Opacity only — paint, never
+   size (motion contract §0.2), same as the Skeleton shimmer this sits beside. */
+.ml-ask-answer[data-state="streaming"] .ml-ask-para:last-of-type::after {
+  content: "";
+  display: inline-block;
+  inline-size: 0.5em;
+  block-size: 1em;
+  margin-inline-start: 0.15em;
+  vertical-align: text-bottom;
+  background: var(--ml-text-muted);
+  animation: ml-ask-blink 1.1s ease-in-out infinite;
+}
+
+@keyframes ml-ask-blink {
+  0%,
+  100% {
+    opacity: 1;
+  }
+  50% {
+    opacity: 0.15;
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-ask-answer[data-state="streaming"] .ml-ask-para:last-of-type::after {
+    animation: none;
+  }
+}
+
+.ml-ask-note {
+  margin: 0.9rem 0 0;
+  font-size: var(--ml-text-sm);
+  line-height: 1.5;
+  color: var(--ml-text-muted);
+}
