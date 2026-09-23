@@ -5,7 +5,11 @@ import { useEffect } from "react";
  *
  * While any overlay holds a lock, `document.body` is set to `overflow: hidden`
  * and its right padding is padded by the scrollbar width so the page does not
- * reflow / shift when the scrollbar disappears. Because the counter is shared at
+ * reflow / shift when the scrollbar disappears — unless the root already
+ * reserves a stable scrollbar gutter (ui-kit's base.css sets
+ * `html { scrollbar-gutter: stable }`). The gutter then stays put when the
+ * scrollbar hides, so padding too would double-compensate and shove the page
+ * left by one scrollbar width. Because the counter is shared at
  * module scope, nested overlays (e.g. a Dropdown opened inside a Modal) never
  * unlock the body early — the body only unlocks once the *last* lock releases.
  *
@@ -15,6 +19,12 @@ import { useEffect } from "react";
 let lockCount = 0;
 let previousOverflow = "";
 let previousPaddingRight = "";
+
+/** True when the root keeps its scrollbar gutter reserved (`stable`, `stable both-edges`). */
+function rootReservesGutter(): boolean {
+  const gutter = getComputedStyle(document.documentElement).getPropertyValue("scrollbar-gutter");
+  return gutter.includes("stable");
+}
 
 function applyLock() {
   if (typeof document === "undefined") return;
@@ -28,7 +38,7 @@ function applyLock() {
   previousPaddingRight = body.style.paddingRight;
 
   body.style.overflow = "hidden";
-  if (scrollbarWidth > 0) {
+  if (scrollbarWidth > 0 && !rootReservesGutter()) {
     const current = parseFloat(getComputedStyle(body).paddingRight) || 0;
     body.style.paddingRight = `${current + scrollbarWidth}px`;
   }
