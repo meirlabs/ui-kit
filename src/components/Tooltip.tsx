@@ -9,6 +9,7 @@ import {
   useId,
   useRef,
   useState,
+  version,
 } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../utils/cn";
@@ -123,7 +124,10 @@ export function Tooltip({
     ref: (node: HTMLElement | null) => {
       anchorRef.current = node;
       setRef(
-        (child as unknown as { ref?: Ref<HTMLElement> }).ref,
+        // React 19 moved ref into props; reading element.ref emits a warning.
+        Number(version.split(".")[0]) >= 19
+          ? childProps.ref as Ref<HTMLElement> | undefined
+          : (child as unknown as { ref?: Ref<HTMLElement> }).ref,
         node,
       );
     },
