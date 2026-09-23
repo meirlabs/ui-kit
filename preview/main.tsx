@@ -36,6 +36,7 @@ import { BreadcrumbsDemo } from "./demos/BreadcrumbsDemo";
 // Data Display
 import { DataTableDemo } from "./demos/DataTableDemo";
 import { StatCardDemo } from "./demos/StatCardDemo";
+import { OnboardingWidgetDemo } from "./demos/OnboardingWidgetDemo";
 import { EmptyStateDemo } from "./demos/EmptyStateDemo";
 
 // Feedback
@@ -121,6 +122,7 @@ const categories: Category[] = [
     items: [
       { name: "Data Table", component: DataTableDemo },
       { name: "Stat Card", component: StatCardDemo },
+      { name: "Onboarding Widget", component: OnboardingWidgetDemo },
       { name: "Empty State", component: EmptyStateDemo },
     ],
   },
