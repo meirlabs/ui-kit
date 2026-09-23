@@ -1264,3 +1264,14 @@ See [CONTRIBUTING.md](./CONTRIBUTING.md) for full development setup and conventi
 ## License
 
 MIT
+# CalendarHeatmap
+
+`CalendarHeatmap` displays consecutive ISO days in a GitHub-style calendar. Pass
+`days: { date, level: 0 | 1 | 2 | 3 | 4 | null, label }[]`, an `aria-label`, and
+optionally `selectedDate`, `onSelect`, and `tone="success"` (default: neutral).
+Null means missing; zero means measured zero. Each day has a tooltip and an
+accessible reading. Arrow keys move by day vertically and week horizontally;
+Home/End jump to the edges. The overflow strip starts at recent days.
+
+Compose a selected-day detail with large previous/next buttons for touch access.
+Scoring, units and health/business interpretation belong to the consuming app.

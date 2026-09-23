@@ -154,6 +154,12 @@ Stepper(props: StepperProps): JSX.Element
 // StepperStep: { label; description?; status?: "complete"|"current"|"upcoming" }
 
 // Data Display
+CalendarHeatmap(props: CalendarHeatmapProps): JSX.Element
+// { days: { date: string; level: 0|1|2|3|4|null; label: string }[]; "aria-label": string; selectedDate?; onSelect?; tone?: "neutral"|"success"; className? }
+// Consecutive ISO days, oldest first. Sunday-first week columns, month labels, missing vs zero,
+// Tooltip per reading and a single tab stop (arrows/Home/End). Scrolls the strip to recent days.
+// Supply a selected-day detail and large previous/next controls for touch; compact cells alone are not sufficient.
+
 DataTable<Row>(props: DataTableProps<Row>): JSX.Element
 // columns: Column<Row>[] — { id; header; accessor?: ((row) => ReactNode) | keyof Row; sortable?; align?: "left"|"right"|"center"; width?; numeric?; sortFn? }
 // data: Row[]; getRowId?; sortState?/onSortChange? (controlled) or defaultSort? (uncontrolled); manualSort?

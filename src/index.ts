@@ -175,3 +175,12 @@ export { Skeleton, SkeletonText } from "./components/Skeleton";
 export type { SkeletonProps, SkeletonTextProps, SkeletonVariant } from "./components/Skeleton";
 export { Progress } from "./components/Progress";
 export type { ProgressProps, ProgressSize, ProgressTone } from "./components/Progress";
+export { CalendarHeatmap } from "./components/CalendarHeatmap";
+export type { CalendarHeatmapProps, CalendarHeatmapDay } from "./components/CalendarHeatmap";
+export { LiveFaq } from "./components/LiveFaq";
+export type {
+  LiveFaqProps,
+  LiveFaqItem,
+  LiveFaqStrings,
+  LiveFaqPhase,
+} from "./components/LiveFaq";
