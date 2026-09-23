@@ -42,8 +42,8 @@
 
 .ml-fileupload-zone:focus-visible {
   outline: none;
-  border-color: var(--ml-text);
-  box-shadow: 0 0 0 2px var(--ml-text);
+  border-color: var(--ml-text-faint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-text) 8%, transparent);
 }
 
 .ml-fileupload-zone:disabled {
