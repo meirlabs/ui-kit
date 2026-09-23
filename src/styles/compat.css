@@ -6,6 +6,34 @@
  */
 
 /* ── Token Bridge ── */
+/* Theme-invariant legacy aliases (spacing, radius, fonts, type scale) live in
+   plain :root so they resolve under the light theme too — same bug/fix as
+   tokens.css: these were previously bridged only inside the dark selector
+   below, which meant any consumer still on legacy --space, --radius,
+   --font, and --text names got nothing in light. */
+:root {
+  --space-xs: var(--ml-space-xs);
+  --space-sm: var(--ml-space-sm);
+  --space-md: var(--ml-space-md);
+  --space-lg: var(--ml-space-lg);
+  --space-xl: var(--ml-space-xl);
+  --space-2xl: var(--ml-space-2xl);
+  --radius-sm: var(--ml-radius-sm);
+  --radius-md: var(--ml-radius-md);
+  --radius-lg: var(--ml-radius-lg);
+  --radius-xl: var(--ml-radius-xl);
+  --radius-pill: var(--ml-radius-pill);
+  --font-sans: var(--ml-font-sans);
+  --font-mono: var(--ml-font-mono);
+  --text-xs: var(--ml-text-xs);
+  --text-sm: var(--ml-text-sm);
+  --text-base: var(--ml-text-base);
+  --text-lg: var(--ml-text-lg);
+  --text-xl: var(--ml-text-xl);
+  --text-2xl: var(--ml-text-2xl);
+  --text-3xl: var(--ml-text-3xl);
+}
+
 [data-meirlabs-theme="dark"] {
   --primary: var(--ml-color-primary);
   --primary-muted: var(--ml-color-primary-muted);
@@ -26,17 +54,6 @@
   --text: var(--ml-text);
   --text-muted: var(--ml-text-muted);
   --text-faint: var(--ml-text-faint);
-  --space-xs: var(--ml-space-xs);
-  --space-sm: var(--ml-space-sm);
-  --space-md: var(--ml-space-md);
-  --space-lg: var(--ml-space-lg);
-  --space-xl: var(--ml-space-xl);
-  --space-2xl: var(--ml-space-2xl);
-  --radius-sm: var(--ml-radius-sm);
-  --radius-md: var(--ml-radius-md);
-  --radius-lg: var(--ml-radius-lg);
-  --radius-xl: var(--ml-radius-xl);
-  --radius-pill: var(--ml-radius-pill);
   --shadow-card: var(--ml-shadow-card);
   --shadow-elevated: var(--ml-shadow-elevated);
   --shadow-modal: var(--ml-shadow-modal);
@@ -44,15 +61,6 @@
   --glass-bg: var(--ml-glass-bg);
   --glass-blur: var(--ml-glass-blur);
   --glass-border: var(--ml-glass-border);
-  --font-sans: var(--ml-font-sans);
-  --font-mono: var(--ml-font-mono);
-  --text-xs: var(--ml-text-xs);
-  --text-sm: var(--ml-text-sm);
-  --text-base: var(--ml-text-base);
-  --text-lg: var(--ml-text-lg);
-  --text-xl: var(--ml-text-xl);
-  --text-2xl: var(--ml-text-2xl);
-  --text-3xl: var(--ml-text-3xl);
 }
 
 /* ── Class Aliases: Table ── */

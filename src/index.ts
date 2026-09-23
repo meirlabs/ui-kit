@@ -48,7 +48,7 @@ export type {
 } from "./components/MetricValue";
 
 // Layout
-export { Shell } from "./components/Shell";
+export { Shell, ShellSidebar, ShellMain } from "./components/Shell";
 export type { ShellProps, ShellSidebarProps, ShellMainProps } from "./components/Shell";
 export { Sidebar, SidebarItem } from "./components/Sidebar";
 export type { SidebarProps, SidebarSectionProps, SidebarItemProps } from "./components/Sidebar";
@@ -66,7 +66,7 @@ export { DetailList } from "./components/DetailList";
 export type { DetailListProps, DetailListItem } from "./components/DetailList";
 export { DangerZone } from "./components/DangerZone";
 export type { DangerZoneProps, DangerZoneItemProps } from "./components/DangerZone";
-export { Accordion } from "./components/Accordion";
+export { Accordion, AccordionItem } from "./components/Accordion";
 export type { AccordionProps, AccordionItemProps } from "./components/Accordion";
 
 // Navigation
@@ -81,6 +81,8 @@ export type {
 } from "./components/SegmentedControl";
 export { Pagination, getPaginationRange, PAGINATION_DOTS } from "./components/Pagination";
 export type { PaginationProps } from "./components/Pagination";
+export { PaginationFooter } from "./components/PaginationFooter";
+export type { PaginationFooterProps } from "./components/PaginationFooter";
 export { Breadcrumbs } from "./components/Breadcrumbs";
 export type { BreadcrumbsProps, BreadcrumbItem } from "./components/Breadcrumbs";
 
@@ -93,6 +95,8 @@ export type {
   SortState,
   SortDirection,
 } from "./components/DataTable";
+export { FilterBar } from "./components/FilterBar";
+export type { FilterBarProps } from "./components/FilterBar";
 export { StatCard } from "./components/StatCard";
 export type { StatCardProps, StatCardTrend } from "./components/StatCard";
 export { OnboardingWidget } from "./components/OnboardingWidget";
@@ -151,6 +155,8 @@ export { Input } from "./components/Input";
 export type { InputProps } from "./components/Input";
 export { Textarea } from "./components/Textarea";
 export type { TextareaProps } from "./components/Textarea";
+export { Composer } from "./components/Composer";
+export type { ComposerProps } from "./components/Composer";
 export { Checkbox } from "./components/Checkbox";
 export type { CheckboxProps } from "./components/Checkbox";
 export { Radio, RadioGroup } from "./components/Radio";
@@ -175,7 +181,8 @@ export { Skeleton, SkeletonText } from "./components/Skeleton";
 export type { SkeletonProps, SkeletonTextProps, SkeletonVariant } from "./components/Skeleton";
 export { Progress } from "./components/Progress";
 export type { ProgressProps, ProgressSize, ProgressTone } from "./components/Progress";
-
+export { CalendarHeatmap } from "./components/CalendarHeatmap";
+export type { CalendarHeatmapProps, CalendarHeatmapDay } from "./components/CalendarHeatmap";
 export { LiveFaq } from "./components/LiveFaq";
 export type {
   LiveFaqProps,

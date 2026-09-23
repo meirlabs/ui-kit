@@ -1,0 +1,43 @@
+/* @meir-labs/ui-kit — FilterBar
+   Toolbar pattern: left slot for extra controls (e.g. a segmented Toggle),
+   right cluster for search + "Filters" button + actions, and an optional
+   active-filter chip row underneath. */
+
+.ml-filterbar-wrap {
+  display: flex;
+  flex-direction: column;
+  gap: var(--ml-space-sm);
+  width: 100%;
+}
+
+.ml-filterbar {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ml-space-md);
+  width: 100%;
+}
+
+.ml-filterbar-left {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+}
+
+.ml-filterbar-right {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-sm);
+  margin-left: auto;
+}
+
+.ml-filterbar-search {
+  flex: none;
+}
+
+.ml-filterbar-chips {
+  display: flex;
+  flex-wrap: wrap;
+  align-items: center;
+  gap: var(--ml-space-sm);
+}

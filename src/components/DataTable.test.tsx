@@ -187,4 +187,24 @@ describe("DataTable", () => {
     fireEvent.keyDown(firstRow, { key: "Enter" });
     expect(onRowClick).toHaveBeenCalledTimes(2);
   });
+
+  it("renders the toolbar slot above the table when provided", () => {
+    const { container } = render(
+      <DataTable
+        columns={columns}
+        data={rows}
+        aria-label="People"
+        toolbar={<span>Toolbar content</span>}
+      />,
+    );
+    expect(screen.getByText("Toolbar content")).toBeInTheDocument();
+    expect(container.querySelector(".ml-dt-toolbar")).toBeInTheDocument();
+  });
+
+  it("omits the toolbar wrapper entirely when no toolbar is given", () => {
+    const { container } = render(
+      <DataTable columns={columns} data={rows} aria-label="People" />,
+    );
+    expect(container.querySelector(".ml-dt-toolbar")).toBeNull();
+  });
 });

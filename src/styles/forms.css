@@ -80,13 +80,13 @@
   color: var(--ml-text-faint);
 }
 
-/* Neutral 2px focus ring on :focus-visible — never the blue accent outline. */
+/* Quiet grey border + faint halo on :focus-visible — never the blue accent outline. */
 .ml-field > input:not([type="checkbox"]):not([type="radio"]):focus-visible,
 .ml-field > select:focus-visible,
 .ml-field > textarea:focus-visible {
   outline: none;
-  border-color: var(--ml-text);
-  box-shadow: 0 0 0 2px var(--ml-text);
+  border-color: var(--ml-text-faint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-text) 8%, transparent);
 }
 
 /* Danger state (Field injects aria-invalid onto the control). */
@@ -95,7 +95,7 @@
 }
 .ml-field > [aria-invalid="true"]:focus-visible {
   border-color: var(--ml-color-danger);
-  box-shadow: 0 0 0 2px var(--ml-color-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-color-danger) 14%, transparent);
 }
 
 .ml-field > :disabled {

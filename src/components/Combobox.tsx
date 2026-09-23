@@ -434,7 +434,8 @@ export function Combobox({
               data-open={visible ? "true" : "false"}
               style={{
                 ...floatingStyle,
-                zIndex: "var(--ml-z-dropdown, 1060)" as unknown as number,
+                // Portaled to <body>: must clear a Drawer/Modal scrim (z 1400/1500) it may be opened from.
+                zIndex: "var(--ml-z-anchored, 1550)" as unknown as number,
               }}
               onMouseDown={(e) => e.preventDefault()}
             >

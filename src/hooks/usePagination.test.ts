@@ -1,3 +1,4 @@
+import { useEffect } from "react";
 import { renderHook, act } from "@testing-library/react";
 import { describe, it, expect } from "vitest";
 import { usePagination } from "./usePagination";
@@ -64,5 +65,37 @@ describe("usePagination", () => {
       result.current.reset();
     });
     expect(result.current.pageIndex).toBe(0);
+  });
+});
+
+describe("usePagination identities", () => {
+  it("keeps setPage and reset stable across renders", () => {
+    const items = Array.from({ length: 25 }, (_, i) => i);
+    const { result, rerender } = renderHook(() => usePagination(items));
+    const first = { setPage: result.current.setPage, reset: result.current.reset };
+
+    rerender();
+
+    expect(result.current.setPage).toBe(first.setPage);
+    expect(result.current.reset).toBe(first.reset);
+  });
+
+  it("stays on the chosen page when an effect is keyed on reset", () => {
+    // The shape every caller writes: "a filter or a sort starts again at the first page".
+    // An unstable reset makes that effect fire on every render, so a page click snaps back.
+    const items = Array.from({ length: 25 }, (_, i) => i);
+    const { result } = renderHook(() => {
+      const pagination = usePagination(items);
+      const { reset } = pagination;
+      useEffect(() => reset(), [reset]);
+      return pagination;
+    });
+
+    act(() => {
+      result.current.setPage(1);
+    });
+
+    expect(result.current.pageIndex).toBe(1);
+    expect(result.current.page).toEqual([12, 13, 14, 15, 16, 17, 18, 19, 20, 21, 22, 23]);
   });
 });

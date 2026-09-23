@@ -15,6 +15,13 @@
   overflow: hidden;
 }
 
+/* ── Toolbar slot (FilterBar / search + Filters button) — sits above the table,
+   inside the card border, sharing its bottom edge with the header row. ── */
+.ml-dt-toolbar {
+  padding: var(--ml-space-md) var(--ml-space-lg);
+  border-bottom: 1px solid var(--ml-border-subtle);
+}
+
 /* Sticky-header scroll region — owns its own overflow, so it must reserve the
    scrollbar gutter to stay reflow-stable (§9). */
 .ml-dt-scroll {

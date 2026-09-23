@@ -94,3 +94,104 @@
   outline: 2px solid var(--ml-text);
   outline-offset: 2px;
 }
+
+/* ── PaginationFooter: "Show N ▾ results (X total)" left, "Page x of y" +
+   chevrons right — the mailgail table-footer convention (§ README). ── */
+.ml-pgf {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  flex-wrap: wrap;
+  gap: var(--ml-space-md);
+  width: 100%;
+  font-size: var(--ml-text-sm);
+  color: var(--ml-text-muted);
+  font-family: var(--ml-font-sans);
+}
+
+.ml-pgf-size {
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-xs);
+}
+
+.ml-pgf-size-shell {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+}
+
+.ml-pgf-size-shell select {
+  appearance: none;
+  height: 28px;
+  padding: 0 22px 0 8px;
+  border: 1px solid var(--ml-border);
+  border-radius: var(--ml-radius-sm);
+  background: var(--ml-bg-card);
+  color: var(--ml-text);
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  cursor: pointer;
+}
+
+.ml-pgf-size-shell select:disabled {
+  cursor: default;
+  opacity: 0.6;
+}
+
+.ml-pgf-size-shell svg {
+  position: absolute;
+  right: 8px;
+  pointer-events: none;
+  color: var(--ml-text-muted);
+}
+
+.ml-pgf-size-shell select:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-pgf-stepper {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-space-xs);
+}
+
+.ml-pgf-arrow {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border: none;
+  border-radius: var(--ml-radius-sm);
+  background: none;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition:
+    background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-pgf-arrow:hover:not(:disabled) {
+  background: var(--ml-bg-elevated);
+  color: var(--ml-text);
+}
+
+.ml-pgf-arrow:disabled {
+  color: var(--ml-text-faint);
+  opacity: 0.5;
+  cursor: default;
+}
+
+.ml-pgf-arrow:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+.ml-pgf-label {
+  min-width: 76px;
+  text-align: center;
+  color: var(--ml-text);
+  font-variant-numeric: tabular-nums;
+}

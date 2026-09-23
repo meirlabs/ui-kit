@@ -1,4 +1,4 @@
-import { useState } from "react";
+import { useCallback, useState } from "react";
 
 const DEFAULT_PAGE_SIZE = 12;
 
@@ -23,11 +23,16 @@ export function usePagination<T>(
   const start = clamped * pageSize;
   const page = items.slice(start, start + pageSize);
 
+  // Callers key effects on reset ("a filter or a sort starts again at the first
+  // page"). A fresh identity each render would fire those effects on every render
+  // and snap the table back to page 1 the moment a page is clicked.
+  const reset = useCallback(() => setPageIndex(0), []);
+
   return {
     page,
     pageIndex: clamped,
     pageCount,
     setPage: setPageIndex,
-    reset: () => setPageIndex(0),
+    reset,
   };
 }

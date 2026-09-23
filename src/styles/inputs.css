@@ -50,10 +50,10 @@
   -webkit-appearance: none;
 }
 
-/* Neutral 2px focus ring on keyboard focus. */
+/* Quiet focus: a grey border and a faint 3px halo, never a solid dark ring. */
 .ml-input:focus-within {
-  border-color: var(--ml-text);
-  box-shadow: 0 0 0 2px var(--ml-text);
+  border-color: var(--ml-text-faint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-text) 8%, transparent);
 }
 /* Only ring for keyboard focus, not mouse clicks. */
 .ml-input:has(.ml-input-field:focus:not(:focus-visible)) {
@@ -66,7 +66,7 @@
 }
 .ml-input--invalid:focus-within {
   border-color: var(--ml-color-danger);
-  box-shadow: 0 0 0 2px var(--ml-color-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-color-danger) 14%, transparent);
 }
 
 .ml-input--disabled {
@@ -130,8 +130,15 @@
 
 .ml-textarea:focus-visible {
   outline: none;
-  border-color: var(--ml-text);
-  box-shadow: 0 0 0 2px var(--ml-text);
+  border-color: var(--ml-text-faint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-text) 8%, transparent);
+}
+
+/* autoResize fields grow imperatively — a manual drag handle would fight that,
+   so autoResize always drops the native resize handle (owner rule: "never
+   mouse-resizable"). */
+.ml-textarea--autoresize {
+  resize: none;
 }
 
 .ml-textarea--invalid {
@@ -139,7 +146,7 @@
 }
 .ml-textarea--invalid:focus-visible {
   border-color: var(--ml-color-danger);
-  box-shadow: 0 0 0 2px var(--ml-color-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-color-danger) 14%, transparent);
 }
 
 .ml-textarea--disabled,

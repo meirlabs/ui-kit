@@ -35,8 +35,10 @@ function mergeRefs<T>(
 /**
  * Textarea — native `<textarea>` matching the input tokens, with an optional
  * `autoResize` that grows to content between `minRows`/`maxRows`. Height is set
- * imperatively (no CSS transition) so growth never animates abruptly. Controlled
- * and uncontrolled both work; ref is forwarded.
+ * imperatively (no CSS transition) so growth never animates abruptly. An
+ * `autoResize` field also drops the native mouse resize handle (`resize: none`)
+ * — a manual drag handle would fight the auto-grow. Controlled and
+ * uncontrolled both work; ref is forwarded.
  */
 export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
   function Textarea(
@@ -91,6 +93,7 @@ export const Textarea = forwardRef<HTMLTextAreaElement, TextareaProps>(
         ref={mergeRefs(innerRef, ref)}
         className={cn(
           "ml-textarea",
+          autoResize && "ml-textarea--autoresize",
           isInvalid && "ml-textarea--invalid",
           disabled && "ml-textarea--disabled",
           className,

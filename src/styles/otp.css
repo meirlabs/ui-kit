@@ -66,10 +66,10 @@
 }
 
 /* The active slot is the typing-position cue (mouse and keyboard alike),
-   so it always rings — same 2px ring as .ml-input:focus-within. */
+   so it always rings — same quiet ring as .ml-input:focus-within. */
 .ml-otp-slot--active {
-  border-color: var(--ml-text);
-  box-shadow: 0 0 0 2px var(--ml-text);
+  border-color: var(--ml-text-faint);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-text) 8%, transparent);
 }
 
 .ml-otp-placeholder {
@@ -82,7 +82,7 @@
 }
 .ml-otp--invalid .ml-otp-slot--active {
   border-color: var(--ml-color-danger);
-  box-shadow: 0 0 0 2px var(--ml-color-danger);
+  box-shadow: 0 0 0 3px color-mix(in srgb, var(--ml-color-danger) 14%, transparent);
 }
 
 /* Disabled — matches .ml-input--disabled. */

@@ -191,7 +191,8 @@
   border: 1px solid var(--ml-border);
   border-radius: var(--ml-radius-lg);
   box-shadow: var(--ml-shadow-card);
-  z-index: var(--ml-z-dropdown, 1000);
+  /* Portaled to <body>; must clear Drawer/Modal scrims it can be opened from. */
+  z-index: var(--ml-z-anchored, 1550);
   animation: ml-dropdown-in var(--ml-duration-fast) var(--ml-ease-out);
   transform-origin: top center;
 }
