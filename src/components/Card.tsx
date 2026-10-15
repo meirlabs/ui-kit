@@ -16,6 +16,15 @@ export interface CardProps extends ComponentPropsWithoutRef<"div"> {
   interactive?: boolean;
   /** `"default"` = 24px padding, `"compact"` = 12px. */
   padding?: "compact" | "default";
+  /**
+   * Opt in to soft "squircle" (continuous-curve) corners instead of the
+   * plain circular radius. Progressive enhancement via `corner-shape` —
+   * currently Chromium-based browsers (Chrome/Edge 139+); browsers without
+   * support render the normal 12px radius, unchanged. Where supported, the
+   * radius also scales up to 21px (12px * `--ml-squircle-radius-scale`) so
+   * the corner reads as softer, not sharper, than the plain radius.
+   */
+  squircle?: boolean;
 }
 
 /**
@@ -28,12 +37,18 @@ export interface CardProps extends ComponentPropsWithoutRef<"div"> {
  *
  * Pass `interactive` for a hover border shift, and set `as="button"` / `as="a"`
  * (or an `onClick`) to make the whole card an accessible, focus-ringed target.
+ *
+ * Pass `squircle` to soften the corners into a continuous "squircle" curve
+ * and scale the radius up to 21px so it reads softer than the plain 12px
+ * radius (progressive enhancement — no-op on browsers without
+ * `corner-shape`, currently Chromium-based browsers only).
  */
 export const Card = forwardRef<HTMLElement, CardProps>(function Card(
   {
     as,
     interactive,
     padding = "default",
+    squircle,
     className,
     children,
     onClick,
@@ -69,6 +84,7 @@ export const Card = forwardRef<HTMLElement, CardProps>(function Card(
         "ml-card",
         interactive && "ml-card-interactive",
         padding === "compact" && "ml-card-compact",
+        squircle && "ml-squircle",
         className,
       )}
       onClick={onClick}

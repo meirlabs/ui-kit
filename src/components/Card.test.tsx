@@ -1,6 +1,10 @@
+import { readFileSync } from "node:fs";
+import { resolve } from "node:path";
 import { render, screen, fireEvent } from "@testing-library/react";
 import { describe, it, expect, vi } from "vitest";
 import { Card } from "./Card";
+
+const squircleCss = readFileSync(resolve(process.cwd(), "src/styles/squircle.css"), "utf8");
 
 describe("Card", () => {
   it("renders a plain div with the base class and default padding", () => {
@@ -77,5 +81,45 @@ describe("Card", () => {
     );
     expect(node).toBeInstanceOf(HTMLDivElement);
     expect(screen.getByTestId("card")).toHaveClass("custom");
+  });
+
+  it("applies the squircle class when opted in", () => {
+    render(
+      <Card squircle data-testid="card">
+        Body
+      </Card>,
+    );
+    expect(screen.getByTestId("card")).toHaveClass("ml-squircle");
+  });
+
+  it("does not apply the squircle class by default", () => {
+    render(<Card data-testid="card">Body</Card>);
+    expect(screen.getByTestId("card")).not.toHaveClass("ml-squircle");
+  });
+
+  it("gates the squircle corner-shape behind @supports (zero-change fallback)", () => {
+    // Contract: browsers without `corner-shape` must render today's plain
+    // border-radius, unchanged. If `corner-shape` ever escapes the
+    // `@supports` block, unsupported browsers stop getting a no-op fallback.
+    expect(squircleCss).toMatch(/@supports \(corner-shape: squircle\)/);
+    const supportsStart = squircleCss.indexOf("@supports (corner-shape: squircle)");
+    const supportsBlock = squircleCss.slice(supportsStart);
+    expect(supportsBlock).toMatch(/\.ml-card\.ml-squircle\s*{[^}]*corner-shape:\s*squircle/);
+    const cssBeforeSupports = squircleCss
+      .slice(0, supportsStart)
+      .replace(/\/\*[\s\S]*?\*\//g, "");
+    expect(cssBeforeSupports).not.toMatch(/corner-shape:\s*squircle/);
+  });
+
+  it("scales the squircle radius up so it reads softer, not sharper, than the plain radius", () => {
+    // corner-shape: squircle (superellipse n=2) is mathematically squarer
+    // than a circular arc at the same radius, so the radius must grow under
+    // the same @supports block or the effect looks sharper than plain.
+    const supportsBlock = squircleCss.slice(
+      squircleCss.indexOf("@supports (corner-shape: squircle)"),
+    );
+    expect(supportsBlock).toMatch(
+      /\.ml-card\.ml-squircle\s*{[^}]*border-radius:\s*calc\(var\(--ml-radius-lg\)\s*\*\s*var\(--ml-squircle-radius-scale/,
+    );
   });
 });

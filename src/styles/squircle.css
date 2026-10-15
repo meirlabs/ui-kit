@@ -1,0 +1,35 @@
+/* ─────────────────────────────────────────────────────────────
+   Squircle corners — progressive enhancement layered on top of an
+   element's existing `border-radius` (e.g. one of the `--ml-radius-*`
+   tokens). Add the `ml-squircle` class alongside any element that
+   already sets a radius to soften it into a continuous "squircle"
+   curve instead of a circular arc.
+
+   `corner-shape: squircle` (superellipse n=2) is mathematically
+   *squarer* than a circular arc at the same radius — applying it
+   without adjustment makes corners look sharper, the opposite of the
+   intent. To actually read as softer, the radius is scaled up by
+   `--ml-squircle-radius-scale` wherever `corner-shape` is supported.
+   1.75 was chosen by comparing `.ml-card` (12px base radius) against
+   `.ml-card.ml-squircle` side by side in Chromium: below ~1.5x the
+   squircle still reads tighter than the plain rounded corner, and
+   above ~2x it starts ballooning into a distractingly different
+   shape. 1.75x is the point where it reads as a clear, gentle
+   softening at the 12px/16px radii ui-kit actually uses.
+
+   Opt-in only — nothing is squircled by default. Gated behind
+   `@supports` so browsers without `corner-shape` render the plain
+   `border-radius` unchanged (zero visual diff on unsupported browsers).
+   Native CSS only — no SVG mask/clip-path, so borders, focus rings and
+   shadows keep following the corner instead of getting clipped.
+   ───────────────────────────────────────────────────────────── */
+@supports (corner-shape: squircle) {
+  :root {
+    --ml-squircle-radius-scale: 1.75;
+  }
+
+  .ml-card.ml-squircle {
+    border-radius: calc(var(--ml-radius-lg) * var(--ml-squircle-radius-scale));
+    corner-shape: squircle;
+  }
+}
