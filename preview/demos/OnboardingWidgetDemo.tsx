@@ -67,6 +67,26 @@ export function OnboardingWidgetDemo() {
       </div>
 
       <div className="demo-section">
+        <div className="demo-label">Current step highlighted (in progress)</div>
+        <div style={{ maxWidth: 480 }}>
+          <OnboardingWidget
+            title="Set up your workspace"
+            steps={[
+              { id: "profile", title: "Complete your profile", completed: true },
+              {
+                id: "workspace",
+                title: "Name your workspace",
+                description: "Pick a name and URL for your team.",
+                current: true,
+              },
+              { id: "connect", title: "Connect a data source" },
+              { id: "invite", title: "Invite a teammate" },
+            ]}
+          />
+        </div>
+      </div>
+
+      <div className="demo-section">
         <div className="demo-label">All steps complete (success tone)</div>
         <div style={{ maxWidth: 480 }}>
           <OnboardingWidget

@@ -1,6 +1,6 @@
 ---
 name: ui-kit
-description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette), toasts, pagination, status pills, tags, badges, metric values, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg.
+description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette), toasts, pagination, status pills, tags, badges, metric values, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, onboarding checklist, first-run experience, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg.
 ---
 
 # @meir-labs/ui-kit
@@ -45,6 +45,7 @@ and design tokens — read it for details.
 - **Callout** — inline tone-colored note block. `tone`, `title`, `icon`, `onDismiss`.
 - **Placeholder** — decorative "nothing here yet" illustration (`subject`: clients/documents/search/calendar). Pair with `EmptyState` for the copy.
 - **EditableDocument** — fill-in-the-blank document editor. `source` prose with `{{key|label}}` tokens, controlled `values`/`onChange`; use `parseDocFields(source)` to derive form fields.
+- **OnboardingWidget** — data-driven onboarding checklist card. `steps[]` (id/title/description/`completed`/`current`/icon/action), `onStepAction`, `onDismiss`, `hideProgress`, `progressLabel`. Each step is completed/current/incomplete; `current` renders an emphasized marker + `aria-current="step"`.
 
 ### Layout
 - **Shell / Sidebar / SidebarItem / TopBar / PageHeader** — app-shell scaffolding. `Sidebar` takes `collapsed` (icon rail); `SidebarItem` takes `active`/`icon`; `TopBar` has `left`/`center`/`right` slots; `PageHeader` takes `title`/`subtitle`/`breadcrumb`/`actions`/`backHref` or `onBack`.

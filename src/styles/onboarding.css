@@ -126,6 +126,9 @@
 /* Marker: a circle carrying the check (complete), a custom icon, or the
    ordinal number (incomplete fallback). */
 .ml-onboarding-step-marker {
+  /* Pin box-sizing so the current-state 1px→2px border swap doesn't grow the
+     marker (contract §9 — metrics stay fixed on state). */
+  box-sizing: border-box;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -155,6 +158,18 @@
   border-color: transparent;
   background: var(--ml-color-success);
   color: #fff;
+}
+
+/* Current marker: emphasized ring, matches Stepper's current-state treatment. */
+.ml-onboarding-step[data-state="current"] .ml-onboarding-step-marker {
+  border-width: 2px;
+  border-color: var(--ml-text);
+  color: var(--ml-text);
+}
+
+.ml-onboarding-step[data-state="current"] .ml-onboarding-step-title {
+  color: var(--ml-text);
+  font-weight: 600;
 }
 
 .ml-onboarding-step-body {

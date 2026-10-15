@@ -14,6 +14,13 @@ export interface OnboardingStep {
   /** Whether the step is done. Drives the marker + progress count. */
   completed?: boolean;
   /**
+   * Marks this step as the one the user is on right now (an "in progress"
+   * state distinct from complete/incomplete). Ignored when `completed` is
+   * true. Renders an emphasized ring on the marker and `aria-current="step"`
+   * on the list item, matching `Stepper`'s current state.
+   */
+  current?: boolean;
+  /**
    * Optional marker for the *incomplete* state (icon-agnostic ReactNode).
    * Completed steps always show the built-in check. Omit to fall back to the
    * step's ordinal number.
@@ -85,7 +92,8 @@ function DismissIcon() {
 /**
  * OnboardingWidget — a data-driven onboarding checklist card. Shows a progress
  * summary ("2 of 4 complete" + a bar) over a list of steps, each with a
- * completed/incomplete marker, an optional description, and an optional CTA.
+ * completed/current/incomplete marker, an optional description, and an
+ * optional CTA.
  *
  * Controlled: `steps` and their `completed` flags come in via props; the widget
  * renders them and emits `onStepAction(id, index)` when a step's CTA fires. No
@@ -169,6 +177,8 @@ export const OnboardingWidget = forwardRef<HTMLElement, OnboardingWidgetProps>(
         <ol className="ml-onboarding-steps">
           {steps.map((step, index) => {
             const completed = Boolean(step.completed);
+            const current = !completed && Boolean(step.current);
+            const state = completed ? "complete" : current ? "current" : "incomplete";
             const showAction =
               step.action != null &&
               (!completed || step.action.showWhenComplete === true);
@@ -177,7 +187,8 @@ export const OnboardingWidget = forwardRef<HTMLElement, OnboardingWidgetProps>(
               <li
                 key={step.id}
                 className="ml-onboarding-step"
-                data-state={completed ? "complete" : "incomplete"}
+                data-state={state}
+                aria-current={current ? "step" : undefined}
               >
                 <span className="ml-onboarding-step-marker" aria-hidden="true">
                   {completed ? (
@@ -197,7 +208,11 @@ export const OnboardingWidget = forwardRef<HTMLElement, OnboardingWidgetProps>(
                     </div>
                   )}
                   <span className="ml-visually-hidden">
-                    {completed ? "Completed" : "Not completed"}
+                    {completed
+                      ? "Completed"
+                      : current
+                        ? "In progress"
+                        : "Not completed"}
                   </span>
                 </div>
 
