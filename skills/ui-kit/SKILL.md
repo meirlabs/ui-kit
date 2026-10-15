@@ -1,6 +1,6 @@
 ---
 name: ui-kit
-description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette), toasts, pagination, status pills, tags, badges, metric values, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg.
+description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette), toasts, pagination, status pills, tags, badges, metric values, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg, magnetic nav link, anchor positioning, hit area, tap target, ml-magnetic-nav, ml-hit-area.
 ---
 
 # @meir-labs/ui-kit
@@ -93,6 +93,10 @@ and design tokens — read it for details.
 - **Spinner** — inline loading indicator. `size` sm/md/lg, `label` (visually-hidden a11y name).
 - **Skeleton / SkeletonText** — loading placeholder. `variant` text/rect/circle, `width`/`height`/`radius`; `SkeletonText` adds `lines`.
 - **Progress** — determinate (`value`/`max`) or indeterminate bar. `size`, `tone`, `label`, `showValue`.
+
+### Patterns (CSS-only, no component)
+- **`.ml-magnetic-nav` / `.ml-magnetic-nav-link` / `.ml-magnetic-nav-highlight`** — highlight that glides between nav links via CSS anchor positioning; rests on `aria-current="page"`; falls back to a plain hover/focus color change where unsupported.
+- **`.ml-hit-area`** — grows a small control's clickable region via `::before` (no layout shift). Tune with `--ml-hit-area-inset`. Only safe with clear space from the next control — see README.
 
 ## Hooks
 

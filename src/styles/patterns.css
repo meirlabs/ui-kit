@@ -1,0 +1,155 @@
+/* @meir-labs/ui-kit — Patterns
+   Small, drop-in CSS techniques that don't warrant a full component: a class
+   (or two) on plain markup, no props, no JS. Reduced motion is handled by
+   the kit's global transition-duration guard (base.css) — neither pattern
+   below needs its own `prefers-reduced-motion` block. */
+
+/* ── Magnetic nav link (CSS anchor positioning) ──────────────────────────────
+   A single shared highlight glides between nav links by tracking whichever
+   link currently carries `anchor-name: --ml-magnetic-anchor`. The browser
+   resolves that anchor's box every frame via `anchor()`, so a plain
+   top/left/right/bottom transition animates the slide — no JS measuring
+   DOMRects.
+
+   The anchor name defaults to living on the `aria-current="page"` link (so
+   the highlight has a resting place) and moves to whichever link is
+   hovered/focused. Only one link may hold the anchor name at a time — if two
+   did, which one "wins" is tree-order dependent per spec, so the `:has()`
+   rule below strips it from the active link whenever a *different* link is
+   hovered/focused, and gives it back the instant that ends. That keeps a
+   valid anchor at every moment, so the highlight always has somewhere to
+   transition to/from.
+
+   No `aria-current` link, and nothing hovered/focused? The highlight has no
+   anchor to size against, so its top/left/right/bottom fall back to `auto`
+   and it collapses to 0×0 (invisible) — not a bug, just no resting position.
+
+   Where `anchor-name`/`anchor()` are unsupported, the `@supports` block never
+   fires: the highlight stays `display: none` and each link keeps its own
+   plain `:hover`/`:focus-visible` color change as the fallback — that rule
+   sits outside `@supports` so it always applies. */
+.ml-magnetic-nav {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  gap: var(--ml-space-xs);
+}
+
+.ml-magnetic-nav-link {
+  position: relative;
+  z-index: 1;
+  display: inline-flex;
+  align-items: center;
+  padding: 8px 14px;
+  border-radius: var(--ml-radius-pill);
+  font-family: inherit;
+  font-size: var(--ml-text-sm);
+  font-weight: 500;
+  color: var(--ml-text-muted);
+  text-decoration: none;
+  transition: color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-magnetic-nav-link[aria-current="page"] {
+  color: var(--ml-text);
+}
+
+.ml-magnetic-nav-link:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 2px;
+}
+
+/* Hover-driven changes only for pointers that actually hover — touch taps
+   trigger :hover too, which would otherwise "stick" the magnetic slide right
+   before the tap navigates away. Keyboard focus (:focus-visible) is never
+   gated, so Tab-ing through the nav still moves the highlight. */
+@media (hover: hover) and (pointer: fine) {
+  .ml-magnetic-nav-link:hover {
+    color: var(--ml-text);
+  }
+}
+
+.ml-magnetic-nav-highlight {
+  display: none;
+}
+
+@supports (anchor-name: --ml-magnetic-anchor) {
+  .ml-magnetic-nav-link {
+    anchor-name: none;
+  }
+  .ml-magnetic-nav-link[aria-current="page"] {
+    anchor-name: --ml-magnetic-anchor;
+  }
+  .ml-magnetic-nav-link:focus-visible {
+    anchor-name: --ml-magnetic-anchor;
+  }
+  /* Yield the anchor back to the active link whenever a different link is
+     the one actually hovered/focused (see comment above). */
+  .ml-magnetic-nav:has(.ml-magnetic-nav-link:focus-visible)
+    .ml-magnetic-nav-link[aria-current="page"]:not(:focus-visible) {
+    anchor-name: none;
+  }
+
+  .ml-magnetic-nav-highlight {
+    display: block;
+    position: absolute;
+    z-index: 0;
+    position-anchor: --ml-magnetic-anchor;
+    top: anchor(top);
+    left: anchor(left);
+    right: anchor(right);
+    bottom: anchor(bottom);
+    border-radius: var(--ml-radius-pill);
+    background: var(--ml-bg-elevated);
+    pointer-events: none;
+    transition:
+      top var(--ml-duration-slow) var(--ml-ease-out),
+      left var(--ml-duration-slow) var(--ml-ease-out),
+      right var(--ml-duration-slow) var(--ml-ease-out),
+      bottom var(--ml-duration-slow) var(--ml-ease-out);
+  }
+
+  @media (hover: hover) and (pointer: fine) {
+    .ml-magnetic-nav-link:hover {
+      anchor-name: --ml-magnetic-anchor;
+    }
+    .ml-magnetic-nav:has(.ml-magnetic-nav-link:hover)
+      .ml-magnetic-nav-link[aria-current="page"]:not(:hover) {
+      anchor-name: none;
+    }
+  }
+}
+
+/* ── Hit-area extension (::before, no layout impact) ─────────────────────────
+   Generalizes the technique already used internally by `.ml-tag-remove`:
+   grow a control's clickable region with an absolutely-positioned ::before
+   sized via a negative `inset`, instead of padding, so the visible box (and
+   sibling spacing) never changes. Hit-testing on a `::before` resolves to its
+   host element — there's no separate node to wire a click handler to — so
+   clicks anywhere in the enlarged region already register as clicks on the
+   control.
+
+   Default -10px matches the canonical 24px-icon-button → 44px-hit-area case
+   (tap-target guidance); override `--ml-hit-area-inset` per instance for a
+   smaller visual box (e.g. a 16px control needs ~-14px to reach 44px).
+
+   Caution — only apply to a control with at least 2× this inset of clear
+   space from the nearest *following* sibling control. `::before` doesn't
+   open its own stacking context (no z-index set), so plain DOM/paint order
+   applies: a later sibling's hit-area, extending backward, paints on top of
+   an earlier sibling and will intercept clicks in the overlap. A hit-area
+   extending forward into a *later* sibling is safe — the later sibling's own
+   box already paints on top of it. */
+.ml-hit-area {
+  position: relative;
+}
+.ml-hit-area::before {
+  content: "";
+  position: absolute;
+  inset: calc(-1 * var(--ml-hit-area-inset, 10px));
+}
+@media (pointer: coarse) {
+  .ml-hit-area::before {
+    inset: calc(-1 * var(--ml-hit-area-inset-coarse, 14px));
+  }
+}

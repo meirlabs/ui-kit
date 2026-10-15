@@ -404,3 +404,11 @@ body {
   gap: 12px;
   flex-wrap: wrap;
 }
+
+/* Debug-only outline so a reviewer can see the ::before hit-area boundary
+   in preview/demos/HitAreaDemo.tsx. Never shipped in patterns.css — the
+   real pattern's ::before is invisible by design. */
+.demo-hit-area-debug .ml-hit-area::before {
+  outline: 1px dashed var(--ml-color-danger);
+  background: color-mix(in srgb, var(--ml-color-danger) 10%, transparent);
+}
