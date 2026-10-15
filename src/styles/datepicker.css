@@ -1,0 +1,214 @@
+/* @meir-labs/ui-kit — DatePicker */
+
+.ml-datepicker {
+  display: inline-flex;
+  min-width: 200px;
+}
+
+.ml-datepicker-trigger {
+  width: 100%;
+}
+
+.ml-datepicker-icon {
+  flex-shrink: 0;
+  color: var(--ml-text-muted);
+}
+
+/* ── Panel (enter/exit fade + translate, matches Popover/Select) ── */
+.ml-datepicker-panel {
+  position: fixed;
+  width: 280px;
+  padding: var(--ml-space-md);
+  border-radius: var(--ml-radius-lg);
+  background: var(--ml-bg-card);
+  border: 1px solid var(--ml-border);
+  box-shadow: var(--ml-shadow-elevated);
+  color: var(--ml-text);
+  font-family: inherit;
+  opacity: 0;
+  transform: translateY(-4px);
+  transition: opacity var(--ml-duration-slow) var(--ml-ease-out),
+    transform var(--ml-duration-slow) var(--ml-ease-out);
+  will-change: opacity, transform;
+}
+
+.ml-datepicker-panel:focus {
+  outline: none;
+}
+
+.ml-datepicker-panel[data-placement^="top"] {
+  transform: translateY(4px);
+}
+
+.ml-datepicker-panel[data-open="true"] {
+  opacity: 1;
+  transform: translate(0, 0);
+}
+
+/* ── Header ── */
+.ml-datepicker-header {
+  display: flex;
+  align-items: center;
+  justify-content: space-between;
+  margin-bottom: var(--ml-space-sm);
+}
+
+.ml-datepicker-nav {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: 28px;
+  height: 28px;
+  border-radius: var(--ml-radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ml-text-muted);
+  cursor: pointer;
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-datepicker-nav:hover {
+  background: var(--ml-bg-surface);
+  color: var(--ml-text);
+}
+
+.ml-datepicker-nav:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 1px;
+}
+
+.ml-datepicker-title {
+  font-size: 14px;
+  font-weight: 600;
+  color: var(--ml-text);
+}
+
+/* ── Grid ── */
+.ml-datepicker-grid {
+  display: flex;
+  flex-direction: column;
+  gap: 2px;
+}
+
+.ml-datepicker-row {
+  display: grid;
+  grid-template-columns: repeat(7, 1fr);
+  gap: 2px;
+}
+
+.ml-datepicker-weekday {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 24px;
+  font-size: 11px;
+  font-weight: 500;
+  text-transform: uppercase;
+  letter-spacing: 0.03em;
+  color: var(--ml-text-faint);
+}
+
+.ml-datepicker-day {
+  display: flex;
+  align-items: center;
+  justify-content: center;
+  height: 32px;
+  border-radius: var(--ml-radius-sm);
+  border: 1px solid transparent;
+  background: transparent;
+  color: var(--ml-text);
+  font-size: 13px;
+  font-family: inherit;
+  cursor: pointer;
+  transition: background var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease),
+    border-color var(--ml-duration-base) var(--ml-ease);
+}
+
+.ml-datepicker-day:hover {
+  background: var(--ml-bg-surface);
+}
+
+.ml-datepicker-day:focus-visible {
+  outline: 2px solid var(--ml-text);
+  outline-offset: 1px;
+}
+
+.ml-datepicker-day[data-outside] {
+  color: var(--ml-text-faint);
+}
+
+.ml-datepicker-day[data-today] {
+  border-color: var(--ml-border);
+  font-weight: 600;
+}
+
+.ml-datepicker-day[data-selected] {
+  background: var(--ml-text);
+  color: var(--ml-bg);
+  font-weight: 600;
+}
+
+.ml-datepicker-day[data-selected]:hover {
+  background: var(--ml-text);
+}
+
+.ml-datepicker-day[aria-disabled="true"] {
+  color: var(--ml-text-faint);
+  opacity: 0.4;
+  cursor: not-allowed;
+  pointer-events: none;
+}
+
+/* ── Month transition ──
+   Slides + fades the grid in from the direction of travel (<=200ms, matches
+   --ml-duration-slow). The day cells themselves don't re-transition — only the
+   grid as a whole, so it reads as one deliberate move rather than a flicker. */
+@keyframes ml-datepicker-slide-next {
+  from {
+    opacity: 0;
+    transform: translateX(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes ml-datepicker-slide-prev {
+  from {
+    opacity: 0;
+    transform: translateX(-10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+.ml-datepicker-grid[data-direction="next"] {
+  animation: ml-datepicker-slide-next var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+.ml-datepicker-grid[data-direction="prev"] {
+  animation: ml-datepicker-slide-prev var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-datepicker-panel {
+    transition-duration: 0.01ms;
+    transform: none;
+  }
+  .ml-datepicker-panel[data-open="true"] {
+    transform: none;
+  }
+  .ml-datepicker-grid[data-direction="next"],
+  .ml-datepicker-grid[data-direction="prev"] {
+    animation: none;
+  }
+  .ml-datepicker-day,
+  .ml-datepicker-nav {
+    transition: none;
+  }
+}
