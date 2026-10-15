@@ -39,6 +39,9 @@ import { StatCardDemo } from "./demos/StatCardDemo";
 import { OnboardingWidgetDemo } from "./demos/OnboardingWidgetDemo";
 import { EmptyStateDemo } from "./demos/EmptyStateDemo";
 
+// Patterns
+import { InvoicePortalDemo } from "./demos/InvoicePortalDemo";
+
 // Feedback
 import { BannerDemo } from "./demos/BannerDemo";
 import { ToastDemo } from "./demos/ToastDemo";
@@ -124,6 +127,12 @@ const categories: Category[] = [
       { name: "Stat Card", component: StatCardDemo },
       { name: "Onboarding Widget", component: OnboardingWidgetDemo },
       { name: "Empty State", component: EmptyStateDemo },
+    ],
+  },
+  {
+    name: "Patterns",
+    items: [
+      { name: "Client Invoice Portal", component: InvoicePortalDemo },
     ],
   },
   {
