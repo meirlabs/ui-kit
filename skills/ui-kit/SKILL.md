@@ -1,6 +1,6 @@
 ---
 name: ui-kit
-description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette), toasts, pagination, status pills, tags, badges, metric values, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg.
+description: Themeable (light & dark) React component library, @meir-labs/ui-kit. Use when building UI with tables, forms, overlays (modal, drawer, dropdown, popover, tooltip, select, combobox, command palette), toasts, pagination, status pills, tags, badges, metric values, or design tokens. Triggers on: table component, data table, pagination, status pill, tag, badge, chip, metric value, design tokens, ui-kit, component library, theme tokens, form field, input, select, combobox, modal, drawer, toast, tooltip, popover, accordion, stepper, breadcrumbs, file upload, command palette, loading state, loader, spinner, dots loader, bars loader, pulse ring, skeleton, ml-dt, ml-tag, ml-status-pill, ml-metric, ml-pg.
 ---
 
 # @meir-labs/ui-kit
@@ -91,6 +91,10 @@ and design tokens — read it for details.
 ### Feedback
 - **Toaster / ToastProvider / useToast** — mount `<ToastProvider>` once at the app root; call `useToast().toast({ title, description?, tone?, duration?, action? })` anywhere below it. `placement`, `maxVisible` queue with pause-on-hover.
 - **Spinner** — inline loading indicator. `size` sm/md/lg, `label` (visually-hidden a11y name).
+- **CometLoader** — AI/agentic loading indicator (orbiting dot-matrix spiral). `size`, `label`. Reach for it when the wait is AI thinking/generating; `Spinner` stays the generic async default.
+- **DotsLoader** — minimal 3-dot sequential-pulse loader for tight inline spaces (send button, inline "typing" state). `size`, `label`.
+- **BarsLoader** — 4-bar equalizer-style loader; reads as active background work (upload, render, sync). `size`, `label`.
+- **PulseRingLoader** — expanding-ring loader; reads as a live/listening/connecting state. `size`, `label`.
 - **Skeleton / SkeletonText** — loading placeholder. `variant` text/rect/circle, `width`/`height`/`radius`; `SkeletonText` adds `lines`.
 - **Progress** — determinate (`value`/`max`) or indeterminate bar. `size`, `tone`, `label`, `showValue`.
 

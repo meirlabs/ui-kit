@@ -1,0 +1,58 @@
+/* @meir-labs/ui-kit — PulseRingLoader
+   A solid currentColor core with a ring that expands and fades outward on
+   loop. Inherits --ml-text-muted by default. Reduced-motion freezes the ring
+   at rest and pulses its opacity only (no scale animation). */
+
+.ml-pulse-ring {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ml-text-muted);
+  vertical-align: middle;
+}
+
+.ml-pulse-ring-visual {
+  position: relative;
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  width: var(--ml-pulse-ring-size, 20px);
+  height: var(--ml-pulse-ring-size, 20px);
+}
+
+.ml-pulse-ring-wave {
+  position: absolute;
+  inset: 0;
+  box-sizing: border-box;
+  border-radius: var(--ml-radius-pill);
+  border: 1.5px solid currentColor;
+  animation: ml-pulse-ring-expand 1.6s ease-out infinite;
+}
+
+.ml-pulse-ring-core {
+  width: 34%;
+  height: 34%;
+  border-radius: var(--ml-radius-pill);
+  background: currentColor;
+}
+
+.ml-pulse-ring-sm { --ml-pulse-ring-size: 16px; }
+.ml-pulse-ring-md { --ml-pulse-ring-size: 20px; }
+.ml-pulse-ring-lg { --ml-pulse-ring-size: 26px; }
+
+@keyframes ml-pulse-ring-expand {
+  0% { transform: scale(0.4); opacity: 0.6; }
+  100% { transform: scale(1.4); opacity: 0; }
+}
+
+/* Reduced-motion: hold the ring at rest scale, pulse opacity only. */
+@media (prefers-reduced-motion: reduce) {
+  .ml-pulse-ring-wave {
+    animation: ml-pulse-ring-pulse 1.4s ease-in-out infinite;
+    transform: scale(1);
+  }
+  @keyframes ml-pulse-ring-pulse {
+    0%, 100% { opacity: 0.5; }
+    50% { opacity: 0.15; }
+  }
+}
