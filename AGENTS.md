@@ -123,6 +123,11 @@ DangerZone(props: DangerZoneProps) / DangerZoneItem(props: DangerZoneItemProps):
 // DangerZoneItemProps: { title: ReactNode; description?; actionLabel? (default "Delete"); onConfirm?: () => void; disabled?; loading?; action?: ReactNode }
 // Doesn't own a confirm modal — wire your own confirm flow via onConfirm.
 
+ScrollFade(props: ScrollFadeProps): JSX.Element
+// { axis?: "x" | "y" | "both" (default "y"); size?: number (fade length in px, default 48) } & div props
+// Fades a scroll container's edges based on scroll position (CSS animation-timeline: scroll()) — no
+// fade at an edge you're already at. @supports-gated: degrades to a plain unmasked scroller elsewhere.
+
 // Navigation
 Tabs(props: TabsProps) / TabsPanel(props: TabsPanelProps): JSX.Element
 // TabsProps: { tabs: TabItem[]; value: string; onChange: (value) => void; "aria-label": string } & div props (required aria-label)
