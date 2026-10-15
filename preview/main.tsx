@@ -44,6 +44,7 @@ import { BannerDemo } from "./demos/BannerDemo";
 import { ToastDemo } from "./demos/ToastDemo";
 import { CalloutDemo } from "./demos/CalloutDemo";
 import { SpinnerDemo } from "./demos/SpinnerDemo";
+import { CometLoaderDemo } from "./demos/CometLoaderDemo";
 import { SkeletonDemo } from "./demos/SkeletonDemo";
 import { ProgressDemo } from "./demos/ProgressDemo";
 
@@ -133,6 +134,7 @@ const categories: Category[] = [
       { name: "Toast", component: ToastDemo },
       { name: "Callout", component: CalloutDemo },
       { name: "Spinner", component: SpinnerDemo },
+      { name: "Comet Loader", component: CometLoaderDemo },
       { name: "Skeleton", component: SkeletonDemo },
       { name: "Progress", component: ProgressDemo },
     ],
