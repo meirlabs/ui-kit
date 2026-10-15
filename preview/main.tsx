@@ -5,6 +5,7 @@ import "./preview.css";
 
 // Primitives
 import { ButtonDemo } from "./demos/ButtonDemo";
+import { DeleteButtonDemo } from "./demos/DeleteButtonDemo";
 import { BadgeDemo } from "./demos/BadgeDemo";
 import { AvatarDemo } from "./demos/AvatarDemo";
 import { LabelDemo } from "./demos/LabelDemo";
@@ -82,6 +83,7 @@ const categories: Category[] = [
     name: "Primitives",
     items: [
       { name: "Button", component: ButtonDemo },
+      { name: "Delete Button", component: DeleteButtonDemo },
       { name: "Badge", component: BadgeDemo },
       { name: "Avatar", component: AvatarDemo },
       { name: "Label", component: LabelDemo },

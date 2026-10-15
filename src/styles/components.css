@@ -202,6 +202,137 @@
   }
 }
 
+/* ── Delete Button ──
+   A no-modal, inline confirm-to-delete control: idle (danger-muted, like
+   .ml-btn-danger) → confirm (armed — solid danger fill, label morphs, a
+   countdown bar auto-reverts it) → loading (spinner) → done (checkmark,
+   success color) → back to idle. The width morph between labels is the
+   deliberate exception to "metrics never shift between states" — it *is* the
+   pattern here. JS drives the width transition (see DeleteButton.tsx);
+   duration/easing come straight from the shared motion tokens. */
+.ml-delete-btn {
+  gap: 6px;
+  background: var(--ml-color-danger-muted);
+  color: var(--ml-color-danger);
+  overflow: hidden;
+  transition:
+    background-color var(--ml-duration-base) var(--ml-ease),
+    color var(--ml-duration-base) var(--ml-ease),
+    box-shadow var(--ml-duration-base) var(--ml-ease),
+    transform var(--ml-duration-press) var(--ml-ease),
+    width var(--ml-duration-slow) var(--ml-ease-out);
+}
+
+/* loading/done are deliberately NOT :disabled (see DeleteButton.tsx —
+   disabling the focused element would evict focus), so these two rules must
+   explicitly exclude those phase classes or their higher specificity
+   (:hover + :not(:disabled)) would outrank .ml-delete-btn-loading/-done's
+   plain class selector and repaint the hover/press color over the fill. */
+.ml-delete-btn:hover:not(:disabled):not(.ml-delete-btn-loading):not(.ml-delete-btn-done) {
+  background: color-mix(in srgb, var(--ml-color-danger) 18%, var(--ml-color-danger-muted));
+}
+
+.ml-delete-btn:active:not(:disabled):not(.ml-delete-btn-loading):not(.ml-delete-btn-done) {
+  transform: scale(var(--ml-press-scale));
+}
+
+/* Armed: solid danger fill so the raised stakes read immediately. */
+.ml-delete-btn-confirm {
+  background: var(--ml-color-danger);
+  color: #ffffff;
+}
+
+.ml-delete-btn-confirm:hover:not(:disabled) {
+  background: color-mix(in srgb, var(--ml-color-danger) 88%, black);
+}
+
+/* Loading/done are non-interactive beats, not a "control unavailable" state,
+   so the component itself never sets the `disabled` attribute for them (see
+   DeleteButtonProps.disabled in DeleteButton.tsx — disabling the focused
+   element would evict focus to <body> and never give it back). This only
+   matters if the *consumer* also passes `disabled` while mid-delete; keep
+   these beats fully legible even then rather than applying the base 50% dim. */
+.ml-delete-btn-loading:disabled,
+.ml-delete-btn-done:disabled {
+  opacity: 1;
+}
+
+/* Loading: same danger fill, no hover/press feedback (cursor already
+   defaults via :disabled), spinner replaces the icon. */
+.ml-delete-btn-loading {
+  background: var(--ml-color-danger);
+  color: #ffffff;
+  cursor: default;
+}
+
+/* Done: success tint for the brief checkmark beat. */
+.ml-delete-btn-done {
+  background: var(--ml-color-success-muted);
+  color: var(--ml-color-success);
+  cursor: default;
+}
+
+.ml-delete-btn-icon-slot {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  flex-shrink: 0;
+}
+
+.ml-delete-btn-label {
+  white-space: nowrap;
+}
+
+.ml-delete-btn-spinner {
+  width: 14px;
+  height: 14px;
+  border-radius: 50%;
+  border: 1.75px solid currentColor;
+  border-top-color: transparent;
+  opacity: 0.9;
+  animation: ml-btn-spin 0.7s linear infinite;
+}
+
+/* Auto-revert countdown — a thin bar draining left→right along the bottom
+   edge over `confirmTimeoutMs` (set inline as animation-duration). Purely
+   decorative: the JS timeout that actually reverts the phase runs
+   regardless, so hiding this under reduced-motion loses no functionality. */
+.ml-delete-btn-countdown {
+  position: absolute;
+  left: 0;
+  bottom: 0;
+  height: 2px;
+  width: 100%;
+  background: rgba(255, 255, 255, 0.6);
+  transform-origin: left;
+  animation: ml-delete-btn-countdown linear forwards;
+}
+
+@keyframes ml-delete-btn-countdown {
+  from {
+    transform: scaleX(1);
+  }
+  to {
+    transform: scaleX(0);
+  }
+}
+
+@media (prefers-reduced-motion: reduce) {
+  .ml-delete-btn {
+    transition: background-color var(--ml-duration-base) var(--ml-ease), color var(--ml-duration-base) var(--ml-ease);
+  }
+  .ml-delete-btn:active:not(:disabled) {
+    transform: none;
+  }
+  .ml-delete-btn-spinner {
+    animation: none;
+    opacity: 0.6;
+  }
+  .ml-delete-btn-countdown {
+    display: none;
+  }
+}
+
 /* ── Badge ──
    Pill, -muted tint fill + solid status text, no border (contract §8). Neutral
    is GRAY (surface + muted text) — never the blue `.ml-badge-neutral` legacy
