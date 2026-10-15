@@ -18,8 +18,10 @@ export interface ButtonProps
   extends Omit<ComponentPropsWithoutRef<"button">, "children"> {
   /**
    * Visual treatment. `primary` is the charcoal "btn-dark" surface — the way a
-   * monochrome system expresses a primary action (contract §5). `icon` is a
-   * transparent, square icon-only button.
+   * monochrome system expresses a primary action (contract §5), with a
+   * layered shadow + inset highlight bevel and press/hover motion for a
+   * tactile, raised feel (LAB-164). `icon` is a transparent, square
+   * icon-only button.
    */
   variant?: ButtonVariant;
   /** Row height: sm 32 · md 40 · lg 48. Font stays 14px across sizes. */
