@@ -112,6 +112,29 @@ export const Async: StoryObj = {
   ),
 };
 
+export const DuplicateDedupe: StoryObj = {
+  name: "Duplicate dedupe (shake, no stacking)",
+  render: () => (
+    <>
+      <Toaster />
+      <div style={row}>
+        <Button
+          variant="secondary"
+          onClick={() => toast("Changes saved", { duration: 30000 })}
+        >
+          Fire "Changes saved" — click again to shake, not stack
+        </Button>
+        <Button
+          variant="secondary"
+          onClick={() => toast.success("Export complete", { duration: 30000 })}
+        >
+          Fire a different message — stacks normally
+        </Button>
+      </div>
+    </>
+  ),
+};
+
 export const TopCenter: StoryObj = {
   render: () => (
     <>
