@@ -1,0 +1,53 @@
+/* @meir-labs/ui-kit — DotsLoader
+   Indeterminate loader for compact inline spots: three currentColor dots
+   bouncing in a staggered wave. Inherits --ml-text-muted by default.
+   Reduced-motion freezes the wave to a soft whole-group opacity pulse
+   (opacity only — no transform). */
+
+.ml-dots {
+  display: inline-flex;
+  align-items: center;
+  justify-content: center;
+  color: var(--ml-text-muted);
+  vertical-align: middle;
+}
+
+.ml-dots-track {
+  display: flex;
+  align-items: center;
+  gap: var(--ml-dots-gap, 4px);
+}
+
+.ml-dots-dot {
+  display: block;
+  width: var(--ml-dots-size, 6px);
+  height: var(--ml-dots-size, 6px);
+  border-radius: var(--ml-radius-pill);
+  background: currentColor;
+  animation: ml-dots-bounce 0.9s ease-in-out infinite;
+}
+
+.ml-dots-sm { --ml-dots-size: 4px; --ml-dots-gap: 3px; }
+.ml-dots-md { --ml-dots-size: 6px; --ml-dots-gap: 4px; }
+.ml-dots-lg { --ml-dots-size: 8px; --ml-dots-gap: 5px; }
+
+@keyframes ml-dots-bounce {
+  0%, 100% { transform: scale(0.6); opacity: 0.35; }
+  50% { transform: scale(1); opacity: 1; }
+}
+
+/* Reduced-motion: stop each dot's bounce and read the group as a soft
+   opacity pulse instead. */
+@media (prefers-reduced-motion: reduce) {
+  .ml-dots-dot {
+    animation: none;
+    opacity: 0.6;
+  }
+  .ml-dots-track {
+    animation: ml-dots-pulse 1.4s ease-in-out infinite;
+  }
+  @keyframes ml-dots-pulse {
+    0%, 100% { opacity: 1; }
+    50% { opacity: 0.4; }
+  }
+}

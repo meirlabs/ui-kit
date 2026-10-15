@@ -1,0 +1,63 @@
+/* @meir-labs/ui-kit — OrbitLoader
+   Indeterminate "satellite" loader: a bright currentColor dot with a short
+   fading trail orbits a static track ring. Inherits --ml-text-muted by
+   default. Reduced-motion stops the orbit with the dot at rest and the trail
+   hidden (no transform change — the arm simply stops animating). */
+
+.ml-orbit {
+  position: relative;
+  display: inline-flex;
+  width: var(--ml-orbit-size, 20px);
+  height: var(--ml-orbit-size, 20px);
+  color: var(--ml-text-muted);
+  vertical-align: middle;
+}
+
+.ml-orbit-sm { --ml-orbit-size: 16px; --ml-orbit-dot-size: 3.5px; }
+.ml-orbit-md { --ml-orbit-size: 20px; --ml-orbit-dot-size: 4px; }
+.ml-orbit-lg { --ml-orbit-size: 24px; --ml-orbit-dot-size: 5px; }
+
+.ml-orbit-track {
+  position: absolute;
+  inset: 0;
+  border-radius: var(--ml-radius-pill);
+  border: 2px solid color-mix(in srgb, currentColor 18%, transparent);
+}
+
+.ml-orbit-arm {
+  position: absolute;
+  inset: 0;
+  animation: ml-orbit-spin 1.1s linear infinite;
+}
+
+.ml-orbit-echo {
+  position: absolute;
+  inset: 0;
+}
+
+.ml-orbit-dot {
+  position: absolute;
+  top: 0;
+  left: 50%;
+  width: var(--ml-orbit-dot-size, 4px);
+  height: var(--ml-orbit-dot-size, 4px);
+  margin-top: calc(var(--ml-orbit-dot-size, 4px) / -2);
+  margin-left: calc(var(--ml-orbit-dot-size, 4px) / -2);
+  border-radius: var(--ml-radius-pill);
+  background: currentColor;
+}
+
+@keyframes ml-orbit-spin {
+  to { transform: rotate(360deg); }
+}
+
+/* Reduced-motion: stop the orbit — the dot rests at 12 o'clock on the track
+   and the fading trail disappears, reading as a single static satellite. */
+@media (prefers-reduced-motion: reduce) {
+  .ml-orbit-arm {
+    animation: none;
+  }
+  .ml-orbit-echo {
+    display: none;
+  }
+}

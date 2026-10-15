@@ -32,6 +32,9 @@
 @import "./callout.css";
 @import "./spinner.css";
 @import "./comet.css";
+@import "./dots.css";
+@import "./pulse.css";
+@import "./orbit.css";
 @import "./skeleton.css";
 @import "./live-faq.css";
 @import "./progress.css";

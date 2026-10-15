@@ -91,6 +91,10 @@ and design tokens — read it for details.
 ### Feedback
 - **Toaster / ToastProvider / useToast** — mount `<ToastProvider>` once at the app root; call `useToast().toast({ title, description?, tone?, duration?, action? })` anywhere below it. `placement`, `maxVisible` queue with pause-on-hover.
 - **Spinner** — inline loading indicator. `size` sm/md/lg, `label` (visually-hidden a11y name).
+- **CometLoader** — AI/agentic loading indicator, a 4×4 dot grid with a bright head orbiting a spiral. Use when the wait is AI thinking/generating.
+- **DotsLoader** — compact three-dot bounce loader for inline spots (buttons, table cells, chat bubbles).
+- **PulseLoader** — calm "still working" loader, expanding sonar-ping rings around a static core.
+- **OrbitLoader** — satellite-style loader, a dot with a fading trail orbiting a static track ring.
 - **Skeleton / SkeletonText** — loading placeholder. `variant` text/rect/circle, `width`/`height`/`radius`; `SkeletonText` adds `lines`.
 - **Progress** — determinate (`value`/`max`) or indeterminate bar. `size`, `tone`, `label`, `showValue`.
 
