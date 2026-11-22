@@ -22,8 +22,10 @@
     background var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-select-trigger:hover:not(:disabled) {
-  border-color: var(--ml-text-muted);
+@media (hover: hover) {
+  .ml-select-trigger:hover:not(:disabled) {
+    border-color: var(--ml-text-muted);
+  }
 }
 
 .ml-select-trigger:focus-visible {

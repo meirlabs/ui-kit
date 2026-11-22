@@ -20,8 +20,10 @@
   transition: border-color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-combobox-control:hover {
-  border-color: var(--ml-text-muted);
+@media (hover: hover) {
+  .ml-combobox-control:hover {
+    border-color: var(--ml-text-muted);
+  }
 }
 
 .ml-combobox-control:focus-within {
@@ -108,9 +110,11 @@
     background var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-combobox-chip-remove:hover {
-  background: var(--ml-bg-elevated);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-combobox-chip-remove:hover {
+    background: var(--ml-bg-elevated);
+    color: var(--ml-text);
+  }
 }
 
 /* ── Listbox popover ── */

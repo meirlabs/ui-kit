@@ -135,9 +135,11 @@
     background var(--ml-duration-base) var(--ml-ease),
     border-color var(--ml-duration-base) var(--ml-ease);
 }
-.ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-action:hover {
-  background: var(--ml-bg-surface);
-  border-color: var(--ml-text-muted);
+@media (hover: hover) {
+  .ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-action:hover {
+    background: var(--ml-bg-surface);
+    border-color: var(--ml-text-muted);
+  }
 }
 .ml-toaster[data-sonner-toaster] .ml-toast .ml-toast-action:focus-visible {
   outline: 2px solid var(--ml-text);
@@ -162,9 +164,11 @@
     background var(--ml-duration-base) var(--ml-ease),
     color var(--ml-duration-base) var(--ml-ease);
 }
-.ml-toaster[data-sonner-toaster] .ml-toast.ml-toast .ml-toast-cancel.ml-toast-cancel:hover {
-  background: color-mix(in srgb, var(--ml-text) 8%, transparent);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-toaster[data-sonner-toaster] .ml-toast.ml-toast .ml-toast-cancel.ml-toast-cancel:hover {
+    background: color-mix(in srgb, var(--ml-text) 8%, transparent);
+    color: var(--ml-text);
+  }
 }
 .ml-toaster[data-sonner-toaster] .ml-toast.ml-toast .ml-toast-cancel.ml-toast-cancel:focus-visible {
   outline: 2px solid var(--ml-text);

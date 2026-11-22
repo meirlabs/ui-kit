@@ -56,6 +56,20 @@
   color: var(--ml-text-muted);
 }
 
+/* Tracked small caps are a Latin convention: letter-spacing pulls connected
+   and unicameral scripts apart and uppercase means nothing to them. Under RTL,
+   or for these languages, the label is plain 12px text instead. */
+[dir="rtl"] .ml-dt-th-label,
+.ml-dt-th-label:lang(ar),
+.ml-dt-th-label:lang(fa),
+.ml-dt-th-label:lang(he),
+.ml-dt-th-label:lang(ur),
+.ml-dt-th-label:lang(yi) {
+  font-size: 12px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
 /* The non-sort header padding lives on the label so it matches the sort button. */
 .ml-dt-th > .ml-dt-th-label {
   padding: 12px 16px;
@@ -103,8 +117,10 @@
   justify-content: right;
 }
 
-.ml-dt-sort:hover .ml-dt-th-label {
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-dt-sort:hover .ml-dt-th-label {
+    color: var(--ml-text);
+  }
 }
 .ml-dt-sort:focus-visible {
   outline: 2px solid var(--ml-text);
@@ -143,6 +159,22 @@
   font-variant-numeric: tabular-nums;
 }
 
+/* ── Two-line cell: a name over a quieter second line (email, id, date) ── */
+.ml-dt-primary {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--ml-text);
+}
+.ml-dt-secondary {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
+}
+
 /* ── Rows ── */
 .ml-dt tbody .ml-dt-row:not(:last-child) td {
   border-bottom: 1px solid var(--ml-border-subtle);
@@ -150,10 +182,15 @@
 .ml-dt tbody .ml-dt-row {
   transition: background-color var(--ml-duration-base) var(--ml-ease);
 }
-/* Hover is a surface shift — never a colored fill (§7, contract). */
-.ml-dt tbody .ml-dt-row--clickable:hover,
 .ml-dt tbody .ml-dt-row--selected {
   background: var(--ml-bg-surface);
+}
+/* Hover is a surface shift — never a colored fill (§7, contract). Gated so a
+   tapped row doesn't keep the fill on touch screens. */
+@media (hover: hover) {
+  .ml-dt tbody .ml-dt-row--clickable:hover {
+    background: var(--ml-bg-surface);
+  }
 }
 .ml-dt-row--clickable {
   cursor: pointer;

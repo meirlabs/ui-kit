@@ -52,6 +52,16 @@ export interface DrawerProps extends Omit<ComponentPropsWithoutRef<"div">, "titl
 
 const EXIT_MS = 200;
 
+/* The body reserves a stable scrollbar gutter. On machines with classic
+   scrollbars that gutter would add to the end padding and push the content off
+   the header/footer edge — so hand its width to the stylesheet, which takes it
+   out of the padding. Overlay scrollbars measure 0. */
+function reportBodyGutter(body: HTMLDivElement | null) {
+  if (!body) return;
+  const gutter = Math.max(0, body.offsetWidth - body.clientWidth);
+  body.style.setProperty("--ml-drawer-gutter", `${gutter}px`);
+}
+
 function usePresence(open: boolean, duration: number) {
   const [mounted, setMounted] = useState(open);
   const [visible, setVisible] = useState(false);
@@ -164,7 +174,9 @@ export function Drawer({
             </button>
           </div>
         )}
-        <div className="ml-drawer-body">{children}</div>
+        <div ref={reportBodyGutter} className="ml-drawer-body">
+          {children}
+        </div>
         {footer && <div className="ml-drawer-footer">{footer}</div>}
       </div>
     </div>,

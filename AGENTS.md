@@ -143,8 +143,8 @@ getPaginationRange(...) / PAGINATION_DOTS
 // Returns null when pageCount <= 1
 
 PaginationFooter(props: PaginationFooterProps): JSX.Element
-// { pageIndex; pageCount; onPage; total: number; pageSize: number; onPageSizeChange?: (size) => void; pageSizeOptions?: number[] ([10,25,50,100]); noun?: string ("result"); nounPlural?: string (`${noun}s`); labels?: PaginationFooterLabels } & div props
-// PaginationFooterLabels (all optional, English defaults): { show?: string ("Show", "" omits it); ofTotal?: (total: number, noun: string) => string (`of ${total} ${noun}`, noun already singular/plural); rowsPerPage?: string ("Rows per page", aria); pagination?: string ("Pagination", nav aria); previousPage?: string ("Previous page", aria); nextPage?: string ("Next page", aria); pageOf?: (page: number, pageCount: number) => string (`Page ${page} of ${pageCount}`, page is 1-based) }
+// { pageIndex; pageCount; onPage; total: number; pageSize: number; onPageSizeChange?: (size) => void; pageSizeOptions?: number[] ([10,25,50,100]); hidePageSize?: boolean (false — drops the "Show N ▾" picker, shows `labels.total` instead); noun?: string ("result"); nounPlural?: string (`${noun}s`); labels?: PaginationFooterLabels } & div props
+// PaginationFooterLabels (all optional, English defaults): { show?: string ("Show", "" omits it); ofTotal?: (total: number, noun: string) => string (`of ${total} ${noun}`, noun already singular/plural); rowsPerPage?: string ("Rows per page", aria); pagination?: string ("Pagination", nav aria); previousPage?: string ("Previous page", aria); nextPage?: string ("Next page", aria); pageOf?: (page: number, pageCount: number) => string (`Page ${page} of ${pageCount}`, page is 1-based); total?: (total: number, noun: string) => string (`${total} ${noun}`, only with hidePageSize; "" shows nothing) }
 // The mailgail table-footer pattern: "Show N ▾ of X results" at the start edge, "Page x of y" chevrons at the end edge — no numbered page buttons. Drop into DataTable's `footer` slot. `onPageSizeChange` omitted → the size <select> renders disabled (space reserved, not hidden). Translate through `labels`, never by forking the component; mirrors under dir="rtl" (chevrons flip).
 
 Breadcrumbs(props: BreadcrumbsProps): JSX.Element
@@ -172,7 +172,7 @@ DataTable<Row>(props: DataTableProps<Row>): JSX.Element
 // footer: drop a <Pagination>/<PaginationFooter> or summary below the body. toolbar: drop a <FilterBar> or any toolbar above the table (bordered band, matches the header). Both purely additive — omitting either renders exactly as before.
 
 FilterBar(props: FilterBarProps): JSX.Element
-// { searchValue: string; onSearchChange: (value) => void; searchPlaceholder?; searchLabel? ("Search"); searchIcon?: ReactNode; collapsible?: boolean (false); searchWidth?: number (260); onFiltersClick?: () => void; filterCount?: number; filtersLabel? ("Filters"); filtersIcon?: ReactNode; children?: ReactNode (left slot, e.g. a Toggle); actions?: ReactNode (right slot after Filters); activeFilters?: ReactNode (chip row below) } & div props
+// { searchValue: string; onSearchChange: (value) => void; searchPlaceholder?; searchLabel? ("Search"); searchIcon?: ReactNode; collapsible?: boolean (false); searchWidth?: number (260); searchInputProps?: Omit<InputProps, "value"|"onChange"> (extra props for the search <input>, e.g. dir="auto"); onFiltersClick?: () => void; filterCount?: number; filtersLabel? ("Filters"); filtersIcon?: ReactNode; children?: ReactNode (left slot, e.g. a Toggle); actions?: ReactNode (right slot after Filters); activeFilters?: ReactNode (chip row below) } & div props
 // The "top-right search + Filters button" table toolbar (mailgail pattern). `collapsible` renders an icon trigger that expands to the Input on click and collapses back on blur only when empty. `onFiltersClick` omitted → no Filters button rendered. Drop into DataTable's `toolbar` slot.
 
 StatCard(props: StatCardProps): JSX.Element
@@ -180,6 +180,7 @@ StatCard(props: StatCardProps): JSX.Element
 
 EmptyState(props: EmptyStateProps): JSX.Element
 // { title: ReactNode; description?; icon?; illustration?; action?; variant?: "no-data"|"no-results"|"error" } & div props
+// Art: `illustration` > `icon` > the variant's default Placeholder. `illustration={null}` or `{false}` switches the default art off (an `icon` still shows); leave the prop out to keep the default.
 
 // Overlays
 Modal(props: ModalProps): JSX.Element
@@ -315,8 +316,8 @@ LiveChart(props): JSX.Element                        // from "@meir-labs/ui-kit/
 - `.ml-dt-chevron` -- Navigation arrow cell (hidden until row hover)
 - `.ml-dt-chevron-col` -- Fixed-width chevron column (32px)
 - `.ml-dt-avatar` -- Fixed-width avatar column (40px)
-- `.ml-dt-primary` -- Bold primary text in multi-line cell
-- `.ml-dt-secondary` -- Muted secondary text below primary
+- `.ml-dt-primary` -- First line of a two-line cell: 14px, medium weight (use on a `<span>`/`<div>`; it is a block)
+- `.ml-dt-secondary` -- Second line below it: 12px muted, on its own line. Use the pair instead of hand-rolling name-over-detail cells.
 - `.ml-dt-time` -- Monospace timestamp
 - `.ml-dt-truncate` -- Ellipsis overflow (max 300px)
 
@@ -492,6 +493,7 @@ kit respects `prefers-reduced-motion` automatically.
 - Don't reimplement focus trapping, scroll locking, or anchored positioning for a new overlay — use `useFocusTrap`/`useScrollLock`/`useAnchoredPosition`, or compose `Modal`/`Drawer`/`Popover`/`Select`/`Combobox`, which already do.
 - Never hardcode a z-index or a raw `box-shadow` — use the `--ml-z-*` scale and `--ml-shadow-*` tokens so stacking and elevation stay coordinated.
 - `--ml-color-primary`/`--ml-color-purple` are neutralized (resolve to text/surface, not blue/purple) — don't rely on them for an accent color; use functional `success`/`warning`/`danger` tones, or `.ml-btn-primary` for emphasis.
+- Touch: every `:hover` style lives inside `@media (hover: hover)` (a tap must not leave a stuck hover fill — a test enforces it), text fields are 16px under `@media (pointer: coarse)` (iOS zooms below that), and small controls grow their hit area to 44px with a `::before`, never by changing their box.
 - RTL: write logical CSS (`margin-inline-*`, `padding-inline-*`, `inset-inline-*`, `text-align: start|end`) and prefer logical prop values (`align: "start"|"end"`, Drawer `side: "start"|"end"`) — never physical `left`/`right` unless the edge is genuinely physical. Direction-pointing icons (previous/next chevrons) are mirrored with `[dir="rtl"]`. Apps set `dir="rtl"` on `<html>`, because overlays portal into `document.body`.
 - If a component does not exist in ui-kit but would be generally reusable, suggest adding it to the package.
 - The library is intentionally small. Check existing components first; **extend** a

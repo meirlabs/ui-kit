@@ -158,3 +158,12 @@
   cursor: not-allowed;
   resize: none;
 }
+
+/* iOS Safari zooms the page when a focused field's text is under 16px. Touch
+   screens get 16px; mouse/trackpad layouts keep 14px. */
+@media (pointer: coarse) {
+  .ml-input-field,
+  .ml-textarea {
+    font-size: 16px;
+  }
+}

@@ -5,11 +5,12 @@ import {
   useRef,
   useState,
   type ComponentPropsWithoutRef,
+  type FocusEvent,
   type ReactNode,
 } from "react";
 import { cn } from "../utils/cn";
 import { Button } from "./Button";
-import { Input } from "./Input";
+import { Input, type InputProps } from "./Input";
 
 /* ────────────────────────────────────────────────────────────────────────────
    FilterBar — the "top-right search + Filters button" toolbar that sits above
@@ -38,6 +39,14 @@ export interface FilterBarProps
   collapsible?: boolean;
   /** Fixed width of the expanded search field, in px. Default 260. */
   searchWidth?: number;
+  /**
+   * Extra props for the search `<input>` — e.g. `dir="auto"` so an email or
+   * phone number typed on an RTL page keeps its order, or `inputMode`, `name`,
+   * `autoComplete`. The FilterBar's own wiring (`value`, change handling,
+   * placeholder, label, icon, size) wins; `onBlur` is called before its own,
+   * and `className`/`style` are merged.
+   */
+  searchInputProps?: Omit<InputProps, "value" | "onChange">;
   /** Renders the "Filters" / "Filters (N)" button. Omit to hide it entirely. */
   onFiltersClick?: () => void;
   /** Count shown in the Filters button label once greater than 0. */
@@ -88,6 +97,7 @@ export const FilterBar = forwardRef<HTMLDivElement, FilterBarProps>(function Fil
     searchIcon = DefaultSearchIcon,
     collapsible = false,
     searchWidth = 260,
+    searchInputProps,
     onFiltersClick,
     filterCount = 0,
     filtersLabel = "Filters",
@@ -114,9 +124,14 @@ export const FilterBar = forwardRef<HTMLDivElement, FilterBarProps>(function Fil
     requestAnimationFrame(() => inputRef.current?.focus());
   }, []);
 
-  const handleBlur = useCallback(() => {
-    if (collapsible && searchValue.trim().length === 0) setOpen(false);
-  }, [collapsible, searchValue]);
+  const passedOnBlur = searchInputProps?.onBlur;
+  const handleBlur = useCallback(
+    (e: FocusEvent<HTMLInputElement>) => {
+      passedOnBlur?.(e);
+      if (collapsible && searchValue.trim().length === 0) setOpen(false);
+    },
+    [collapsible, searchValue, passedOnBlur],
+  );
 
   const showCollapsedTrigger = collapsible && !open;
 
@@ -137,6 +152,7 @@ export const FilterBar = forwardRef<HTMLDivElement, FilterBarProps>(function Fil
             </Button>
           ) : (
             <Input
+              {...searchInputProps}
               ref={inputRef}
               size="sm"
               value={searchValue}
@@ -145,8 +161,8 @@ export const FilterBar = forwardRef<HTMLDivElement, FilterBarProps>(function Fil
               placeholder={searchPlaceholder}
               aria-label={searchLabel}
               leftIcon={searchIcon}
-              style={{ width: searchWidth }}
-              className="ml-filterbar-search"
+              style={{ width: searchWidth, ...searchInputProps?.style }}
+              className={cn("ml-filterbar-search", searchInputProps?.className)}
             />
           )}
           {onFiltersClick != null && (

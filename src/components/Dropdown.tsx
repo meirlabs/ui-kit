@@ -57,6 +57,8 @@ interface Coords {
   top: number;
   left: number;
   triggerWidth: number;
+  /** Physical edge the menu is lined up with — its entrance grows from there. */
+  origin: "left" | "right";
   placement: "top" | "bottom";
 }
 
@@ -120,10 +122,17 @@ export function Dropdown({
 
     // start/end are inline-axis edges, so they swap under RTL.
     const rtl = getDirection(triggerEl) === "rtl";
-    let left = (align === "end") !== rtl ? rect.right - menuW : rect.left;
+    const origin = (align === "end") !== rtl ? "right" : "left";
+    let left = origin === "right" ? rect.right - menuW : rect.left;
     left = Math.max(margin, Math.min(left, window.innerWidth - menuW - margin));
 
-    setCoords({ top, left, triggerWidth: rect.width, placement: placeTop ? "top" : "bottom" });
+    setCoords({
+      top,
+      left,
+      triggerWidth: rect.width,
+      placement: placeTop ? "top" : "bottom",
+      origin,
+    });
   }, [align]);
 
   // Measure + place once the menu is in the DOM, and keep it anchored. The
@@ -272,6 +281,7 @@ export function Dropdown({
             role="menu"
             aria-orientation="vertical"
             data-placement={coords?.placement}
+            data-origin={coords?.origin}
             style={
               {
                 position: "fixed",

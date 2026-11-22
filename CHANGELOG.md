@@ -61,6 +61,44 @@ no prop removed, and left-to-right rendering is unchanged.
 - **`TopBar`:** the trailing slot is pushed with `margin-inline-start`, so it
   sits at the end edge under `dir="rtl"` (unchanged in LTR). The `left` /
   `right` prop names stay; they mean start / end.
+- **Touch (no change on mouse/trackpad layouts):**
+  - Every `:hover` style now sits inside `@media (hover: hover)`, so a tapped
+    row, button, menu item, tab or link doesn't keep its hover fill on touch
+    screens. `focus-visible` styles that shared a rule with `:hover` are
+    unchanged.
+  - `Input`, `Textarea` (and so the `FilterBar` search and `Composer`) and
+    bare controls in a `Field` use 16px text under `@media (pointer: coarse)`;
+    iOS Safari zooms the page when a focused field is smaller.
+  - `PaginationFooter` arrows keep their 28px box but take a 44px hit area on
+    coarse pointers.
+- **`PaginationFooter`:** new `hidePageSize` prop (default `false`) drops the
+  "Show N ▾" picker and shows a plain total in its place, worded by the new
+  `labels.total(total, noun)` (default `` `${total} ${noun}` ``; `""` shows
+  nothing and keeps the stepper at the end edge).
+- **`FilterBar`:** new `searchInputProps` for the search `<input>` — e.g.
+  `dir="auto"` so an email or phone number typed on an RTL page keeps its
+  order. The FilterBar's own wiring wins; `onBlur`, `className` and `style`
+  are merged.
+- **`EmptyState`:** `illustration={null}` or `{false}` now renders no default
+  artwork (and no empty wrapper). Leaving the prop out still draws the
+  variant's illustration. Note: `null` used to fall back to the default art.
+- **`DataTable` header labels:** under `[dir="rtl"]`, or for `lang` `ar`,
+  `fa`, `he`, `ur`, `yi`, the label drops its letter-spacing and uppercase
+  transform and is 12px (tracking breaks connected and unicameral scripts).
+  Latin LTR output is unchanged.
+- **Table cell helpers:** `.ml-dt-primary` (14px, medium) and
+  `.ml-dt-secondary` (12px, muted, own line) are now actually in the
+  stylesheet — they were documented but never shipped.
+- **`Dropdown`:** the entrance grows from the trigger's corner (`data-origin`
+  on the menu: the physical edge it is lined up with, following `align` and
+  the reading direction) instead of top centre.
+- **`Drawer`:** the body's reserved scrollbar gutter no longer adds to its end
+  padding, so content lines up with the header and footer on machines with
+  classic scrollbars too (it was inset by the scrollbar's width). No change
+  with overlay scrollbars.
+- **Tests:** new `EmptyState.test.tsx` and `styles/touch.test.ts` (hover
+  gating is enforced kit-wide); `DataTable`, `PaginationFooter`, `FilterBar`,
+  `Dropdown` and `Drawer` suites extended.
 - **Tests:** new `TopBar.test.tsx`; `Dropdown.test.tsx` and
   `Textarea.test.tsx` gained menu-width and resize-handle coverage.
 - **Tests:** new `Drawer.test.tsx` and `useAnchoredPosition.test.ts`;

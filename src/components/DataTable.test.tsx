@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { render, screen, fireEvent, within } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import { DataTable, type Column } from "./DataTable";
 
 interface Row {
@@ -206,6 +208,78 @@ describe("DataTable", () => {
       <DataTable columns={columns} data={rows} aria-label="People" />,
     );
     expect(container.querySelector(".ml-dt-toolbar")).toBeNull();
+  });
+
+  describe("stylesheet", () => {
+    let style: HTMLStyleElement;
+
+    beforeEach(() => {
+      // vitest runs with cwd at the package root.
+      style = document.createElement("style");
+      style.textContent = readFileSync(join(process.cwd(), "src/styles/table.css"), "utf8");
+      document.head.append(style);
+    });
+
+    afterEach(() => {
+      style.remove();
+    });
+
+    function headerLabelStyle(wrapper: { dir?: string; lang?: string }) {
+      const { container } = render(
+        <div {...wrapper}>
+          <DataTable columns={columns} data={rows} aria-label="People" />
+        </div>,
+      );
+      const computed = getComputedStyle(container.querySelector(".ml-dt-th-label")!);
+      return {
+        fontSize: computed.fontSize,
+        letterSpacing: computed.letterSpacing,
+        textTransform: computed.textTransform,
+      };
+    }
+
+    it("keeps the tracked uppercase 11px header label for Latin LTR", () => {
+      expect(headerLabelStyle({})).toEqual({
+        fontSize: "11px",
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+      });
+    });
+
+    it("drops tracking and uppercase, at 12px, under RTL", () => {
+      expect(headerLabelStyle({ dir: "rtl" })).toEqual({
+        fontSize: "12px",
+        letterSpacing: "normal",
+        textTransform: "none",
+      });
+    });
+
+    it.each(["he", "ar", "fa", "ur"])(
+      "does the same for lang=%s without a dir attribute",
+      (lang) => {
+        expect(headerLabelStyle({ lang })).toEqual({
+          fontSize: "12px",
+          letterSpacing: "normal",
+          textTransform: "none",
+        });
+      },
+    );
+
+    it("ships the two-line cell helpers: a medium primary line over a muted 12px one", () => {
+      const { container } = render(
+        <div>
+          <span className="ml-dt-primary">Ada Lovelace</span>
+          <span className="ml-dt-secondary">ada@example.com</span>
+        </div>,
+      );
+      const primary = getComputedStyle(container.querySelector(".ml-dt-primary")!);
+      const secondary = getComputedStyle(container.querySelector(".ml-dt-secondary")!);
+      expect(primary.display).toBe("block");
+      expect(primary.fontWeight).toBe("500");
+      expect(secondary.display).toBe("block");
+      expect(secondary.fontSize).toBe("12px");
+      expect(secondary.color).toBe("var(--ml-text-muted)");
+    });
   });
 
   describe("labels", () => {

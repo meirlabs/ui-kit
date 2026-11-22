@@ -115,6 +115,71 @@ describe("PaginationFooter", () => {
     expect(screen.getByLabelText("Rows per page")).toBeDisabled();
   });
 
+  describe("hidePageSize", () => {
+    it("shows the page-size picker by default", () => {
+      render(
+        <PaginationFooter pageIndex={0} pageCount={3} onPage={() => {}} total={42} pageSize={10} />,
+      );
+      expect(screen.getByLabelText("Rows per page")).toBeInTheDocument();
+      expect(screen.getByText("Show")).toBeInTheDocument();
+    });
+
+    it("drops the picker and keeps a plain total", () => {
+      const { container } = render(
+        <PaginationFooter
+          pageIndex={0}
+          pageCount={3}
+          onPage={() => {}}
+          total={42}
+          pageSize={10}
+          hidePageSize
+        />,
+      );
+      expect(screen.queryByLabelText("Rows per page")).not.toBeInTheDocument();
+      expect(screen.queryByText("Show")).not.toBeInTheDocument();
+      expect(container.querySelector("select")).toBeNull();
+      expect(screen.getByText("42 results")).toBeInTheDocument();
+      // The stepper is untouched.
+      expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
+      expect(screen.getByLabelText("Next page")).toBeEnabled();
+    });
+
+    it("words the total through labels.total, with the singular/plural noun", () => {
+      const total = vi.fn((count: number, noun: string) => `${count} ${noun} au total`);
+      render(
+        <PaginationFooter
+          pageIndex={0}
+          pageCount={1}
+          onPage={() => {}}
+          total={1}
+          pageSize={10}
+          noun="ligne"
+          hidePageSize
+          labels={{ total }}
+        />,
+      );
+      expect(total).toHaveBeenCalledWith(1, "ligne");
+      expect(screen.getByText("1 ligne au total")).toBeInTheDocument();
+    });
+
+    it('renders only the stepper when labels.total returns ""', () => {
+      const { container } = render(
+        <PaginationFooter
+          pageIndex={0}
+          pageCount={3}
+          onPage={() => {}}
+          total={42}
+          pageSize={10}
+          hidePageSize
+          labels={{ total: () => "" }}
+        />,
+      );
+      expect(container.querySelector(".ml-pgf-size")).toBeNull();
+      expect(container.querySelector(".ml-pgf")).toHaveClass("ml-pgf--no-size");
+      expect(screen.getByText("Page 1 of 3")).toBeInTheDocument();
+    });
+  });
+
   describe("labels", () => {
     it("keeps every English default when labels is omitted", () => {
       render(

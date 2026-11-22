@@ -38,6 +38,12 @@ export interface PaginationFooterLabels {
   nextPage?: string;
   /** The stepper label; `page` is 1-based. Default `` `Page ${page} of ${pageCount}` ``. */
   pageOf?: (page: number, pageCount: number) => string;
+  /**
+   * The plain total shown in place of the picker when `hidePageSize` is set;
+   * `noun` is the already singular/plural form. Default `` `${total} ${noun}` ``.
+   * Return `""` to show nothing there.
+   */
+  total?: (total: number, noun: string) => string;
 }
 
 const DEFAULT_LABELS: Required<PaginationFooterLabels> = {
@@ -48,6 +54,7 @@ const DEFAULT_LABELS: Required<PaginationFooterLabels> = {
   previousPage: "Previous page",
   nextPage: "Next page",
   pageOf: (page, pageCount) => `Page ${page} of ${pageCount}`,
+  total: (total, noun) => `${total} ${noun}`,
 };
 
 export interface PaginationFooterProps
@@ -62,6 +69,12 @@ export interface PaginationFooterProps
   onPageSizeChange?: (size: number) => void;
   /** Options offered in the page-size `<select>`. Default `[10, 25, 50, 100]`. */
   pageSizeOptions?: number[];
+  /**
+   * Leave out the "Show N ▾" picker and show a plain total (`labels.total`)
+   * in its place — for tables whose page size is not the user's to change.
+   * Default `false`.
+   */
+  hidePageSize?: boolean;
   /** Singular noun for the count, e.g. `"lead"`. Default `"result"`. */
   noun?: string;
   /** Plural noun. Defaults to `${noun}s`. */
@@ -123,6 +136,7 @@ export function PaginationFooter({
   pageSize,
   onPageSizeChange,
   pageSizeOptions = DEFAULT_SIZE_OPTIONS,
+  hidePageSize = false,
   noun = "result",
   nounPlural,
   labels,
@@ -136,28 +150,37 @@ export function PaginationFooter({
   const atStart = pageIndex <= 0;
   const atEnd = pageIndex >= safePageCount - 1;
 
+  const summary = hidePageSize ? t.total(total, label) : "";
+
   return (
-    <div className={cn("ml-pgf", className)} {...rest}>
-      <span className="ml-pgf-size">
-        {t.show !== "" && <span>{t.show}</span>}
-        <span className="ml-pgf-size-shell">
-          <select
-            id={sizeId}
-            aria-label={t.rowsPerPage}
-            value={pageSize}
-            disabled={onPageSizeChange == null}
-            onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
-          >
-            {pageSizeOptions.map((size) => (
-              <option key={size} value={size}>
-                {size}
-              </option>
-            ))}
-          </select>
-          <ChevronDown />
+    <div
+      className={cn("ml-pgf", hidePageSize && summary === "" && "ml-pgf--no-size", className)}
+      {...rest}
+    >
+      {hidePageSize ? (
+        summary !== "" && <span className="ml-pgf-size">{summary}</span>
+      ) : (
+        <span className="ml-pgf-size">
+          {t.show !== "" && <span>{t.show}</span>}
+          <span className="ml-pgf-size-shell">
+            <select
+              id={sizeId}
+              aria-label={t.rowsPerPage}
+              value={pageSize}
+              disabled={onPageSizeChange == null}
+              onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
+            >
+              {pageSizeOptions.map((size) => (
+                <option key={size} value={size}>
+                  {size}
+                </option>
+              ))}
+            </select>
+            <ChevronDown />
+          </span>
+          <span>{t.ofTotal(total, label)}</span>
         </span>
-        <span>{t.ofTotal(total, label)}</span>
-      </span>
+      )}
 
       <nav aria-label={t.pagination} className="ml-pgf-stepper">
         <button

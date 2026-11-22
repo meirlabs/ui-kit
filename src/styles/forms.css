@@ -103,6 +103,16 @@
   cursor: not-allowed;
 }
 
+/* Bare controls follow the Input/Textarea touch rule: 16px text on coarse
+   pointers, so iOS Safari does not zoom the page on focus. */
+@media (pointer: coarse) {
+  .ml-field > input:not([type="checkbox"]):not([type="radio"]),
+  .ml-field > select,
+  .ml-field > textarea {
+    font-size: 16px;
+  }
+}
+
 /* ── Wizard ── */
 .ml-wizard-progress {
   display: flex;

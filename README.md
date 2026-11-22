@@ -115,6 +115,7 @@ import { DataTable, PaginationFooter } from "@meir-labs/ui-kit";
 | `total` | `number` | -- | Feeds the `"of N results"` copy |
 | `pageSize` / `onPageSizeChange` | `number` / `(size) => void` | -- | Omit the handler and the size `<select>` renders disabled instead of disappearing |
 | `pageSizeOptions` | `number[]` | `[10, 25, 50, 100]` | Options offered in the size `<select>` |
+| `hidePageSize` | `boolean` | `false` | Leave out the "Show N ▾" picker and show a plain total (`labels.total`, default `"42 results"`) in its place |
 | `noun` / `nounPlural` | `string` | `"result"` / `${noun}s` | Singular/plural label, e.g. `"lead"` / `"leads"` |
 | `labels` | `PaginationFooterLabels` | English | Override any built-in string (see below) |
 
@@ -131,11 +132,12 @@ Every visible and accessible string is overridable through `labels`. All keys ar
     previousPage: "Page précédente",                        // aria-label
     nextPage: "Page suivante",                              // aria-label
     pageOf: (page, pageCount) => `Page ${page} / ${pageCount}`, // page is 1-based
+    total: (total, noun) => `${total} ${noun}`,             // only with hidePageSize; "" shows nothing
   }}
 />
 ```
 
-Under `dir="rtl"` the row mirrors (size picker at the start edge, stepper at the end edge) and the previous/next chevrons flip.
+Under `dir="rtl"` the row mirrors (size picker at the start edge, stepper at the end edge) and the previous/next chevrons flip. On touch screens the 28px arrows take a 44px hit area without changing size.
 
 ### StatusPill
 
@@ -615,6 +617,7 @@ import { FilterBar, Toggle, Tag, ChipRow } from "@meir-labs/ui-kit";
 | `searchPlaceholder` / `searchLabel` | `string` | `"Search"` / `"Search"` | Placeholder and accessible label |
 | `collapsible` | `boolean` | `false` | `true` renders an icon trigger that expands to the field on click and collapses back on blur only while empty |
 | `searchWidth` | `number` | `260` | Width of the expanded field, in px |
+| `searchInputProps` | `Omit<InputProps, "value" \| "onChange">` | -- | Extra props for the search `<input>`, e.g. `dir="auto"` so an email or phone number typed on an RTL page keeps its order. The FilterBar's own wiring wins; `onBlur`, `className` and `style` are merged |
 | `onFiltersClick` | `() => void` | -- | Omit to hide the Filters button entirely |
 | `filterCount` | `number` | `0` | Shown as `"Filters (N)"` once greater than 0 |
 | `children` | `ReactNode` | -- | Extra left-side controls, e.g. a segmented `Toggle` |
@@ -649,7 +652,7 @@ import { EmptyState } from "@meir-labs/ui-kit";
 />
 ```
 
-`variant`: `"no-data"` (dashed illustrated container), `"no-results"`, or `"error"` (plain centered blocks). `icon` wins over the default illustration; `illustration` wins over both.
+`variant`: `"no-data"` (dashed illustrated container), `"no-results"`, or `"error"` (plain centered blocks). `icon` wins over the default illustration; `illustration` wins over both. Pass `illustration={null}` (or `false`) for no default artwork at all.
 
 ### Modal
 
@@ -696,6 +699,10 @@ import { Drawer } from "@meir-labs/ui-kit";
 ```
 
 Same open/close/focus contract as `Modal`, sliding in from an edge. `side`: `"start" | "end" | "left" | "right" | "top" | "bottom"` (default `end`). `start`/`end` follow the reading direction — `end` is the right edge in LTR and the left edge in RTL — and the anchoring, borders and slide-in direction all follow; `left`/`right` are physical. Direction comes from the `dir` prop when passed, otherwise from the document (the drawer portals into `document.body`). `size`: `"sm" | "md" | "lg"` (~320/420/560px along the panel's axis). `closeLabel` names the header close button for assistive tech (default `"Close"`).
+
+### Touch
+
+Three rules hold across the kit, all behind media queries so mouse/trackpad layouts are unaffected: `:hover` styles apply only under `@media (hover: hover)` (a tapped row or button doesn't keep its hover fill); `Input`, `Textarea` and bare controls in a `Field` use 16px text under `@media (pointer: coarse)` (iOS Safari zooms the page on focus below that); small controls grow their hit area to 44px with a pseudo-element instead of changing their box.
 
 ### Right-to-left (RTL)
 
@@ -979,8 +986,8 @@ These classes are available globally after importing `styles.css`. Use them dire
 | `.ml-dt-chevron` | Navigation arrow cell (hidden until row hover) |
 | `.ml-dt-chevron-col` | Fixed-width column for the chevron (32px) |
 | `.ml-dt-avatar` | Fixed-width avatar column (40px) |
-| `.ml-dt-primary` | Bold primary text in a multi-line cell |
-| `.ml-dt-secondary` | Muted secondary text below primary |
+| `.ml-dt-primary` | First line of a two-line cell: 14px, medium weight (a block — put it on a `<span>` or `<div>`) |
+| `.ml-dt-secondary` | Second line below it: 12px, muted, on its own line |
 | `.ml-dt-time` | Monospace timestamp |
 | `.ml-dt-truncate` | Ellipsis overflow (max 300px) |
 

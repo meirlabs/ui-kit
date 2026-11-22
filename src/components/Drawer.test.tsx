@@ -73,6 +73,34 @@ describe("Drawer", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  describe("body gutter", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    function gutterVar(offsetWidth: number, clientWidth: number) {
+      vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(offsetWidth);
+      vi.spyOn(HTMLElement.prototype, "clientWidth", "get").mockReturnValue(clientWidth);
+      render(
+        <Drawer open onClose={() => {}} title="Filters">
+          Body
+        </Drawer>,
+      );
+      return screen
+        .getByText("Body")
+        .style.getPropertyValue("--ml-drawer-gutter");
+    }
+
+    it("reports the reserved scrollbar gutter so the body padding can absorb it", () => {
+      // Classic scrollbars: the body's stable gutter takes 11px of its width.
+      expect(gutterVar(420, 409)).toBe("11px");
+    });
+
+    it("reports no gutter with overlay scrollbars", () => {
+      expect(gutterVar(420, 420)).toBe("0px");
+    });
+  });
+
   describe("side resolution", () => {
     it("defaults to the right edge in LTR, on the panel and the overlay", () => {
       const { panel, overlay } = sideOf();

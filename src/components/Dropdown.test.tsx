@@ -1,6 +1,6 @@
 import { readFileSync } from "node:fs";
 import { join } from "node:path";
-import { render, screen, fireEvent, within } from "@testing-library/react";
+import { cleanup, render, screen, fireEvent, within } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { Dropdown, type DropdownAlign, type DropdownMenuItem } from "./Dropdown";
 
@@ -210,6 +210,23 @@ describe("Dropdown", () => {
 
     it("RTL: end lines up left edges", () => {
       expect(openAt("end", "rtl")).toBe(`${TRIGGER.left}px`);
+    });
+
+    it("grows from the corner it is lined up with", () => {
+      // The entrance scales from the trigger's corner: the menu's own aligned
+      // edge, which is the physical side `data-origin` names.
+      const originAt = (align: DropdownAlign | undefined, dir?: "rtl") => {
+        openAt(align, dir);
+        const origin = screen.getByRole("menu").dataset.origin;
+        cleanup();
+        vi.restoreAllMocks();
+        document.documentElement.removeAttribute("dir");
+        return origin;
+      };
+      expect(originAt(undefined)).toBe("left");
+      expect(originAt("end")).toBe("right");
+      expect(originAt("start", "rtl")).toBe("right");
+      expect(originAt("end", "rtl")).toBe("left");
     });
 
     it("re-measures once the trigger's width lands, so the far edge lines up on first open", () => {

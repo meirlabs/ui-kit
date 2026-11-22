@@ -12,7 +12,11 @@ export interface EmptyStateProps
   description?: ReactNode;
   /** Custom leading node (icon). Wins over the default illustration. */
   icon?: ReactNode;
-  /** Custom illustration node. Wins over both `icon` and the default art. */
+  /**
+   * Custom illustration node. Wins over both `icon` and the default art.
+   * Pass `null` or `false` to switch the default art off (an `icon` still
+   * shows if you pass one); leave it out to keep the default.
+   */
   illustration?: ReactNode;
   /** Primary/secondary CTA(s). */
   action?: ReactNode;
@@ -50,10 +54,14 @@ export function EmptyState({
   ...rest
 }: EmptyStateProps) {
   const subject = VARIANT_SUBJECT[variant];
-  const art =
-    illustration ??
-    icon ??
-    (subject ? <Placeholder subject={subject} /> : null);
+  // `null`/`false` is an explicit "no default art"; only leaving the prop out
+  // falls back to the variant's illustration.
+  const artOff = illustration === null || illustration === false;
+  const art = artOff
+    ? (icon ?? null)
+    : (illustration ??
+      icon ??
+      (subject ? <Placeholder subject={subject} /> : null));
 
   return (
     <div
