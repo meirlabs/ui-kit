@@ -208,6 +208,83 @@ describe("DataTable", () => {
     expect(container.querySelector(".ml-dt-toolbar")).toBeNull();
   });
 
+  describe("labels", () => {
+    it("keeps every English default when labels is omitted", () => {
+      const { unmount } = render(
+        <DataTable columns={columns} data={rows} selectable="multiple" aria-label="People" />,
+      );
+      expect(screen.getByLabelText("Select all rows")).toBeInTheDocument();
+      expect(screen.getByLabelText("Select row 1")).toBeInTheDocument();
+      expect(screen.getByLabelText("Select row 3")).toBeInTheDocument();
+      unmount();
+
+      render(<DataTable columns={columns} data={[]} selectable="single" aria-label="People" />);
+      expect(screen.getByText("Select")).toHaveClass("ml-visually-hidden");
+      expect(screen.getByText("No data.")).toHaveClass("ml-dt-empty-fallback");
+    });
+
+    it("replaces the selection labels, passing the 1-based row number", () => {
+      const selectRow = vi.fn((rowNumber: number) => `Sélectionner la ligne ${rowNumber}`);
+      render(
+        <DataTable
+          columns={columns}
+          data={rows}
+          selectable="multiple"
+          aria-label="People"
+          labels={{ selectRow, selectAll: "Tout sélectionner" }}
+        />,
+      );
+      expect(screen.getByLabelText("Tout sélectionner")).toBeInTheDocument();
+      expect(screen.getByLabelText("Sélectionner la ligne 1")).toBeInTheDocument();
+      expect(screen.getByLabelText("Sélectionner la ligne 3")).toBeInTheDocument();
+      expect(selectRow.mock.calls.map(([n]) => n)).toEqual([1, 2, 3]);
+      expect(screen.queryByLabelText(/Select/)).not.toBeInTheDocument();
+    });
+
+    it("replaces the single-select column header and the empty copy", () => {
+      render(
+        <DataTable
+          columns={columns}
+          data={[]}
+          selectable="single"
+          aria-label="People"
+          labels={{ selectColumn: "Sélection", empty: "Aucune donnée." }}
+        />,
+      );
+      expect(screen.getByText("Sélection")).toHaveClass("ml-visually-hidden");
+      expect(screen.getByText("Aucune donnée.")).toHaveClass("ml-dt-empty-fallback");
+      expect(screen.queryByText("No data.")).not.toBeInTheDocument();
+    });
+
+    it("falls back to the default for any key left out", () => {
+      render(
+        <DataTable
+          columns={columns}
+          data={rows}
+          selectable="multiple"
+          aria-label="People"
+          labels={{ selectAll: "Tout sélectionner" }}
+        />,
+      );
+      expect(screen.getByLabelText("Tout sélectionner")).toBeInTheDocument();
+      expect(screen.getByLabelText("Select row 2")).toBeInTheDocument();
+    });
+
+    it("lets emptyState win over labels.empty", () => {
+      render(
+        <DataTable
+          columns={columns}
+          data={[]}
+          aria-label="People"
+          emptyState={<span>Custom empty</span>}
+          labels={{ empty: "Aucune donnée." }}
+        />,
+      );
+      expect(screen.getByText("Custom empty")).toBeInTheDocument();
+      expect(screen.queryByText("Aucune donnée.")).not.toBeInTheDocument();
+    });
+  });
+
   describe("column alignment", () => {
     function headerAndFirstCell(align?: Column<Row>["align"], numeric = false) {
       const cols: Column<Row>[] = [

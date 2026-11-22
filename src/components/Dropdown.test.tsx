@@ -86,6 +86,43 @@ describe("Dropdown", () => {
     expect(onSelect).not.toHaveBeenCalled();
   });
 
+  describe("first open", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("moves focus into the menu once it is visible, so the keyboard works", () => {
+      // Browsers refuse to focus inside a `visibility: hidden` subtree — which
+      // is what the menu is until it has been measured. jsdom focuses anyway,
+      // so reproduce the browser rule here.
+      const realFocus = HTMLElement.prototype.focus;
+      vi.spyOn(HTMLElement.prototype, "focus").mockImplementation(function (
+        this: HTMLElement,
+        ...args: Parameters<HTMLElement["focus"]>
+      ) {
+        const menu = this.closest<HTMLElement>('[role="menu"]');
+        if (menu && menu.style.visibility === "hidden") return;
+        realFocus.apply(this, args);
+      });
+
+      const { trigger } = renderDropdown();
+      fireEvent.click(trigger);
+
+      const first = screen.getByRole("menuitem", { name: "Edit" });
+      expect(screen.getByRole("menu").style.visibility).toBe("visible");
+      expect(document.activeElement).toBe(first);
+
+      fireEvent.keyDown(document.activeElement!, { key: "ArrowDown" });
+      expect(document.activeElement).toBe(
+        screen.getByRole("menuitem", { name: "Duplicate" }),
+      );
+
+      fireEvent.keyDown(document.activeElement!, { key: "Escape" });
+      expect(screen.queryByRole("menu")).not.toBeInTheDocument();
+      expect(document.activeElement).toBe(trigger);
+    });
+  });
+
   describe("align follows the reading direction", () => {
     // jsdom has no layout: fake a 100px trigger at x=300..400 and a 160px menu.
     const TRIGGER = { left: 300, right: 400, top: 100, bottom: 130, width: 100, height: 30 };

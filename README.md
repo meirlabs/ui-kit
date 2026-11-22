@@ -565,7 +565,24 @@ The React table component (the `.ml-dt-*` CSS classes below still work if you'd 
 | `loading` / `loadingRowCount` / `error` / `emptyState` | -- | Loading skeleton rows (default 5), error slot, empty slot |
 | `onRowClick` | `(row: Row) => void` | -- |
 | `toolbar` | `ReactNode` | Slot above the body (bordered, matches the header band) — drop a `<FilterBar>` here |
+| `labels` | `DataTableLabels` | Override any built-in string (see below); English by default |
 | `footer` | `ReactNode` | Slot below the body — drop a `<Pagination>`/`<PaginationFooter>` or summary here |
+
+Every built-in string is overridable through `labels` (type `DataTableLabels`). All keys are optional:
+
+```tsx
+<DataTable
+  {...table}
+  labels={{
+    selectRow: (rowNumber) => `Sélectionner la ligne ${rowNumber}`, // aria-label of a row checkbox; rowNumber is 1-based
+    selectAll: "Tout sélectionner",                                 // aria-label of the header checkbox
+    selectColumn: "Sélection",                                      // hidden header of the selection column (selectable="single")
+    empty: "Aucune donnée.",                                        // shown when data is empty and no emptyState is given
+  }}
+/>
+```
+
+Sort buttons are named by the column `header` and expose their state through `aria-sort`, so they carry no text of their own. `VirtualDataTable` accepts the same prop; only `empty` applies there.
 
 ### FilterBar
 
@@ -678,7 +695,7 @@ import { Drawer } from "@meir-labs/ui-kit";
 </Drawer>
 ```
 
-Same open/close/focus contract as `Modal`, sliding in from an edge. `side`: `"start" | "end" | "left" | "right" | "top" | "bottom"` (default `end`). `start`/`end` follow the reading direction — `end` is the right edge in LTR and the left edge in RTL — and the anchoring, borders and slide-in direction all follow; `left`/`right` are physical. Direction comes from the `dir` prop when passed, otherwise from the document (the drawer portals into `document.body`). `size`: `"sm" | "md" | "lg"` (~320/420/560px along the panel's axis).
+Same open/close/focus contract as `Modal`, sliding in from an edge. `side`: `"start" | "end" | "left" | "right" | "top" | "bottom"` (default `end`). `start`/`end` follow the reading direction — `end` is the right edge in LTR and the left edge in RTL — and the anchoring, borders and slide-in direction all follow; `left`/`right` are physical. Direction comes from the `dir` prop when passed, otherwise from the document (the drawer portals into `document.body`). `size`: `"sm" | "md" | "lg"` (~320/420/560px along the panel's axis). `closeLabel` names the header close button for assistive tech (default `"Close"`).
 
 ### Right-to-left (RTL)
 

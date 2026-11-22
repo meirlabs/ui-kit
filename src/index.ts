@@ -93,6 +93,7 @@ export type { BreadcrumbsProps, BreadcrumbItem } from "./components/Breadcrumbs"
 export { DataTable } from "./components/DataTable";
 export type {
   DataTableProps,
+  DataTableLabels,
   Column,
   ColumnAlign,
   SortState,

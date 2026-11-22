@@ -46,6 +46,8 @@ export interface DrawerProps extends Omit<ComponentPropsWithoutRef<"div">, "titl
   initialFocusRef?: RefObject<HTMLElement | null>;
   closeOnOverlayClick?: boolean;
   closeOnEscape?: boolean;
+  /** Accessible name of the header close button. Default `"Close"`. */
+  closeLabel?: string;
 }
 
 const EXIT_MS = 200;
@@ -86,6 +88,7 @@ export function Drawer({
   initialFocusRef,
   closeOnOverlayClick = true,
   closeOnEscape = true,
+  closeLabel = "Close",
   className,
   children,
   dir,
@@ -148,7 +151,7 @@ export function Drawer({
               type="button"
               className="ml-drawer-close"
               onClick={onClose}
-              aria-label="Close"
+              aria-label={closeLabel}
             >
               <svg width="14" height="14" viewBox="0 0 14 14" fill="none" aria-hidden="true">
                 <path

@@ -60,6 +60,19 @@ describe("Drawer", () => {
     expect(onClose).toHaveBeenCalledTimes(1);
   });
 
+  it('names the close button "Close" by default', () => {
+    render(<Drawer open onClose={() => {}} title="Filters" />);
+    expect(screen.getByRole("button", { name: "Close" })).toBeInTheDocument();
+  });
+
+  it("names the close button with closeLabel, and it still closes", () => {
+    const onClose = vi.fn();
+    render(<Drawer open onClose={onClose} title="Filters" closeLabel="Fermer" />);
+    expect(screen.queryByRole("button", { name: "Close" })).not.toBeInTheDocument();
+    fireEvent.click(screen.getByRole("button", { name: "Fermer" }));
+    expect(onClose).toHaveBeenCalledTimes(1);
+  });
+
   describe("side resolution", () => {
     it("defaults to the right edge in LTR, on the panel and the overlay", () => {
       const { panel, overlay } = sideOf();

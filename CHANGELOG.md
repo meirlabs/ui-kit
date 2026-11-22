@@ -37,9 +37,20 @@ no prop removed, and left-to-right rendering is unchanged.
   `text-align: left` / `margin-left` / `margin-right` replaced with their
   logical equivalents (trigger and tooltip text, the required asterisk, the
   toolbar's end cluster, the tag remove button).
+- **`DataTable`:** new optional `labels` prop (`DataTableLabels`, exported)
+  for the built-in strings — `selectRow(rowNumber)`, `selectAll`,
+  `selectColumn` and `empty`. English defaults are unchanged.
+  `VirtualDataTable` takes the same prop for its one string (`empty`).
+- **`Drawer`:** new optional `closeLabel` prop for the close button's
+  accessible name (default `"Close"`).
+- **`Dropdown`:** fix — the first time a menu opened, keyboard focus stayed on
+  the trigger (the menu was still hidden while it was being measured), so
+  Escape and the arrow keys did nothing until the second open. Focus now moves
+  in once the menu is placed.
 - **Tests:** new `Drawer.test.tsx` and `useAnchoredPosition.test.ts`;
-  `DataTable.test.tsx`, `PaginationFooter.test.tsx` and `Dropdown.test.tsx`
-  gained alignment, `labels` and direction coverage.
+  `DataTable.test.tsx`, `VirtualDataTable.test.tsx`,
+  `PaginationFooter.test.tsx` and `Dropdown.test.tsx` gained alignment,
+  `labels`, direction and first-open focus coverage.
 
 ## 0.3.0
 

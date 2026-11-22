@@ -166,7 +166,8 @@ DataTable<Row>(props: DataTableProps<Row>): JSX.Element
 // align: prefer "start"/"end" — they follow the reading direction and mirror under dir="rtl"; "left"/"right" are physical and stay put.
 // data: Row[]; getRowId?; sortState?/onSortChange? (controlled) or defaultSort? (uncontrolled); manualSort?
 // selectable?: "single"|"multiple"; selectedIds?/onSelectionChange?/defaultSelectedIds?
-// stickyHeader?; compact?; loading?; loadingRowCount? (5); error?; emptyState?; onRowClick?; caption?; "aria-label"?; footer?: ReactNode; toolbar?: ReactNode
+// stickyHeader?; compact?; loading?; loadingRowCount? (5); error?; emptyState?; onRowClick?; caption?; "aria-label"?; footer?: ReactNode; toolbar?: ReactNode; labels?: DataTableLabels
+// DataTableLabels (all optional, English defaults): { selectRow?: (rowNumber: number) => string (`Select row ${rowNumber}`, 1-based, row checkbox aria); selectAll?: string ("Select all rows", header checkbox aria); selectColumn?: string ("Select", hidden header of the selection column when selectable="single"); empty?: string ("No data.", used when no emptyState) }. Translate through `labels`; sort buttons are named by the column header + aria-sort and have no text of their own.
 // footer: drop a <Pagination>/<PaginationFooter> or summary below the body. toolbar: drop a <FilterBar> or any toolbar above the table (bordered band, matches the header). Both purely additive — omitting either renders exactly as before.
 
 FilterBar(props: FilterBarProps): JSX.Element
@@ -189,7 +190,7 @@ Dropdown(props: DropdownProps): JSX.Element
 // DropdownItem: { label; value; icon?; disabled?; destructive? } | DropdownSeparator: { separator: true }
 
 Drawer(props: DrawerProps): JSX.Element
-// { open: boolean; onClose: () => void; side?: "start"|"end"|"left"|"right"|"top"|"bottom" (end); size?: "sm"|"md"|"lg"; title?; footer?; initialFocusRef?; closeOnOverlayClick?; closeOnEscape? } & div props
+// { open: boolean; onClose: () => void; side?: "start"|"end"|"left"|"right"|"top"|"bottom" (end); size?: "sm"|"md"|"lg"; title?; footer?; initialFocusRef?; closeOnOverlayClick?; closeOnEscape?; closeLabel?: string ("Close", aria-label of the header close button) } & div props
 // side: "start"/"end" follow the reading direction (end = right in LTR, left in RTL; slide-in direction follows); "left"/"right" are physical. Direction = the `dir` prop when passed, else the document's (the drawer portals into document.body). `data-side` in the DOM is always the resolved physical edge.
 
 CommandPalette(props: CommandPaletteProps): JSX.Element
@@ -289,6 +290,7 @@ VirtualDataTable<Row>(props): JSX.Element            // from "@meir-labs/ui-kit/
 // react-virtuoso (MIT npm core only — never the commercial @virtuoso.dev/* packages).
 // Use when a list/table exceeds ~200-500 rendered rows or infinite-scrolls; below that use DataTable + Pagination.
 // Client-only; set initialItemCount if server HTML matters.
+// labels?: Pick<DataTableLabels, "empty"> — the default empty copy ("No data."); the other DataTable labels don't apply (no selection column).
 
 SortableList(props): JSX.Element                     // from "@meir-labs/ui-kit/sortable"
 // @dnd-kit/core 6.x + sortable. Keyboard + screen-reader reordering must stay enabled; Hebrew announcement

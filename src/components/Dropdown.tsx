@@ -143,12 +143,15 @@ export function Dropdown({
     };
   }, [open, position, items.length, appliedMinWidth]);
 
-  // Roving focus: move DOM focus to the active item.
+  // Roving focus: move DOM focus to the active item. The menu stays
+  // `visibility: hidden` until it has been measured, and a hidden element
+  // cannot take focus — so wait for the first placement before focusing.
+  const positioned = coords != null;
   useEffect(() => {
-    if (open && activeIndex >= 0) {
+    if (open && positioned && activeIndex >= 0) {
       itemRefs.current[activeIndex]?.focus();
     }
-  }, [open, activeIndex]);
+  }, [open, positioned, activeIndex]);
 
   // Close on outside click.
   useEffect(() => {
