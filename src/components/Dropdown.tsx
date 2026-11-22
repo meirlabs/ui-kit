@@ -1,4 +1,5 @@
 import {
+  type CSSProperties,
   type ComponentPropsWithoutRef,
   type ReactElement,
   type ReactNode,
@@ -55,7 +56,7 @@ function isSeparator(item: DropdownMenuItem): item is DropdownSeparator {
 interface Coords {
   top: number;
   left: number;
-  minWidth: number;
+  triggerWidth: number;
   placement: "top" | "bottom";
 }
 
@@ -122,15 +123,16 @@ export function Dropdown({
     let left = (align === "end") !== rtl ? rect.right - menuW : rect.left;
     left = Math.max(margin, Math.min(left, window.innerWidth - menuW - margin));
 
-    setCoords({ top, left, minWidth: rect.width, placement: placeTop ? "top" : "bottom" });
+    setCoords({ top, left, triggerWidth: rect.width, placement: placeTop ? "top" : "bottom" });
   }, [align]);
 
   // Measure + place once the menu is in the DOM, and keep it anchored. The
-  // first pass measures the menu before its inline min-width has landed, so it
-  // runs once more when that changes: a menu lined up by its far edge (`end`,
-  // or `start` under RTL) is placed from its width and would otherwise sit off
-  // the trigger on first open.
-  const appliedMinWidth = coords?.minWidth;
+  // first pass measures the menu before it knows the trigger's width (which
+  // can widen it — see the min-width in overlays.css), so it runs once more
+  // when that changes: a menu lined up by its far edge (`end`, or `start`
+  // under RTL) is placed from its width and would otherwise sit off the
+  // trigger on first open.
+  const appliedTriggerWidth = coords?.triggerWidth;
   useLayoutEffect(() => {
     if (!open) return;
     position();
@@ -141,7 +143,7 @@ export function Dropdown({
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onScroll);
     };
-  }, [open, position, items.length, appliedMinWidth]);
+  }, [open, position, items.length, appliedTriggerWidth]);
 
   // Roving focus: move DOM focus to the active item. The menu stays
   // `visibility: hidden` until it has been measured, and a hidden element
@@ -270,13 +272,19 @@ export function Dropdown({
             role="menu"
             aria-orientation="vertical"
             data-placement={coords?.placement}
-            style={{
-              position: "fixed",
-              top: coords?.top ?? -9999,
-              left: coords?.left ?? -9999,
-              minWidth: coords?.minWidth,
-              visibility: coords ? "visible" : "hidden",
-            }}
+            style={
+              {
+                position: "fixed",
+                top: coords?.top ?? -9999,
+                left: coords?.left ?? -9999,
+                // Not an inline min-width: that would override the menu's own
+                // default minimum and shrink it under a narrow trigger. The
+                // stylesheet takes the larger of the two.
+                "--ml-dropdown-trigger-width":
+                  coords != null ? `${coords.triggerWidth}px` : undefined,
+                visibility: coords ? "visible" : "hidden",
+              } as CSSProperties
+            }
             onKeyDown={onMenuKeyDown}
           >
             {items.map((item, i) => {

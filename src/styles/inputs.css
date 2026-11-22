@@ -136,8 +136,11 @@
 
 /* autoResize fields grow imperatively — a manual drag handle would fight that,
    so autoResize always drops the native resize handle (owner rule: "never
-   mouse-resizable"). */
-.ml-textarea--autoresize {
+   mouse-resizable"). The second selector covers a Textarea placed in a Field:
+   forms.css gives `.ml-field > textarea` a vertical handle, and that rule is
+   more specific than the modifier class alone. */
+.ml-textarea--autoresize,
+.ml-field > textarea.ml-textarea--autoresize {
   resize: none;
 }
 

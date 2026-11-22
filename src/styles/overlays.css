@@ -182,7 +182,9 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 180px;
+  /* Never narrower than the default minimum, nor than its trigger (the
+     component passes the trigger's width in). */
+  min-width: max(180px, var(--ml-dropdown-trigger-width, 0px));
   max-height: min(60vh, 420px);
   overflow-y: auto;
   scrollbar-gutter: stable;

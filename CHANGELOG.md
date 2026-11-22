@@ -47,6 +47,22 @@ no prop removed, and left-to-right rendering is unchanged.
   the trigger (the menu was still hidden while it was being measured), so
   Escape and the arrow keys did nothing until the second open. Focus now moves
   in once the menu is placed.
+- **`Dropdown`:** fix — the menu's width floor is now the larger of its
+  default minimum (180px) and the trigger's width. The trigger's width used
+  to be written as an inline `min-width`, which overrode the default and left
+  a menu under a narrow trigger (an icon or avatar button) only as wide as its
+  labels. The width now reaches the stylesheet as
+  `--ml-dropdown-trigger-width`. Visible in LTR too: menus under narrow
+  triggers get wider.
+- **`Textarea`:** fix — an `autoResize` field inside a `Field` still showed
+  the browser's drag-resize handle, because `Field`'s rule for a bare
+  `<textarea>` out-ranked the `autoResize` modifier. It now has no handle
+  inside or outside a `Field`.
+- **`TopBar`:** the trailing slot is pushed with `margin-inline-start`, so it
+  sits at the end edge under `dir="rtl"` (unchanged in LTR). The `left` /
+  `right` prop names stay; they mean start / end.
+- **Tests:** new `TopBar.test.tsx`; `Dropdown.test.tsx` and
+  `Textarea.test.tsx` gained menu-width and resize-handle coverage.
 - **Tests:** new `Drawer.test.tsx` and `useAnchoredPosition.test.ts`;
   `DataTable.test.tsx`, `VirtualDataTable.test.tsx`,
   `PaginationFooter.test.tsx` and `Dropdown.test.tsx` gained alignment,

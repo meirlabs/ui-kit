@@ -203,7 +203,9 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Top Bar — 56px header with left / center / right slots.
+   Top Bar — 56px header with left / center / right slots. The slot
+   names are historical: `left` sits at the start edge and `right` at
+   the end edge, so the bar mirrors under dir="rtl".
    ───────────────────────────────────────────────────────────── */
 .ml-top-bar {
   display: flex;
@@ -232,7 +234,7 @@
 }
 
 .ml-top-bar-right {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 @media (max-width: 640px) {

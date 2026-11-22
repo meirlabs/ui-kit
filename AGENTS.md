@@ -103,6 +103,7 @@ Sidebar(props: SidebarProps) / SidebarItem(props: SidebarItemProps): JSX.Element
 
 TopBar(props: TopBarProps): JSX.Element
 // { left?: ReactNode; center?: ReactNode; right?: ReactNode } & header props
+// `left`/`right` are the start/end slots: under dir="rtl" the bar mirrors (left slot on the right, right slot on the left).
 
 PageHeader(props: PageHeaderProps): JSX.Element
 // { title: ReactNode; subtitle?; breadcrumb?; actions?; backHref?: string; onBack?: () => void; backLabel?: string } & div props
@@ -187,6 +188,7 @@ Modal(props: ModalProps): JSX.Element
 
 Dropdown(props: DropdownProps): JSX.Element
 // { trigger: ReactNode; items: DropdownMenuItem[]; active?: string; onSelect: (value) => void; align?: "start"|"end" (follows the trigger's reading direction) } & div props
+// Menu width: at least 180px and at least the trigger's width (the larger), so a narrow icon/avatar trigger still gets a full-width menu.
 // DropdownItem: { label; value; icon?; disabled?; destructive? } | DropdownSeparator: { separator: true }
 
 Drawer(props: DrawerProps): JSX.Element

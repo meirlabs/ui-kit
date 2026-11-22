@@ -393,7 +393,7 @@ import { Shell, Sidebar, SidebarItem, TopBar, PageHeader } from "@meir-labs/ui-k
 </Shell>
 ```
 
-App-shell scaffolding. `Sidebar` takes `collapsed` (64px icon-only rail); `SidebarItem` takes `active`/`icon`; `TopBar` has `left`/`center`/`right` slots; `PageHeader` takes `title`, `subtitle`, `breadcrumb`, `actions`, and `backHref` or `onBack`.
+App-shell scaffolding. `Sidebar` takes `collapsed` (64px icon-only rail); `SidebarItem` takes `active`/`icon`; `TopBar` has `left`/`center`/`right` slots (start / center / end — they mirror under `dir="rtl"`); `PageHeader` takes `title`, `subtitle`, `breadcrumb`, `actions`, and `backHref` or `onBack`.
 
 ### Card
 

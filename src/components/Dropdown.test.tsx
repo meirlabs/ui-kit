@@ -1,3 +1,5 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { render, screen, fireEvent, within } from "@testing-library/react";
 import { afterEach, describe, it, expect, vi } from "vitest";
 import { Dropdown, type DropdownAlign, type DropdownMenuItem } from "./Dropdown";
@@ -123,6 +125,46 @@ describe("Dropdown", () => {
     });
   });
 
+  describe("menu width", () => {
+    afterEach(() => {
+      vi.restoreAllMocks();
+    });
+
+    it("hands the trigger's width to the stylesheet instead of overriding the menu's minimum", () => {
+      // A narrow trigger (an icon button) must not shrink the menu: an inline
+      // min-width would beat the stylesheet's default minimum.
+      vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+        left: 300, right: 332, top: 100, bottom: 132, width: 32, height: 32,
+        x: 300, y: 100, toJSON: () => ({}),
+      });
+      const { trigger } = renderDropdown();
+      fireEvent.click(trigger);
+      const menu = screen.getByRole("menu");
+      expect(menu.style.minWidth).toBe("");
+      expect(menu.style.getPropertyValue("--ml-dropdown-trigger-width")).toBe("32px");
+    });
+
+    it("is at least its default minimum and at least as wide as the trigger", () => {
+      // vitest runs with cwd at the package root.
+      const style = document.createElement("style");
+      style.textContent = readFileSync(
+        join(process.cwd(), "src/styles/overlays.css"),
+        "utf8",
+      );
+      document.head.append(style);
+      try {
+        const rule = Array.from(style.sheet!.cssRules).find(
+          (r) => (r as CSSStyleRule).selectorText === ".ml-dropdown-menu",
+        ) as CSSStyleRule;
+        expect(rule.style.getPropertyValue("min-width")).toBe(
+          "max(180px, var(--ml-dropdown-trigger-width, 0px))",
+        );
+      } finally {
+        style.remove();
+      }
+    });
+  });
+
   describe("align follows the reading direction", () => {
     // jsdom has no layout: fake a 100px trigger at x=300..400 and a 160px menu.
     const TRIGGER = { left: 300, right: 400, top: 100, bottom: 130, width: 100, height: 30 };
@@ -170,9 +212,10 @@ describe("Dropdown", () => {
       expect(openAt("end", "rtl")).toBe(`${TRIGGER.left}px`);
     });
 
-    it("re-measures once its min-width lands, so the far edge lines up on first open", () => {
-      // The menu is wider until the inline min-width (the trigger's width)
-      // replaces the stylesheet's: 180px on the first pass, 120px after.
+    it("re-measures once the trigger's width lands, so the far edge lines up on first open", () => {
+      // The menu can change width once it learns the trigger's width (its
+      // min-width is the larger of the two): 180px on the first pass, 120px
+      // after — any change will do for this test.
       document.documentElement.setAttribute("dir", "rtl");
       vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
         ...TRIGGER,
@@ -182,7 +225,7 @@ describe("Dropdown", () => {
       });
       vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(
         function (this: HTMLElement) {
-          return this.style.minWidth ? 120 : 180;
+          return this.style.getPropertyValue("--ml-dropdown-trigger-width") ? 120 : 180;
         },
       );
       render(
