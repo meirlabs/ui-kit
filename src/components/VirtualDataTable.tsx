@@ -11,6 +11,7 @@ import { cn } from "../utils/cn";
 import type {
   Column,
   ColumnAlign,
+  DataTableLabels,
   SortDirection,
   SortState,
 } from "./DataTable";
@@ -83,6 +84,11 @@ export interface VirtualDataTableProps<Row> {
 
   /** Slot below the scroll container — drop a summary/footer here. */
   footer?: ReactNode;
+  /**
+   * Override the built-in strings (translation). Only `empty` applies here —
+   * this table has no selection column. Default `"No data."`.
+   */
+  labels?: Pick<DataTableLabels, "empty">;
 }
 
 /* ── Helpers mirrored from DataTable's internals (kept private there) ── */
@@ -116,7 +122,7 @@ function colWidth<Row>(column: Column<Row>): CSSProperties | undefined {
 }
 
 function alignOf<Row>(column: Column<Row>): ColumnAlign {
-  return column.align ?? (column.numeric ? "right" : "left");
+  return column.align ?? (column.numeric ? "end" : "start");
 }
 
 /* Same caret as DataTable's (private there) — identical classes/markup. */
@@ -151,6 +157,7 @@ function SortCaret({ direction }: { direction: SortDirection | null }) {
 interface VdtContext<Row> {
   columns: Column<Row>[];
   compact: boolean;
+  emptyLabel: string;
   ariaLabel?: string;
   emptyState?: ReactNode;
   onRowClick?: (row: Row) => void;
@@ -176,7 +183,9 @@ export function VirtualDataTable<Row>({
   onRowClick,
   "aria-label": ariaLabel,
   footer,
+  labels,
 }: VirtualDataTableProps<Row>) {
+  const emptyLabel = labels?.empty ?? "No data.";
   /* ── Sort state (controlled | uncontrolled) — same model as DataTable ── */
   const [internalSort, setInternalSort] = useState<SortState | null>(
     defaultSort,
@@ -220,8 +229,8 @@ export function VirtualDataTable<Row>({
   }, [manualSort, activeSort, columns, data]);
 
   const context = useMemo<VdtContext<Row>>(
-    () => ({ columns, compact, ariaLabel, emptyState, onRowClick }),
-    [columns, compact, ariaLabel, emptyState, onRowClick],
+    () => ({ columns, compact, emptyLabel, ariaLabel, emptyState, onRowClick }),
+    [columns, compact, emptyLabel, ariaLabel, emptyState, onRowClick],
   );
 
   /* ── Virtuoso element overrides — stable identity, all state via context ── */
@@ -270,7 +279,7 @@ export function VirtualDataTable<Row>({
           <tr className="ml-dt-row">
             <td className="ml-dt-state" colSpan={ctx!.columns.length}>
               {ctx!.emptyState ?? (
-                <span className="ml-dt-empty-fallback">No data.</span>
+                <span className="ml-dt-empty-fallback">{ctx!.emptyLabel}</span>
               )}
             </td>
           </tr>

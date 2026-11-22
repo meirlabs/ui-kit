@@ -123,9 +123,11 @@
     color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-sidebar-item:hover {
-  background: var(--ml-bg-elevated);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-sidebar-item:hover {
+    background: var(--ml-bg-elevated);
+    color: var(--ml-text);
+  }
 }
 
 /* Monochrome active — surface shift + full-strength text, NOT accent blue */
@@ -203,7 +205,9 @@
 }
 
 /* ─────────────────────────────────────────────────────────────
-   Top Bar — 56px header with left / center / right slots.
+   Top Bar — 56px header with left / center / right slots. The slot
+   names are historical: `left` sits at the start edge and `right` at
+   the end edge, so the bar mirrors under dir="rtl".
    ───────────────────────────────────────────────────────────── */
 .ml-top-bar {
   display: flex;
@@ -232,7 +236,7 @@
 }
 
 .ml-top-bar-right {
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 @media (max-width: 640px) {
@@ -290,8 +294,10 @@
   transition: color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-page-back:hover {
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-page-back:hover {
+    color: var(--ml-text);
+  }
 }
 
 .ml-page-back:focus-visible {
@@ -365,8 +371,10 @@
   transition: border-color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-card-interactive:hover {
-  border-color: var(--ml-text-muted);
+@media (hover: hover) {
+  .ml-card-interactive:hover {
+    border-color: var(--ml-text-muted);
+  }
 }
 
 .ml-card-interactive:focus-visible {
@@ -497,9 +505,11 @@
     background var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-detail-copy:hover {
-  color: var(--ml-text);
-  background: var(--ml-bg-surface);
+@media (hover: hover) {
+  .ml-detail-copy:hover {
+    color: var(--ml-text);
+    background: var(--ml-bg-surface);
+  }
 }
 
 .ml-detail-copy:focus-visible {

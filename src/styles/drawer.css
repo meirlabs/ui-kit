@@ -7,14 +7,19 @@
   padding: 0;
 }
 
-/* Anchor the panel to the requested edge. */
-.ml-drawer-overlay[data-side="right"] {
-  justify-content: flex-end;
+/* Anchor the panel to the requested edge. `data-side` is always a physical
+   edge (the component resolves `start`/`end` against the reading direction),
+   so left/right are pinned with physical auto margins — flex-start/flex-end
+   would swap sides under dir="rtl". */
+.ml-drawer-overlay[data-side="right"],
+.ml-drawer-overlay[data-side="left"] {
   align-items: stretch;
 }
-.ml-drawer-overlay[data-side="left"] {
-  justify-content: flex-start;
-  align-items: stretch;
+.ml-drawer[data-side="right"] {
+  margin-left: auto;
+}
+.ml-drawer[data-side="left"] {
+  margin-right: auto;
 }
 .ml-drawer-overlay[data-side="top"] {
   align-items: flex-start;
@@ -194,9 +199,11 @@
     color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-drawer-close:hover {
-  background: var(--ml-bg-surface);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-drawer-close:hover {
+    background: var(--ml-bg-surface);
+    color: var(--ml-text);
+  }
 }
 
 .ml-drawer-close:focus-visible {
@@ -216,6 +223,14 @@
   flex: 1;
   min-height: 0;
   padding: var(--ml-space-xl);
+  /* The reserved scrollbar gutter (classic scrollbars) sits inside the end
+     padding instead of adding to it, so the content's edges line up with the
+     header and footer on every machine. The component measures the gutter;
+     with overlay scrollbars it is 0 and this is plain --ml-space-xl. */
+  padding-inline-end: max(
+    0px,
+    calc(var(--ml-space-xl) - var(--ml-drawer-gutter, 0px))
+  );
   overflow-y: auto;
   scrollbar-gutter: stable;
   font-size: 14px;

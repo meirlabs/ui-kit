@@ -156,7 +156,7 @@
   justify-content: center;
   width: 16px;
   height: 16px;
-  margin-right: -2px;
+  margin-inline-end: -2px;
   padding: 0;
   border: none;
   border-radius: var(--ml-radius-pill);
@@ -173,9 +173,11 @@
   height: 12px;
   pointer-events: none;
 }
-.ml-tag-remove:hover {
-  opacity: 1;
-  background: color-mix(in srgb, currentColor 16%, transparent);
+@media (hover: hover) {
+  .ml-tag-remove:hover {
+    opacity: 1;
+    background: color-mix(in srgb, currentColor 16%, transparent);
+  }
 }
 .ml-tag-remove:focus-visible {
   outline: 2px solid var(--ml-text);

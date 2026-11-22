@@ -1,5 +1,7 @@
+import { readFileSync } from "node:fs";
+import { join } from "node:path";
 import { render, screen, fireEvent, within } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
+import { afterEach, beforeEach, describe, it, expect, vi } from "vitest";
 import { DataTable, type Column } from "./DataTable";
 
 interface Row {
@@ -206,5 +208,210 @@ describe("DataTable", () => {
       <DataTable columns={columns} data={rows} aria-label="People" />,
     );
     expect(container.querySelector(".ml-dt-toolbar")).toBeNull();
+  });
+
+  describe("stylesheet", () => {
+    let style: HTMLStyleElement;
+
+    beforeEach(() => {
+      // vitest runs with cwd at the package root.
+      style = document.createElement("style");
+      style.textContent = readFileSync(join(process.cwd(), "src/styles/table.css"), "utf8");
+      document.head.append(style);
+    });
+
+    afterEach(() => {
+      style.remove();
+    });
+
+    function headerLabelStyle(wrapper: { dir?: string; lang?: string }) {
+      const { container } = render(
+        <div {...wrapper}>
+          <DataTable columns={columns} data={rows} aria-label="People" />
+        </div>,
+      );
+      const computed = getComputedStyle(container.querySelector(".ml-dt-th-label")!);
+      return {
+        fontSize: computed.fontSize,
+        letterSpacing: computed.letterSpacing,
+        textTransform: computed.textTransform,
+      };
+    }
+
+    it("keeps the tracked uppercase 11px header label for Latin LTR", () => {
+      expect(headerLabelStyle({})).toEqual({
+        fontSize: "11px",
+        letterSpacing: "0.06em",
+        textTransform: "uppercase",
+      });
+    });
+
+    it("drops tracking and uppercase, at 12px, under RTL", () => {
+      expect(headerLabelStyle({ dir: "rtl" })).toEqual({
+        fontSize: "12px",
+        letterSpacing: "normal",
+        textTransform: "none",
+      });
+    });
+
+    it.each(["he", "ar", "fa", "ur"])(
+      "does the same for lang=%s without a dir attribute",
+      (lang) => {
+        expect(headerLabelStyle({ lang })).toEqual({
+          fontSize: "12px",
+          letterSpacing: "normal",
+          textTransform: "none",
+        });
+      },
+    );
+
+    it("ships the two-line cell helpers: a medium primary line over a muted 12px one", () => {
+      const { container } = render(
+        <div>
+          <span className="ml-dt-primary">Ada Lovelace</span>
+          <span className="ml-dt-secondary">ada@example.com</span>
+        </div>,
+      );
+      const primary = getComputedStyle(container.querySelector(".ml-dt-primary")!);
+      const secondary = getComputedStyle(container.querySelector(".ml-dt-secondary")!);
+      expect(primary.display).toBe("block");
+      expect(primary.fontWeight).toBe("500");
+      expect(secondary.display).toBe("block");
+      expect(secondary.fontSize).toBe("12px");
+      expect(secondary.color).toBe("var(--ml-text-muted)");
+    });
+  });
+
+  describe("labels", () => {
+    it("keeps every English default when labels is omitted", () => {
+      const { unmount } = render(
+        <DataTable columns={columns} data={rows} selectable="multiple" aria-label="People" />,
+      );
+      expect(screen.getByLabelText("Select all rows")).toBeInTheDocument();
+      expect(screen.getByLabelText("Select row 1")).toBeInTheDocument();
+      expect(screen.getByLabelText("Select row 3")).toBeInTheDocument();
+      unmount();
+
+      render(<DataTable columns={columns} data={[]} selectable="single" aria-label="People" />);
+      expect(screen.getByText("Select")).toHaveClass("ml-visually-hidden");
+      expect(screen.getByText("No data.")).toHaveClass("ml-dt-empty-fallback");
+    });
+
+    it("replaces the selection labels, passing the 1-based row number", () => {
+      const selectRow = vi.fn((rowNumber: number) => `Sélectionner la ligne ${rowNumber}`);
+      render(
+        <DataTable
+          columns={columns}
+          data={rows}
+          selectable="multiple"
+          aria-label="People"
+          labels={{ selectRow, selectAll: "Tout sélectionner" }}
+        />,
+      );
+      expect(screen.getByLabelText("Tout sélectionner")).toBeInTheDocument();
+      expect(screen.getByLabelText("Sélectionner la ligne 1")).toBeInTheDocument();
+      expect(screen.getByLabelText("Sélectionner la ligne 3")).toBeInTheDocument();
+      expect(selectRow.mock.calls.map(([n]) => n)).toEqual([1, 2, 3]);
+      expect(screen.queryByLabelText(/Select/)).not.toBeInTheDocument();
+    });
+
+    it("replaces the single-select column header and the empty copy", () => {
+      render(
+        <DataTable
+          columns={columns}
+          data={[]}
+          selectable="single"
+          aria-label="People"
+          labels={{ selectColumn: "Sélection", empty: "Aucune donnée." }}
+        />,
+      );
+      expect(screen.getByText("Sélection")).toHaveClass("ml-visually-hidden");
+      expect(screen.getByText("Aucune donnée.")).toHaveClass("ml-dt-empty-fallback");
+      expect(screen.queryByText("No data.")).not.toBeInTheDocument();
+    });
+
+    it("falls back to the default for any key left out", () => {
+      render(
+        <DataTable
+          columns={columns}
+          data={rows}
+          selectable="multiple"
+          aria-label="People"
+          labels={{ selectAll: "Tout sélectionner" }}
+        />,
+      );
+      expect(screen.getByLabelText("Tout sélectionner")).toBeInTheDocument();
+      expect(screen.getByLabelText("Select row 2")).toBeInTheDocument();
+    });
+
+    it("lets emptyState win over labels.empty", () => {
+      render(
+        <DataTable
+          columns={columns}
+          data={[]}
+          aria-label="People"
+          emptyState={<span>Custom empty</span>}
+          labels={{ empty: "Aucune donnée." }}
+        />,
+      );
+      expect(screen.getByText("Custom empty")).toBeInTheDocument();
+      expect(screen.queryByText("Aucune donnée.")).not.toBeInTheDocument();
+    });
+  });
+
+  describe("column alignment", () => {
+    function headerAndFirstCell(align?: Column<Row>["align"], numeric = false) {
+      const cols: Column<Row>[] = [
+        { id: "name", header: "Name", accessor: "name", align, numeric },
+      ];
+      render(<DataTable columns={cols} data={rows} aria-label="People" />);
+      const table = screen.getByRole("table");
+      return {
+        th: within(table).getByRole("columnheader", { name: "Name" }),
+        td: within(table).getAllByRole("cell")[0],
+      };
+    }
+
+    it("defaults to the logical start edge, so it mirrors under RTL", () => {
+      const { th, td } = headerAndFirstCell();
+      expect(th).toHaveClass("ml-dt-align-start");
+      expect(td.style.textAlign).toBe("start");
+    });
+
+    it("defaults numeric columns to the logical end edge", () => {
+      const { th, td } = headerAndFirstCell(undefined, true);
+      expect(th).toHaveClass("ml-dt-align-end");
+      expect(td.style.textAlign).toBe("end");
+    });
+
+    it.each(["start", "end", "left", "right", "center"] as const)(
+      "applies align=%s to the header and the cells",
+      (align) => {
+        const { th, td } = headerAndFirstCell(align);
+        expect(th).toHaveClass(`ml-dt-align-${align}`);
+        expect(td.style.textAlign).toBe(align);
+      },
+    );
+
+    it("lets an explicit align win over the numeric default", () => {
+      const { th, td } = headerAndFirstCell("left", true);
+      expect(th).toHaveClass("ml-dt-align-left");
+      expect(td.style.textAlign).toBe("left");
+    });
+
+    it("aligns loading skeleton cells the same way", () => {
+      const cols: Column<Row>[] = [
+        { id: "name", header: "Name", accessor: "name" },
+        { id: "score", header: "Score", accessor: "score", numeric: true },
+      ];
+      const { container } = render(
+        <DataTable columns={cols} data={[]} loading loadingRowCount={1} aria-label="People" />,
+      );
+      const cells = container.querySelectorAll<HTMLTableCellElement>(
+        ".ml-dt-row--skeleton td",
+      );
+      expect(cells[0].style.textAlign).toBe("start");
+      expect(cells[1].style.textAlign).toBe("end");
+    });
   });
 });

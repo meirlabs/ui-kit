@@ -31,10 +31,12 @@
   font-family: var(--ml-font-sans);
 }
 
-.ml-pg-arrow:hover:not(:disabled),
-.ml-pg-num:hover:not(.active) {
-  background: var(--ml-bg-elevated);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-pg-arrow:hover:not(:disabled),
+  .ml-pg-num:hover:not(.active) {
+    background: var(--ml-bg-elevated);
+    color: var(--ml-text);
+  }
 }
 
 .ml-pg-num.active {
@@ -70,7 +72,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--ml-space-sm);
-  margin-left: var(--ml-space-md);
+  margin-inline-start: var(--ml-space-md);
 }
 
 .ml-pg-size label {
@@ -95,8 +97,9 @@
   outline-offset: 2px;
 }
 
-/* ── PaginationFooter: "Show N ▾ results (X total)" left, "Page x of y" +
-   chevrons right — the mailgail table-footer convention (§ README). ── */
+/* ── PaginationFooter: "Show N ▾ of X results" at the start edge, "Page x of
+   y" + chevrons at the end edge — the mailgail table-footer convention
+   (§ README). Logical properties, so it mirrors under dir="rtl". ── */
 .ml-pgf {
   display: flex;
   align-items: center;
@@ -124,7 +127,8 @@
 .ml-pgf-size-shell select {
   appearance: none;
   height: 28px;
-  padding: 0 22px 0 8px;
+  padding-block: 0;
+  padding-inline: 8px 22px;
   border: 1px solid var(--ml-border);
   border-radius: var(--ml-radius-sm);
   background: var(--ml-bg-card);
@@ -141,7 +145,7 @@
 
 .ml-pgf-size-shell svg {
   position: absolute;
-  right: 8px;
+  inset-inline-end: 8px;
   pointer-events: none;
   color: var(--ml-text-muted);
 }
@@ -157,7 +161,14 @@
   gap: var(--ml-space-xs);
 }
 
+/* Nothing at the start edge (`hidePageSize` with an empty total): the stepper
+   keeps its place at the end edge instead of sliding over. */
+.ml-pgf--no-size .ml-pgf-stepper {
+  margin-inline-start: auto;
+}
+
 .ml-pgf-arrow {
+  position: relative;
   display: inline-flex;
   align-items: center;
   justify-content: center;
@@ -173,9 +184,11 @@
     color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-pgf-arrow:hover:not(:disabled) {
-  background: var(--ml-bg-elevated);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-pgf-arrow:hover:not(:disabled) {
+    background: var(--ml-bg-elevated);
+    color: var(--ml-text);
+  }
 }
 
 .ml-pgf-arrow:disabled {
@@ -194,4 +207,21 @@
   text-align: center;
   color: var(--ml-text);
   font-variant-numeric: tabular-nums;
+}
+
+/* The arrows stay 28px to look at, but take a 44px hit area on touch screens
+   (28 + 2 × 8) — grown with a pseudo-element, so nothing reflows. */
+@media (pointer: coarse) {
+  .ml-pgf-arrow::before {
+    content: "";
+    position: absolute;
+    inset: -8px;
+  }
+}
+
+/* Previous/next chevrons point the way the pages run: mirrored under RTL so
+   "previous" still points back toward the start edge. */
+[dir="rtl"] .ml-pg-arrow > svg,
+[dir="rtl"] .ml-pgf-arrow > svg {
+  transform: scaleX(-1);
 }

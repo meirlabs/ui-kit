@@ -7,6 +7,7 @@ export type { VirtualDataTableProps } from "./components/VirtualDataTable";
 export type {
   Column,
   ColumnAlign,
+  DataTableLabels,
   SortDirection,
   SortState,
 } from "./components/DataTable";

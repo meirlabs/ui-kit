@@ -17,6 +17,60 @@ describe("FilterBar", () => {
     expect(onSearchChange).toHaveBeenCalledWith("acme");
   });
 
+  describe("searchInputProps", () => {
+    it("passes extra props to the search input (e.g. dir for mixed-direction text)", () => {
+      render(
+        <FilterBar
+          searchValue=""
+          onSearchChange={() => {}}
+          searchInputProps={{ dir: "auto", inputMode: "search", name: "q", autoComplete: "off" }}
+        />,
+      );
+      const input = screen.getByRole("textbox", { name: "Search" });
+      expect(input).toHaveAttribute("dir", "auto");
+      expect(input).toHaveAttribute("inputmode", "search");
+      expect(input).toHaveAttribute("name", "q");
+      expect(input).toHaveAttribute("autocomplete", "off");
+    });
+
+    it("keeps the FilterBar's own wiring and still calls a passed onBlur", () => {
+      const onSearchChange = vi.fn();
+      const onBlur = vi.fn();
+      render(
+        <FilterBar
+          searchValue="acme"
+          onSearchChange={onSearchChange}
+          searchPlaceholder="Find"
+          searchInputProps={{ onBlur, placeholder: "ignored", className: "mine" }}
+        />,
+      );
+      const input = screen.getByRole("textbox", { name: "Search" }) as HTMLInputElement;
+      expect(input.value).toBe("acme");
+      expect(input).toHaveAttribute("placeholder", "Find");
+      expect(input).toHaveClass("ml-filterbar-search", "mine");
+      fireEvent.change(input, { target: { value: "acme inc" } });
+      expect(onSearchChange).toHaveBeenCalledWith("acme inc");
+      fireEvent.blur(input);
+      expect(onBlur).toHaveBeenCalledTimes(1);
+    });
+
+    it("still collapses on blur when empty, after calling the passed onBlur", () => {
+      const onBlur = vi.fn();
+      render(
+        <FilterBar
+          searchValue=""
+          onSearchChange={() => {}}
+          collapsible
+          searchInputProps={{ onBlur }}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Search" }));
+      fireEvent.blur(screen.getByRole("textbox", { name: "Search" }));
+      expect(onBlur).toHaveBeenCalledTimes(1);
+      expect(screen.queryByRole("textbox", { name: "Search" })).not.toBeInTheDocument();
+    });
+  });
+
   it("hides the Filters button when onFiltersClick is omitted", () => {
     render(<FilterBar searchValue="" onSearchChange={() => {}} />);
     expect(screen.queryByRole("button", { name: /filters/i })).not.toBeInTheDocument();

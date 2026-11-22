@@ -82,7 +82,10 @@ export type {
 export { Pagination, getPaginationRange, PAGINATION_DOTS } from "./components/Pagination";
 export type { PaginationProps } from "./components/Pagination";
 export { PaginationFooter } from "./components/PaginationFooter";
-export type { PaginationFooterProps } from "./components/PaginationFooter";
+export type {
+  PaginationFooterProps,
+  PaginationFooterLabels,
+} from "./components/PaginationFooter";
 export { Breadcrumbs } from "./components/Breadcrumbs";
 export type { BreadcrumbsProps, BreadcrumbItem } from "./components/Breadcrumbs";
 
@@ -90,6 +93,7 @@ export type { BreadcrumbsProps, BreadcrumbItem } from "./components/Breadcrumbs"
 export { DataTable } from "./components/DataTable";
 export type {
   DataTableProps,
+  DataTableLabels,
   Column,
   ColumnAlign,
   SortState,

@@ -58,8 +58,10 @@
   transition: color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-bc-link:hover {
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-bc-link:hover {
+    color: var(--ml-text);
+  }
 }
 
 .ml-bc-link:focus-visible {
@@ -120,9 +122,11 @@
     color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-bc-menu-item:hover {
-  background: var(--ml-bg-surface);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-bc-menu-item:hover {
+    background: var(--ml-bg-surface);
+    color: var(--ml-text);
+  }
 }
 
 .ml-bc-menu-item:focus-visible {

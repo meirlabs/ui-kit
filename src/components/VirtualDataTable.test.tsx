@@ -170,6 +170,19 @@ describe("VirtualDataTable", () => {
     expect(screen.getByText("No data.")).toHaveClass("ml-dt-empty-fallback");
   });
 
+  it("replaces the default empty copy through labels.empty", () => {
+    renderVirtual(
+      <VirtualDataTable
+        columns={columns}
+        data={[]}
+        aria-label="People"
+        labels={{ empty: "Aucune donnée." }}
+      />,
+    );
+    expect(screen.getByText("Aucune donnée.")).toHaveClass("ml-dt-empty-fallback");
+    expect(screen.queryByText("No data.")).not.toBeInTheDocument();
+  });
+
   it("calls onEndReached when the last row renders", async () => {
     const onEndReached = vi.fn();
     renderVirtual(

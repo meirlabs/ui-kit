@@ -120,9 +120,11 @@
     color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-modal-close:hover {
-  background: var(--ml-bg-surface);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-modal-close:hover {
+    background: var(--ml-bg-surface);
+    color: var(--ml-text);
+  }
 }
 
 .ml-modal-close:focus-visible {
@@ -182,7 +184,9 @@
   display: flex;
   flex-direction: column;
   gap: 2px;
-  min-width: 180px;
+  /* Never narrower than the default minimum, nor than its trigger (the
+     component passes the trigger's width in). */
+  min-width: max(180px, var(--ml-dropdown-trigger-width, 0px));
   max-height: min(60vh, 420px);
   overflow-y: auto;
   scrollbar-gutter: stable;
@@ -199,6 +203,21 @@
 
 .ml-dropdown-menu[data-placement="top"] {
   transform-origin: bottom center;
+}
+
+/* Grow from the trigger's corner: `data-origin` is the physical edge the menu
+   is lined up with (it follows `align` and the reading direction). */
+.ml-dropdown-menu[data-origin="left"] {
+  transform-origin: top left;
+}
+.ml-dropdown-menu[data-origin="right"] {
+  transform-origin: top right;
+}
+.ml-dropdown-menu[data-placement="top"][data-origin="left"] {
+  transform-origin: bottom left;
+}
+.ml-dropdown-menu[data-placement="top"][data-origin="right"] {
+  transform-origin: bottom right;
 }
 
 @keyframes ml-dropdown-in {
@@ -226,22 +245,24 @@
   font-size: 14px;
   line-height: 1.4;
   letter-spacing: -0.31px;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   transition: background var(--ml-duration-base) var(--ml-ease),
     color var(--ml-duration-base) var(--ml-ease);
 }
 
 /* Neutral hover/active — surface shift, never blue. */
-.ml-dropdown-item:hover:not(:disabled),
 .ml-dropdown-item:focus-visible {
   background: var(--ml-bg-surface);
   color: var(--ml-text);
-}
-
-.ml-dropdown-item:focus-visible {
   outline: 2px solid var(--ml-text);
   outline-offset: -2px;
+}
+@media (hover: hover) {
+  .ml-dropdown-item:hover:not(:disabled) {
+    background: var(--ml-bg-surface);
+    color: var(--ml-text);
+  }
 }
 
 .ml-dropdown-item:disabled,
@@ -255,10 +276,15 @@
   color: var(--ml-color-danger);
 }
 
-.ml-dropdown-item-destructive:hover:not(:disabled),
 .ml-dropdown-item-destructive:focus-visible {
   background: var(--ml-color-danger-muted);
   color: var(--ml-color-danger);
+}
+@media (hover: hover) {
+  .ml-dropdown-item-destructive:hover:not(:disabled) {
+    background: var(--ml-color-danger-muted);
+    color: var(--ml-color-danger);
+  }
 }
 
 .ml-dropdown-item-icon {

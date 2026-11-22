@@ -6,11 +6,11 @@ import {
 import { cn } from "../utils/cn";
 
 export interface TopBarProps extends ComponentPropsWithoutRef<"header"> {
-  /** Leading slot (logo, breadcrumb, menu button). */
+  /** Leading slot (logo, breadcrumb, menu button), at the start edge. */
   left?: ReactNode;
   /** Centered slot (search, page switcher). */
   center?: ReactNode;
-  /** Trailing slot (actions, avatar), pinned to the right edge. */
+  /** Trailing slot (actions, avatar), pinned to the end edge (right in LTR, left in RTL). */
   right?: ReactNode;
 }
 

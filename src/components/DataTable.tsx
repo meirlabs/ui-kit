@@ -14,7 +14,8 @@ import { cn } from "../utils/cn";
 
    Semantics: real <table><thead><th scope="col"><tbody>. Header cells are 12px
    uppercase muted with a border-bottom; body cells are 14px/400. Numeric columns
-   right-align and use tabular-nums so digits never nudge neighbors. Row hover is
+   align to the end edge (right in LTR, left in RTL) and use tabular-nums so
+   digits never nudge neighbors. Row hover is
    a surface shift (never a colored fill); selection/hover express through color,
    never metrics.
 
@@ -39,7 +40,11 @@ export interface SortState {
   direction: SortDirection;
 }
 
-export type ColumnAlign = "left" | "right" | "center";
+/**
+ * `start`/`end` follow the reading direction (they mirror under `dir="rtl"`);
+ * `left`/`right` are physical and stay put in both directions.
+ */
+export type ColumnAlign = "start" | "end" | "left" | "right" | "center";
 
 export interface Column<Row> {
   /** Stable identifier — also the key reported in `SortState`. */
@@ -53,15 +58,43 @@ export interface Column<Row> {
   accessor?: ((row: Row) => ReactNode) | keyof Row;
   /** Enable the sort affordance on this column's header. */
   sortable?: boolean;
-  /** Text alignment. Defaults to `right` for numeric columns, else `left`. */
+  /** Text alignment. Defaults to `end` for numeric columns, else `start`. */
   align?: ColumnAlign;
   /** Fixed column width (px number or any CSS length). */
   width?: number | string;
-  /** Right-align + tabular-nums for numbers that align as digits change. */
+  /** End-align + tabular-nums for numbers that align as digits change. */
   numeric?: boolean;
   /** Custom comparator (receives raw rows). Overrides the default sort. */
   sortFn?: (a: Row, b: Row) => number;
 }
+
+/**
+ * Every built-in string the table renders. All keys are optional; anything
+ * omitted keeps its English default. Strings that embed a value are functions.
+ */
+export interface DataTableLabels {
+  /**
+   * Accessible name of a row's selection checkbox; `rowNumber` is 1-based.
+   * Default `` `Select row ${rowNumber}` ``.
+   */
+  selectRow?: (rowNumber: number) => string;
+  /** Accessible name of the header select-all checkbox. Default `"Select all rows"`. */
+  selectAll?: string;
+  /**
+   * Visually hidden header of the selection column in `selectable="single"`
+   * mode (there is no select-all box to name it). Default `"Select"`.
+   */
+  selectColumn?: string;
+  /** Empty-table copy used when no `emptyState` is given. Default `"No data."`. */
+  empty?: string;
+}
+
+const DEFAULT_LABELS: Required<DataTableLabels> = {
+  selectRow: (rowNumber) => `Select row ${rowNumber}`,
+  selectAll: "Select all rows",
+  selectColumn: "Select",
+  empty: "No data.",
+};
 
 export interface DataTableProps<Row> {
   columns: Column<Row>[];
@@ -106,6 +139,8 @@ export interface DataTableProps<Row> {
   footer?: ReactNode;
   /** Slot above the table — drop a <FilterBar> (search + Filters button) or any toolbar here. */
   toolbar?: ReactNode;
+  /** Override any of the built-in strings (translation). English by default. */
+  labels?: DataTableLabels;
   className?: string;
 }
 
@@ -226,8 +261,11 @@ export function DataTable<Row>({
   "aria-label": ariaLabel,
   footer,
   toolbar,
+  labels,
   className,
 }: DataTableProps<Row>) {
+  const t = { ...DEFAULT_LABELS, ...labels };
+
   /* ── Sort state (controlled | uncontrolled) ── */
   const [internalSort, setInternalSort] = useState<SortState | null>(defaultSort);
   const isSortControlled = sortState !== undefined;
@@ -330,7 +368,7 @@ export function DataTable<Row>({
       : undefined;
 
   const alignOf = (column: Column<Row>): ColumnAlign =>
-    column.align ?? (column.numeric ? "right" : "left");
+    column.align ?? (column.numeric ? "end" : "start");
 
   const renderBody = () => {
     if (loading) {
@@ -368,7 +406,7 @@ export function DataTable<Row>({
       return (
         <tr className="ml-dt-row">
           <td className="ml-dt-state" colSpan={totalCols}>
-            {emptyState ?? <span className="ml-dt-empty-fallback">No data.</span>}
+            {emptyState ?? <span className="ml-dt-empty-fallback">{t.empty}</span>}
           </td>
         </tr>
       );
@@ -395,7 +433,7 @@ export function DataTable<Row>({
               <DtCheckbox
                 checked={isSelected}
                 onChange={() => toggleRow(id)}
-                label={`Select row ${i + 1}`}
+                label={t.selectRow(i + 1)}
               />
             </td>
           )}
@@ -431,11 +469,11 @@ export function DataTable<Row>({
                   checked={allSelected}
                   indeterminate={someSelected}
                   onChange={toggleAll}
-                  label="Select all rows"
+                  label={t.selectAll}
                   disabled={rowIds.length === 0 || loading}
                 />
               ) : (
-                <span className="ml-visually-hidden">Select</span>
+                <span className="ml-visually-hidden">{t.selectColumn}</span>
               )}
             </th>
           )}

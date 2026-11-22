@@ -136,8 +136,11 @@
 
 /* autoResize fields grow imperatively — a manual drag handle would fight that,
    so autoResize always drops the native resize handle (owner rule: "never
-   mouse-resizable"). */
-.ml-textarea--autoresize {
+   mouse-resizable"). The second selector covers a Textarea placed in a Field:
+   forms.css gives `.ml-field > textarea` a vertical handle, and that rule is
+   more specific than the modifier class alone. */
+.ml-textarea--autoresize,
+.ml-field > textarea.ml-textarea--autoresize {
   resize: none;
 }
 
@@ -154,4 +157,13 @@
   opacity: 0.5;
   cursor: not-allowed;
   resize: none;
+}
+
+/* iOS Safari zooms the page when a focused field's text is under 16px. Touch
+   screens get 16px; mouse/trackpad layouts keep 14px. */
+@media (pointer: coarse) {
+  .ml-input-field,
+  .ml-textarea {
+    font-size: 16px;
+  }
 }

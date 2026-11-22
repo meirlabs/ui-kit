@@ -86,6 +86,8 @@ export function Tooltip({
   const show = useCallback(() => {
     if (disabled) return;
     if (closeTimer.current) clearTimeout(closeTimer.current);
+    // Hover and focus can both ask: never leave an earlier timer running.
+    if (openTimer.current) clearTimeout(openTimer.current);
     setMounted(true);
     openTimer.current = setTimeout(() => setOpen(true), delay);
   }, [disabled, delay]);
@@ -93,6 +95,7 @@ export function Tooltip({
   const hide = useCallback(
     (immediate = false) => {
       if (openTimer.current) clearTimeout(openTimer.current);
+      if (closeTimer.current) clearTimeout(closeTimer.current);
       setOpen(false);
       closeTimer.current = setTimeout(() => setMounted(false), immediate ? 0 : 200);
     },

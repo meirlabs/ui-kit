@@ -1,6 +1,6 @@
 import { createRef } from "react";
 import { render, screen, fireEvent } from "@testing-library/react";
-import { describe, expect, it, vi } from "vitest";
+import { afterEach, describe, expect, it, vi } from "vitest";
 import { Tooltip } from "./Tooltip";
 
 describe("Tooltip refs", () => {
@@ -13,5 +13,41 @@ describe("Tooltip refs", () => {
     expect(screen.getByRole("tooltip")).toHaveTextContent("Daily reading");
     expect(error).not.toHaveBeenCalled();
     error.mockRestore();
+  });
+});
+
+describe("Tooltip timers", () => {
+  afterEach(() => {
+    vi.useRealTimers();
+  });
+
+  it("leaves no timer behind when shown twice and then unmounted", () => {
+    vi.useFakeTimers();
+    const { unmount } = render(
+      <Tooltip content="More">
+        <button type="button">Trigger</button>
+      </Tooltip>,
+    );
+    const trigger = screen.getByRole("button", { name: "Trigger" });
+    // Pointer and keyboard both ask for the tooltip: two "show" calls.
+    fireEvent.mouseEnter(trigger);
+    fireEvent.focus(trigger);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
+  });
+
+  it("leaves no timer behind when hidden twice and then unmounted", () => {
+    vi.useFakeTimers();
+    const { unmount } = render(
+      <Tooltip content="More">
+        <button type="button">Trigger</button>
+      </Tooltip>,
+    );
+    const trigger = screen.getByRole("button", { name: "Trigger" });
+    fireEvent.mouseEnter(trigger);
+    fireEvent.mouseLeave(trigger);
+    fireEvent.blur(trigger);
+    unmount();
+    expect(vi.getTimerCount()).toBe(0);
   });
 });

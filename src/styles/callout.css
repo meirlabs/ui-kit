@@ -77,9 +77,11 @@
     background var(--ml-duration-base) var(--ml-ease),
     color var(--ml-duration-base) var(--ml-ease);
 }
-.ml-callout-close:hover {
-  background: color-mix(in srgb, var(--ml-text) 8%, transparent);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-callout-close:hover {
+    background: color-mix(in srgb, var(--ml-text) 8%, transparent);
+    color: var(--ml-text);
+  }
 }
 .ml-callout-close:focus-visible {
   outline: 2px solid var(--ml-text);

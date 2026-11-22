@@ -1,5 +1,111 @@
 # Changelog
 
+## Unreleased — RTL support
+
+Right-to-left support for the table stack and the overlays around it. Additive:
+no prop removed, and left-to-right rendering is unchanged.
+
+- **`DataTable` / `VirtualDataTable`:** `Column.align` gains `"start"` and
+  `"end"`, which follow the reading direction. The default is now `start`
+  (`end` for `numeric` columns) instead of `left`/`right` — identical in LTR,
+  mirrored under `dir="rtl"`. `left`/`right`/`center` keep working, and
+  `left`/`right` stay physical in both directions. Header cells now carry
+  `ml-dt-align-start`/`-end` by default (was `-left`/`-right`). `table.css`
+  moved to logical properties (`text-align: start|end`,
+  `padding-inline-*`, `margin-inline-start`).
+- **`PaginationFooter`:** new optional `labels` prop
+  (`PaginationFooterLabels`, exported) covering every visible and accessible
+  string — `show`, `ofTotal(total, noun)`, `rowsPerPage`, `pagination`,
+  `previousPage`, `nextPage`, `pageOf(page, pageCount)`. English defaults are
+  unchanged. The size picker uses logical padding/insets, and the
+  previous/next chevrons (also on `Pagination`) mirror under `[dir="rtl"]`.
+- **`Drawer`:** `side` gains `"start"` and `"end"`, resolved against the `dir`
+  prop when passed and otherwise the document's direction; the default is now
+  `end` (the right edge in LTR, as before). Anchoring, borders and the slide-in
+  direction follow the resolved edge. `left`/`right` are now truly physical —
+  previously an RTL document painted a `right` drawer on the left with the
+  entrance sliding the wrong way. `data-side` is always the physical edge.
+- **`Dropdown`:** `align` follows the trigger's reading direction (`start` is
+  its right edge under RTL); item text aligns to the start edge. Fix: a menu
+  lined up by its far edge (`align="end"`, or `start` under RTL) is measured
+  again once its min-width lands, so it no longer sits off the trigger the
+  first time it opens.
+- **`useAnchoredPosition`:** `-start`/`-end` on `top`/`bottom` placements follow
+  the anchor's reading direction (affects `Tooltip`, `Popover`, `Select`,
+  `Combobox`). `left`/`right` sides stay physical.
+- **`Select`, `Tooltip`, `Field`, `FilterBar`, `Tag`:** physical
+  `text-align: left` / `margin-left` / `margin-right` replaced with their
+  logical equivalents (trigger and tooltip text, the required asterisk, the
+  toolbar's end cluster, the tag remove button).
+- **`DataTable`:** new optional `labels` prop (`DataTableLabels`, exported)
+  for the built-in strings — `selectRow(rowNumber)`, `selectAll`,
+  `selectColumn` and `empty`. English defaults are unchanged.
+  `VirtualDataTable` takes the same prop for its one string (`empty`).
+- **`Drawer`:** new optional `closeLabel` prop for the close button's
+  accessible name (default `"Close"`).
+- **`Dropdown`:** fix — the first time a menu opened, keyboard focus stayed on
+  the trigger (the menu was still hidden while it was being measured), so
+  Escape and the arrow keys did nothing until the second open. Focus now moves
+  in once the menu is placed.
+- **`Dropdown`:** fix — the menu's width floor is now the larger of its
+  default minimum (180px) and the trigger's width. The trigger's width used
+  to be written as an inline `min-width`, which overrode the default and left
+  a menu under a narrow trigger (an icon or avatar button) only as wide as its
+  labels. The width now reaches the stylesheet as
+  `--ml-dropdown-trigger-width`. Visible in LTR too: menus under narrow
+  triggers get wider.
+- **`Textarea`:** fix — an `autoResize` field inside a `Field` still showed
+  the browser's drag-resize handle, because `Field`'s rule for a bare
+  `<textarea>` out-ranked the `autoResize` modifier. It now has no handle
+  inside or outside a `Field`.
+- **`TopBar`:** the trailing slot is pushed with `margin-inline-start`, so it
+  sits at the end edge under `dir="rtl"` (unchanged in LTR). The `left` /
+  `right` prop names stay; they mean start / end.
+- **Touch (no change on mouse/trackpad layouts):**
+  - Every `:hover` style now sits inside `@media (hover: hover)`, so a tapped
+    row, button, menu item, tab or link doesn't keep its hover fill on touch
+    screens. `focus-visible` styles that shared a rule with `:hover` are
+    unchanged.
+  - `Input`, `Textarea` (and so the `FilterBar` search and `Composer`) and
+    bare controls in a `Field` use 16px text under `@media (pointer: coarse)`;
+    iOS Safari zooms the page when a focused field is smaller.
+  - `PaginationFooter` arrows keep their 28px box but take a 44px hit area on
+    coarse pointers.
+- **`PaginationFooter`:** new `hidePageSize` prop (default `false`) drops the
+  "Show N ▾" picker and shows a plain total in its place, worded by the new
+  `labels.total(total, noun)` (default `` `${total} ${noun}` ``; `""` shows
+  nothing and keeps the stepper at the end edge).
+- **`FilterBar`:** new `searchInputProps` for the search `<input>` — e.g.
+  `dir="auto"` so an email or phone number typed on an RTL page keeps its
+  order. The FilterBar's own wiring wins; `onBlur`, `className` and `style`
+  are merged.
+- **`EmptyState`:** `illustration={null}` or `{false}` now renders no default
+  artwork (and no empty wrapper). Leaving the prop out still draws the
+  variant's illustration. Note: `null` used to fall back to the default art.
+- **`DataTable` header labels:** under `[dir="rtl"]`, or for `lang` `ar`,
+  `fa`, `he`, `ur`, `yi`, the label drops its letter-spacing and uppercase
+  transform and is 12px (tracking breaks connected and unicameral scripts).
+  Latin LTR output is unchanged.
+- **Table cell helpers:** `.ml-dt-primary` (14px, medium) and
+  `.ml-dt-secondary` (12px, muted, own line) are now actually in the
+  stylesheet — they were documented but never shipped.
+- **`Dropdown`:** the entrance grows from the trigger's corner (`data-origin`
+  on the menu: the physical edge it is lined up with, following `align` and
+  the reading direction) instead of top centre.
+- **`Drawer`:** the body's reserved scrollbar gutter no longer adds to its end
+  padding, so content lines up with the header and footer on machines with
+  classic scrollbars too (it was inset by the scrollbar's width). No change
+  with overlay scrollbars.
+- **Tests:** new `EmptyState.test.tsx` and `styles/touch.test.ts` (hover
+  gating is enforced kit-wide); `DataTable`, `PaginationFooter`, `FilterBar`,
+  `Dropdown` and `Drawer` suites extended.
+- **Tests:** new `TopBar.test.tsx`; `Dropdown.test.tsx` and
+  `Textarea.test.tsx` gained menu-width and resize-handle coverage.
+- **Tests:** new `Drawer.test.tsx` and `useAnchoredPosition.test.ts`;
+  `DataTable.test.tsx`, `VirtualDataTable.test.tsx`,
+  `PaginationFooter.test.tsx` and `Dropdown.test.tsx` gained alignment,
+  `labels`, direction and first-open focus coverage.
+
 ## 0.3.0
 
 Lands the "mailgail" owner standards (chat composer + table anatomy) as kit

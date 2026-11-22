@@ -39,8 +39,10 @@
   transition: background var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-accordion-trigger:hover {
-  background: var(--ml-bg-surface);
+@media (hover: hover) {
+  .ml-accordion-trigger:hover {
+    background: var(--ml-bg-surface);
+  }
 }
 
 .ml-accordion-trigger:focus-visible {

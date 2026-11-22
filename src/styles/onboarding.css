@@ -66,9 +66,11 @@
   opacity: 0.75;
   transition: opacity var(--ml-duration-base) var(--ml-ease);
 }
-.ml-onboarding-dismiss:hover {
-  opacity: 1;
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-onboarding-dismiss:hover {
+    opacity: 1;
+    color: var(--ml-text);
+  }
 }
 /* expand hit area to ≥32px without reflowing neighbors (contract §9) */
 .ml-onboarding-dismiss::before {
@@ -119,8 +121,10 @@
   border-radius: var(--ml-radius-md);
   transition: background var(--ml-duration-base) var(--ml-ease);
 }
-.ml-onboarding-step:hover {
-  background: var(--ml-bg-surface);
+@media (hover: hover) {
+  .ml-onboarding-step:hover {
+    background: var(--ml-bg-surface);
+  }
 }
 
 /* Marker: a circle carrying the check (complete), a custom icon, or the

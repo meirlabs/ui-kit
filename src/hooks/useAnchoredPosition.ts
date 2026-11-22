@@ -7,11 +7,14 @@ import {
   useRef,
   useState,
 } from "react";
+import { getDirection } from "../utils/direction";
 
 /**
  * Placements supported by {@link useAnchoredPosition}. `-start`/`-end` align the
  * floating element to the anchor's leading/trailing edge on the cross axis; the
- * bare side centers it.
+ * bare side centers it. For `top`/`bottom` the leading edge follows the anchor's
+ * reading direction (left in LTR, right in RTL). The `left`/`right` sides
+ * themselves are physical.
  */
 export type AnchoredPlacement =
   | "top"
@@ -81,6 +84,7 @@ function computeCoords(
   fw: number,
   fh: number,
   offset: number,
+  rtl = false,
 ): Coords {
   let top = 0;
   let left = 0;
@@ -93,8 +97,10 @@ function computeCoords(
 
   // Cross axis
   if (side === "top" || side === "bottom") {
-    if (align === "start") left = anchor.left;
-    else if (align === "end") left = anchor.right - fw;
+    // start/end are inline-axis edges here, so they swap under RTL.
+    const alignLeft = align === "start" ? !rtl : align === "end" ? rtl : null;
+    if (alignLeft === true) left = anchor.left;
+    else if (alignLeft === false) left = anchor.right - fw;
     else left = anchor.left + anchor.width / 2 - fw / 2;
   } else {
     if (align === "start") top = anchor.top;
@@ -160,12 +166,14 @@ export function useAnchoredPosition(
     const vw = document.documentElement.clientWidth;
     const vh = window.innerHeight;
 
+    const rtl = getDirection(anchor) === "rtl";
+
     let { side, align } = parse(placement);
-    let coords = computeCoords(side, align, anchorRect, fw, fh, offset);
+    let coords = computeCoords(side, align, anchorRect, fw, fh, offset, rtl);
 
     if (flip && overflowsMainAxis(side, coords, fw, fh, vw, vh, padding)) {
       const flippedSide = OPPOSITE[side];
-      const flipped = computeCoords(flippedSide, align, anchorRect, fw, fh, offset);
+      const flipped = computeCoords(flippedSide, align, anchorRect, fw, fh, offset, rtl);
       if (!overflowsMainAxis(flippedSide, flipped, fw, fh, vw, vh, padding)) {
         side = flippedSide;
         coords = flipped;

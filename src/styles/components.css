@@ -70,8 +70,10 @@
   transition: filter var(--ml-duration-base), transform var(--ml-duration-press), box-shadow var(--ml-duration-base), opacity var(--ml-duration-base);
 }
 
-.ml-btn-primary:hover:not(:disabled) {
-  filter: brightness(1.12);
+@media (hover: hover) {
+  .ml-btn-primary:hover:not(:disabled) {
+    filter: brightness(1.12);
+  }
 }
 
 .ml-btn-primary:active:not(:disabled) {
@@ -97,9 +99,11 @@
   color: var(--ml-text);
 }
 
-.ml-btn-secondary:hover:not(:disabled) {
-  border-color: var(--ml-text-muted);
-  filter: brightness(1.1);
+@media (hover: hover) {
+  .ml-btn-secondary:hover:not(:disabled) {
+    border-color: var(--ml-text-muted);
+    filter: brightness(1.1);
+  }
 }
 
 .ml-btn-ghost {
@@ -109,9 +113,11 @@
   font-weight: 500;
 }
 
-.ml-btn-ghost:hover:not(:disabled) {
-  border-color: var(--ml-text-muted);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-btn-ghost:hover:not(:disabled) {
+    border-color: var(--ml-text-muted);
+    color: var(--ml-text);
+  }
 }
 
 .ml-btn-danger {
@@ -119,8 +125,10 @@
   color: var(--ml-color-danger);
 }
 
-.ml-btn-danger:hover:not(:disabled) {
-  opacity: 0.85;
+@media (hover: hover) {
+  .ml-btn-danger:hover:not(:disabled) {
+    opacity: 0.85;
+  }
 }
 
 /* Icon-only button: transparent, muted, square, 8px radius (not pill). Square
@@ -134,9 +142,11 @@
   aspect-ratio: 1 / 1;
 }
 
-.ml-btn-icon:hover:not(:disabled):not(.ml-btn-disabled) {
-  background: var(--ml-bg-surface);
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-btn-icon:hover:not(:disabled):not(.ml-btn-disabled) {
+    background: var(--ml-bg-surface);
+    color: var(--ml-text);
+  }
 }
 
 /* Enforce the ≥32px square regardless of intrinsic content */
@@ -341,9 +351,11 @@
   border-radius: inherit;
   overflow: hidden;
 }
-.ml-avatar-interactive:hover {
-  border-color: var(--ml-text-muted);
-  filter: brightness(1.05);
+@media (hover: hover) {
+  .ml-avatar-interactive:hover {
+    border-color: var(--ml-text-muted);
+    filter: brightness(1.05);
+  }
 }
 .ml-avatar-interactive:focus-visible {
   outline: 2px solid var(--ml-text);
@@ -678,8 +690,10 @@
   opacity: 0.7;
   transition: opacity var(--ml-duration-base);
 }
-.ml-banner-dismiss:hover {
-  opacity: 1;
+@media (hover: hover) {
+  .ml-banner-dismiss:hover {
+    opacity: 1;
+  }
 }
 /* expand the hit area to ≥32px without reflowing neighbors (contract §9) */
 .ml-banner-dismiss::before {

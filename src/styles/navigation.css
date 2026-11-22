@@ -37,8 +37,10 @@
   transition: color var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-tabs-btn:hover:not(:disabled) {
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-tabs-btn:hover:not(:disabled) {
+    color: var(--ml-text);
+  }
 }
 
 .ml-tabs-btn.active {
@@ -118,8 +120,10 @@
   flex-shrink: 0;
 }
 
-.ml-toggle button:hover:not(.active):not(:disabled) {
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-toggle button:hover:not(.active):not(:disabled) {
+    color: var(--ml-text);
+  }
 }
 
 .ml-toggle button.active {

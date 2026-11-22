@@ -10,7 +10,8 @@ const bodyText: React.CSSProperties = {
 
 export function DrawerDemo() {
   const [side, setSide] = useState<DrawerSide | null>(null);
-  const sides: DrawerSide[] = ["right", "left", "top", "bottom"];
+  // start/end follow the reading direction; the rest are physical edges.
+  const sides: DrawerSide[] = ["end", "start", "right", "left", "top", "bottom"];
 
   return (
     <>
@@ -31,7 +32,7 @@ export function DrawerDemo() {
         <Drawer
           open={side !== null}
           onClose={() => setSide(null)}
-          side={side ?? "right"}
+          side={side ?? "end"}
           title={`${side ?? ""} drawer`}
           footer={
             <>

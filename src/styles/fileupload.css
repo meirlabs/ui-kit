@@ -30,8 +30,10 @@
     box-shadow var(--ml-duration-base) var(--ml-ease);
 }
 
-.ml-fileupload-zone:hover:not(:disabled) {
-  border-color: var(--ml-text-muted);
+@media (hover: hover) {
+  .ml-fileupload-zone:hover:not(:disabled) {
+    border-color: var(--ml-text-muted);
+  }
 }
 
 /* Drag-over shifts border color only (monochrome). */
@@ -142,9 +144,11 @@
   width: 16px;
   height: 16px;
 }
-.ml-fileupload-remove:hover {
-  color: var(--ml-text);
-  background: var(--ml-bg-surface);
+@media (hover: hover) {
+  .ml-fileupload-remove:hover {
+    color: var(--ml-text);
+    background: var(--ml-bg-surface);
+  }
 }
 .ml-fileupload-remove:focus-visible {
   outline: none;

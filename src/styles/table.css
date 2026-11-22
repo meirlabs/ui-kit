@@ -2,8 +2,9 @@
    Header: 12px uppercase muted, filled with --ml-bg-surface so the header band
    reads as distinct from the card body, + border-bottom. Cell: 14px/400, 12px
    16px (compact 8px 12px). Row hover = surface shift (--ml-bg-surface), NOT a
-   colored fill. Row divider = --ml-border-subtle. Numeric columns right-align +
-   tabular-nums. No font-weight 700 anywhere. Focus ring is 2px var(--ml-text).
+   colored fill. Row divider = --ml-border-subtle. Numeric columns end-align +
+   tabular-nums. Alignment and spacing use logical properties, so the table
+   mirrors under dir="rtl". No font-weight 700 anywhere. Focus ring is 2px var(--ml-text).
    Loading states RESERVE space (skeleton rows at the real row height) — never
    display:none. */
 
@@ -55,6 +56,20 @@
   color: var(--ml-text-muted);
 }
 
+/* Tracked small caps are a Latin convention: letter-spacing pulls connected
+   and unicameral scripts apart and uppercase means nothing to them. Under RTL,
+   or for these languages, the label is plain 12px text instead. */
+[dir="rtl"] .ml-dt-th-label,
+.ml-dt-th-label:lang(ar),
+.ml-dt-th-label:lang(fa),
+.ml-dt-th-label:lang(he),
+.ml-dt-th-label:lang(ur),
+.ml-dt-th-label:lang(yi) {
+  font-size: 12px;
+  letter-spacing: normal;
+  text-transform: none;
+}
+
 /* The non-sort header padding lives on the label so it matches the sort button. */
 .ml-dt-th > .ml-dt-th-label {
   padding: 12px 16px;
@@ -63,6 +78,9 @@
   padding: 8px 12px;
 }
 
+/* start/end follow the reading direction; left/right stay physical. */
+.ml-dt-align-start { text-align: start; }
+.ml-dt-align-end { text-align: end; }
 .ml-dt-align-left { text-align: left; }
 .ml-dt-align-center { text-align: center; }
 .ml-dt-align-right { text-align: right; }
@@ -86,11 +104,23 @@
 .ml-dt--compact .ml-dt-sort {
   padding: 8px 12px;
 }
-.ml-dt-align-right .ml-dt-sort { justify-content: flex-end; }
+.ml-dt-align-end .ml-dt-sort { justify-content: flex-end; }
 .ml-dt-align-center .ml-dt-sort { justify-content: center; }
+/* Physical sides: `left`/`right` keep the trigger on that edge in RTL too. The
+   flex-start/flex-end line is the fallback where the keyword is unsupported. */
+.ml-dt-align-left .ml-dt-sort {
+  justify-content: flex-start;
+  justify-content: left;
+}
+.ml-dt-align-right .ml-dt-sort {
+  justify-content: flex-end;
+  justify-content: right;
+}
 
-.ml-dt-sort:hover .ml-dt-th-label {
-  color: var(--ml-text);
+@media (hover: hover) {
+  .ml-dt-sort:hover .ml-dt-th-label {
+    color: var(--ml-text);
+  }
 }
 .ml-dt-sort:focus-visible {
   outline: 2px solid var(--ml-text);
@@ -125,8 +155,24 @@
 }
 
 .ml-dt-num {
-  text-align: right;
+  text-align: end;
   font-variant-numeric: tabular-nums;
+}
+
+/* ── Two-line cell: a name over a quieter second line (email, id, date) ── */
+.ml-dt-primary {
+  display: block;
+  font-size: 14px;
+  font-weight: 500;
+  line-height: 1.5;
+  color: var(--ml-text);
+}
+.ml-dt-secondary {
+  display: block;
+  font-size: 12px;
+  font-weight: 400;
+  line-height: 1.4;
+  color: var(--ml-text-muted);
 }
 
 /* ── Rows ── */
@@ -136,10 +182,15 @@
 .ml-dt tbody .ml-dt-row {
   transition: background-color var(--ml-duration-base) var(--ml-ease);
 }
-/* Hover is a surface shift — never a colored fill (§7, contract). */
-.ml-dt tbody .ml-dt-row--clickable:hover,
 .ml-dt tbody .ml-dt-row--selected {
   background: var(--ml-bg-surface);
+}
+/* Hover is a surface shift — never a colored fill (§7, contract). Gated so a
+   tapped row doesn't keep the fill on touch screens. */
+@media (hover: hover) {
+  .ml-dt tbody .ml-dt-row--clickable:hover {
+    background: var(--ml-bg-surface);
+  }
 }
 .ml-dt-row--clickable {
   cursor: pointer;
@@ -159,11 +210,11 @@
 /* ── Selection checkbox (local look-alike; decoupled from WS6 Checkbox) ── */
 .ml-dt-check-cell {
   width: 44px;
-  padding-left: var(--ml-space-lg);
-  padding-right: 0;
+  padding-inline-start: var(--ml-space-lg);
+  padding-inline-end: 0;
 }
 .ml-dt--compact .ml-dt-check-cell {
-  padding-left: var(--ml-space-md);
+  padding-inline-start: var(--ml-space-md);
 }
 .ml-dt-check {
   display: inline-flex;
@@ -255,7 +306,7 @@
   animation: ml-dt-shimmer 1.2s ease-in-out infinite;
 }
 .ml-dt-num .ml-dt-skel {
-  margin-left: auto;
+  margin-inline-start: auto;
   width: 40%;
 }
 .ml-dt-skel--check {
