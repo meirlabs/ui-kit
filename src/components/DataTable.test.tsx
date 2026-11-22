@@ -207,4 +207,60 @@ describe("DataTable", () => {
     );
     expect(container.querySelector(".ml-dt-toolbar")).toBeNull();
   });
+
+  describe("column alignment", () => {
+    function headerAndFirstCell(align?: Column<Row>["align"], numeric = false) {
+      const cols: Column<Row>[] = [
+        { id: "name", header: "Name", accessor: "name", align, numeric },
+      ];
+      render(<DataTable columns={cols} data={rows} aria-label="People" />);
+      const table = screen.getByRole("table");
+      return {
+        th: within(table).getByRole("columnheader", { name: "Name" }),
+        td: within(table).getAllByRole("cell")[0],
+      };
+    }
+
+    it("defaults to the logical start edge, so it mirrors under RTL", () => {
+      const { th, td } = headerAndFirstCell();
+      expect(th).toHaveClass("ml-dt-align-start");
+      expect(td.style.textAlign).toBe("start");
+    });
+
+    it("defaults numeric columns to the logical end edge", () => {
+      const { th, td } = headerAndFirstCell(undefined, true);
+      expect(th).toHaveClass("ml-dt-align-end");
+      expect(td.style.textAlign).toBe("end");
+    });
+
+    it.each(["start", "end", "left", "right", "center"] as const)(
+      "applies align=%s to the header and the cells",
+      (align) => {
+        const { th, td } = headerAndFirstCell(align);
+        expect(th).toHaveClass(`ml-dt-align-${align}`);
+        expect(td.style.textAlign).toBe(align);
+      },
+    );
+
+    it("lets an explicit align win over the numeric default", () => {
+      const { th, td } = headerAndFirstCell("left", true);
+      expect(th).toHaveClass("ml-dt-align-left");
+      expect(td.style.textAlign).toBe("left");
+    });
+
+    it("aligns loading skeleton cells the same way", () => {
+      const cols: Column<Row>[] = [
+        { id: "name", header: "Name", accessor: "name" },
+        { id: "score", header: "Score", accessor: "score", numeric: true },
+      ];
+      const { container } = render(
+        <DataTable columns={cols} data={[]} loading loadingRowCount={1} aria-label="People" />,
+      );
+      const cells = container.querySelectorAll<HTMLTableCellElement>(
+        ".ml-dt-row--skeleton td",
+      );
+      expect(cells[0].style.textAlign).toBe("start");
+      expect(cells[1].style.textAlign).toBe("end");
+    });
+  });
 });

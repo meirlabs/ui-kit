@@ -14,7 +14,8 @@ import { cn } from "../utils/cn";
 
    Semantics: real <table><thead><th scope="col"><tbody>. Header cells are 12px
    uppercase muted with a border-bottom; body cells are 14px/400. Numeric columns
-   right-align and use tabular-nums so digits never nudge neighbors. Row hover is
+   align to the end edge (right in LTR, left in RTL) and use tabular-nums so
+   digits never nudge neighbors. Row hover is
    a surface shift (never a colored fill); selection/hover express through color,
    never metrics.
 
@@ -39,7 +40,11 @@ export interface SortState {
   direction: SortDirection;
 }
 
-export type ColumnAlign = "left" | "right" | "center";
+/**
+ * `start`/`end` follow the reading direction (they mirror under `dir="rtl"`);
+ * `left`/`right` are physical and stay put in both directions.
+ */
+export type ColumnAlign = "start" | "end" | "left" | "right" | "center";
 
 export interface Column<Row> {
   /** Stable identifier — also the key reported in `SortState`. */
@@ -53,11 +58,11 @@ export interface Column<Row> {
   accessor?: ((row: Row) => ReactNode) | keyof Row;
   /** Enable the sort affordance on this column's header. */
   sortable?: boolean;
-  /** Text alignment. Defaults to `right` for numeric columns, else `left`. */
+  /** Text alignment. Defaults to `end` for numeric columns, else `start`. */
   align?: ColumnAlign;
   /** Fixed column width (px number or any CSS length). */
   width?: number | string;
-  /** Right-align + tabular-nums for numbers that align as digits change. */
+  /** End-align + tabular-nums for numbers that align as digits change. */
   numeric?: boolean;
   /** Custom comparator (receives raw rows). Overrides the default sort. */
   sortFn?: (a: Row, b: Row) => number;
@@ -330,7 +335,7 @@ export function DataTable<Row>({
       : undefined;
 
   const alignOf = (column: Column<Row>): ColumnAlign =>
-    column.align ?? (column.numeric ? "right" : "left");
+    column.align ?? (column.numeric ? "end" : "start");
 
   const renderBody = () => {
     if (loading) {

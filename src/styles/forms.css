@@ -30,7 +30,7 @@
 }
 
 .ml-field-required {
-  margin-left: 2px;
+  margin-inline-start: 2px;
   color: var(--ml-color-danger);
 }
 

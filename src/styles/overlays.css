@@ -226,7 +226,7 @@
   font-size: 14px;
   line-height: 1.4;
   letter-spacing: -0.31px;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   transition: background var(--ml-duration-base) var(--ml-ease),
     color var(--ml-duration-base) var(--ml-ease);

@@ -39,7 +39,7 @@ useScrollLock(active: boolean): void
 useAnchoredPosition(anchorRef, floatingRef, options: UseAnchoredPositionOptions): UseAnchoredPositionResult
 // UseAnchoredPositionOptions: { open: boolean; placement?: AnchoredPlacement; offset?: number (6); flip?: boolean; matchWidth?: boolean; padding?: number (8) }
 // UseAnchoredPositionResult: { floatingStyle: CSSProperties; placement: AnchoredPlacement; update: () => void }
-// AnchoredPlacement: "top" | "bottom" | "left" | "right" | "<side>-start" | "<side>-end"
+// AnchoredPlacement: "top" | "bottom" | "left" | "right" | "<side>-start" | "<side>-end" — on top/bottom, -start/-end follow the anchor's reading direction (start = left in LTR, right in RTL); the left/right sides are physical
 // Powers Tooltip / Popover / Select / Combobox / Dropdown. Flips to the opposite side and clamps the cross axis to stay on-screen.
 
 // Components — basics
@@ -142,8 +142,9 @@ getPaginationRange(...) / PAGINATION_DOTS
 // Returns null when pageCount <= 1
 
 PaginationFooter(props: PaginationFooterProps): JSX.Element
-// { pageIndex; pageCount; onPage; total: number; pageSize: number; onPageSizeChange?: (size) => void; pageSizeOptions?: number[] ([10,25,50,100]); noun?: string ("row"); nounPlural?: string (`${noun}s`) } & div props
-// The mailgail table-footer pattern: "Show N ▾ results (X total)" left, "Page x of y" chevrons right — no numbered page buttons. Drop into DataTable's `footer` slot. `onPageSizeChange` omitted → the size <select> renders disabled (space reserved, not hidden).
+// { pageIndex; pageCount; onPage; total: number; pageSize: number; onPageSizeChange?: (size) => void; pageSizeOptions?: number[] ([10,25,50,100]); noun?: string ("result"); nounPlural?: string (`${noun}s`); labels?: PaginationFooterLabels } & div props
+// PaginationFooterLabels (all optional, English defaults): { show?: string ("Show", "" omits it); ofTotal?: (total: number, noun: string) => string (`of ${total} ${noun}`, noun already singular/plural); rowsPerPage?: string ("Rows per page", aria); pagination?: string ("Pagination", nav aria); previousPage?: string ("Previous page", aria); nextPage?: string ("Next page", aria); pageOf?: (page: number, pageCount: number) => string (`Page ${page} of ${pageCount}`, page is 1-based) }
+// The mailgail table-footer pattern: "Show N ▾ of X results" at the start edge, "Page x of y" chevrons at the end edge — no numbered page buttons. Drop into DataTable's `footer` slot. `onPageSizeChange` omitted → the size <select> renders disabled (space reserved, not hidden). Translate through `labels`, never by forking the component; mirrors under dir="rtl" (chevrons flip).
 
 Breadcrumbs(props: BreadcrumbsProps): JSX.Element
 // { items: BreadcrumbItem[]; maxItems?: number; separator?: ReactNode } & nav props
@@ -161,7 +162,8 @@ CalendarHeatmap(props: CalendarHeatmapProps): JSX.Element
 // Supply a selected-day detail and large previous/next controls for touch; compact cells alone are not sufficient.
 
 DataTable<Row>(props: DataTableProps<Row>): JSX.Element
-// columns: Column<Row>[] — { id; header; accessor?: ((row) => ReactNode) | keyof Row; sortable?; align?: "left"|"right"|"center"; width?; numeric?; sortFn? }
+// columns: Column<Row>[] — { id; header; accessor?: ((row) => ReactNode) | keyof Row; sortable?; align?: "start"|"end"|"left"|"right"|"center" (start; end when numeric); width?; numeric?; sortFn? }
+// align: prefer "start"/"end" — they follow the reading direction and mirror under dir="rtl"; "left"/"right" are physical and stay put.
 // data: Row[]; getRowId?; sortState?/onSortChange? (controlled) or defaultSort? (uncontrolled); manualSort?
 // selectable?: "single"|"multiple"; selectedIds?/onSelectionChange?/defaultSelectedIds?
 // stickyHeader?; compact?; loading?; loadingRowCount? (5); error?; emptyState?; onRowClick?; caption?; "aria-label"?; footer?: ReactNode; toolbar?: ReactNode
@@ -183,11 +185,12 @@ Modal(props: ModalProps): JSX.Element
 // Focus-trapped (useFocusTrap) + scroll-locked (useScrollLock) internally.
 
 Dropdown(props: DropdownProps): JSX.Element
-// { trigger: ReactNode; items: DropdownMenuItem[]; active?: string; onSelect: (value) => void; align?: "start"|"end" } & div props
+// { trigger: ReactNode; items: DropdownMenuItem[]; active?: string; onSelect: (value) => void; align?: "start"|"end" (follows the trigger's reading direction) } & div props
 // DropdownItem: { label; value; icon?; disabled?; destructive? } | DropdownSeparator: { separator: true }
 
 Drawer(props: DrawerProps): JSX.Element
-// { open: boolean; onClose: () => void; side?: "left"|"right"|"top"|"bottom"; size?: "sm"|"md"|"lg"; title?; footer?; initialFocusRef?; closeOnOverlayClick?; closeOnEscape? } & div props
+// { open: boolean; onClose: () => void; side?: "start"|"end"|"left"|"right"|"top"|"bottom" (end); size?: "sm"|"md"|"lg"; title?; footer?; initialFocusRef?; closeOnOverlayClick?; closeOnEscape? } & div props
+// side: "start"/"end" follow the reading direction (end = right in LTR, left in RTL; slide-in direction follows); "left"/"right" are physical. Direction = the `dir` prop when passed, else the document's (the drawer portals into document.body). `data-side` in the DOM is always the resolved physical edge.
 
 CommandPalette(props: CommandPaletteProps): JSX.Element
 // { open: boolean; onOpenChange: (open) => void; items: CommandItem[]; placeholder?; emptyState?; enableShortcut?: boolean (true); className? }
@@ -485,6 +488,7 @@ kit respects `prefers-reduced-motion` automatically.
 - Don't reimplement focus trapping, scroll locking, or anchored positioning for a new overlay — use `useFocusTrap`/`useScrollLock`/`useAnchoredPosition`, or compose `Modal`/`Drawer`/`Popover`/`Select`/`Combobox`, which already do.
 - Never hardcode a z-index or a raw `box-shadow` — use the `--ml-z-*` scale and `--ml-shadow-*` tokens so stacking and elevation stay coordinated.
 - `--ml-color-primary`/`--ml-color-purple` are neutralized (resolve to text/surface, not blue/purple) — don't rely on them for an accent color; use functional `success`/`warning`/`danger` tones, or `.ml-btn-primary` for emphasis.
+- RTL: write logical CSS (`margin-inline-*`, `padding-inline-*`, `inset-inline-*`, `text-align: start|end`) and prefer logical prop values (`align: "start"|"end"`, Drawer `side: "start"|"end"`) — never physical `left`/`right` unless the edge is genuinely physical. Direction-pointing icons (previous/next chevrons) are mirrored with `[dir="rtl"]`. Apps set `dir="rtl"` on `<html>`, because overlays portal into `document.body`.
 - If a component does not exist in ui-kit but would be generally reusable, suggest adding it to the package.
 - The library is intentionally small. Check existing components first; **extend** a
   primitive with a variant/size (as `Button` gained `secondary`) rather than

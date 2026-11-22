@@ -115,7 +115,27 @@ import { DataTable, PaginationFooter } from "@meir-labs/ui-kit";
 | `total` | `number` | -- | Feeds the `"of N results"` copy |
 | `pageSize` / `onPageSizeChange` | `number` / `(size) => void` | -- | Omit the handler and the size `<select>` renders disabled instead of disappearing |
 | `pageSizeOptions` | `number[]` | `[10, 25, 50, 100]` | Options offered in the size `<select>` |
-| `noun` / `nounPlural` | `string` | `"row"` / `${noun}s` | Singular/plural label, e.g. `"lead"` / `"leads"` |
+| `noun` / `nounPlural` | `string` | `"result"` / `${noun}s` | Singular/plural label, e.g. `"lead"` / `"leads"` |
+| `labels` | `PaginationFooterLabels` | English | Override any built-in string (see below) |
+
+Every visible and accessible string is overridable through `labels`. All keys are optional; strings that embed numbers are functions, so word order and plural rules stay with you:
+
+```tsx
+<PaginationFooter
+  {...paging}
+  labels={{
+    show: "Afficher",                                       // before the size select ("" omits it)
+    ofTotal: (total, noun) => `sur ${total} ${noun}`,       // after it; noun is already singular/plural
+    rowsPerPage: "Lignes par page",                         // aria-label of the size select
+    pagination: "Pagination",                               // aria-label of the stepper <nav>
+    previousPage: "Page précédente",                        // aria-label
+    nextPage: "Page suivante",                              // aria-label
+    pageOf: (page, pageCount) => `Page ${page} / ${pageCount}`, // page is 1-based
+  }}
+/>
+```
+
+Under `dir="rtl"` the row mirrors (size picker at the start edge, stepper at the end edge) and the previous/next chevrons flip.
 
 ### StatusPill
 
@@ -538,6 +558,7 @@ The React table component (the `.ml-dt-*` CSS classes below still work if you'd 
 | Prop | Type | Description |
 | --- | --- | --- |
 | `columns` / `data` | `Column<Row>[]` / `Row[]` | `Column.accessor` is a `keyof Row` or a render function; `sortFn` overrides the default comparator |
+| `Column.align` | `"start" \| "end" \| "left" \| "right" \| "center"` | Defaults to `start` (`end` for `numeric` columns). `start`/`end` follow the reading direction and mirror under `dir="rtl"`; `left`/`right` are physical |
 | `sortState` / `onSortChange` or `defaultSort` | `SortState \| null` | Controlled vs. uncontrolled sort; `manualSort` skips internal sorting for server-sorted data |
 | `selectable` / `selectedIds` / `onSelectionChange` | `"single" \| "multiple"` / `string[]` / callback | Row selection |
 | `stickyHeader` / `compact` | `boolean` | Layout & density |
@@ -645,19 +666,23 @@ import { Dropdown } from "@meir-labs/ui-kit";
 />
 ```
 
-`trigger` is cloned to receive button semantics + handlers. Items are `{ label, value, icon?, disabled?, destructive? }` or `{ separator: true }`. `align`: `"start" | "end"` (default `start`).
+`trigger` is cloned to receive button semantics + handlers. Items are `{ label, value, icon?, disabled?, destructive? }` or `{ separator: true }`. `align`: `"start" | "end"` (default `start`) — it follows the trigger's reading direction, so `start` lines up left edges in LTR and right edges in RTL.
 
 ### Drawer
 
 ```tsx
 import { Drawer } from "@meir-labs/ui-kit";
 
-<Drawer open={open} onClose={() => setOpen(false)} side="right" size="md" title="Filters">
+<Drawer open={open} onClose={() => setOpen(false)} side="end" size="md" title="Filters">
   …
 </Drawer>
 ```
 
-Same open/close/focus contract as `Modal`, sliding in from an edge. `side`: `"left" | "right" | "top" | "bottom"`. `size`: `"sm" | "md" | "lg"` (~320/420/560px along the panel's axis).
+Same open/close/focus contract as `Modal`, sliding in from an edge. `side`: `"start" | "end" | "left" | "right" | "top" | "bottom"` (default `end`). `start`/`end` follow the reading direction — `end` is the right edge in LTR and the left edge in RTL — and the anchoring, borders and slide-in direction all follow; `left`/`right` are physical. Direction comes from the `dir` prop when passed, otherwise from the document (the drawer portals into `document.body`). `size`: `"sm" | "md" | "lg"` (~320/420/560px along the panel's axis).
+
+### Right-to-left (RTL)
+
+Set `dir="rtl"` on `<html>` — overlays (`Drawer`, `Dropdown`, `Select`, `Tooltip`, `Popover`) portal into `document.body`, so a `dir` on an inner wrapper does not reach them. With that in place `DataTable`, `PaginationFooter`, `FilterBar`, `Dropdown`, `Select`, `Tooltip`, `Field`, `EmptyState` and `Drawer` mirror on their own: prefer the logical values (`Column.align: "start" | "end"`, `Drawer side: "start" | "end"`, `Dropdown align`, `-start`/`-end` placements) over `left`/`right`, which stay physical on purpose.
 
 ### CommandPalette
 

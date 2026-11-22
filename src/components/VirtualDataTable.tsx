@@ -116,7 +116,7 @@ function colWidth<Row>(column: Column<Row>): CSSProperties | undefined {
 }
 
 function alignOf<Row>(column: Column<Row>): ColumnAlign {
-  return column.align ?? (column.numeric ? "right" : "left");
+  return column.align ?? (column.numeric ? "end" : "start");
 }
 
 /* Same caret as DataTable's (private there) — identical classes/markup. */

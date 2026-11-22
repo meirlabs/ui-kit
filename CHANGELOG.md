@@ -1,5 +1,46 @@
 # Changelog
 
+## Unreleased — RTL support
+
+Right-to-left support for the table stack and the overlays around it. Additive:
+no prop removed, and left-to-right rendering is unchanged.
+
+- **`DataTable` / `VirtualDataTable`:** `Column.align` gains `"start"` and
+  `"end"`, which follow the reading direction. The default is now `start`
+  (`end` for `numeric` columns) instead of `left`/`right` — identical in LTR,
+  mirrored under `dir="rtl"`. `left`/`right`/`center` keep working, and
+  `left`/`right` stay physical in both directions. Header cells now carry
+  `ml-dt-align-start`/`-end` by default (was `-left`/`-right`). `table.css`
+  moved to logical properties (`text-align: start|end`,
+  `padding-inline-*`, `margin-inline-start`).
+- **`PaginationFooter`:** new optional `labels` prop
+  (`PaginationFooterLabels`, exported) covering every visible and accessible
+  string — `show`, `ofTotal(total, noun)`, `rowsPerPage`, `pagination`,
+  `previousPage`, `nextPage`, `pageOf(page, pageCount)`. English defaults are
+  unchanged. The size picker uses logical padding/insets, and the
+  previous/next chevrons (also on `Pagination`) mirror under `[dir="rtl"]`.
+- **`Drawer`:** `side` gains `"start"` and `"end"`, resolved against the `dir`
+  prop when passed and otherwise the document's direction; the default is now
+  `end` (the right edge in LTR, as before). Anchoring, borders and the slide-in
+  direction follow the resolved edge. `left`/`right` are now truly physical —
+  previously an RTL document painted a `right` drawer on the left with the
+  entrance sliding the wrong way. `data-side` is always the physical edge.
+- **`Dropdown`:** `align` follows the trigger's reading direction (`start` is
+  its right edge under RTL); item text aligns to the start edge. Fix: a menu
+  lined up by its far edge (`align="end"`, or `start` under RTL) is measured
+  again once its min-width lands, so it no longer sits off the trigger the
+  first time it opens.
+- **`useAnchoredPosition`:** `-start`/`-end` on `top`/`bottom` placements follow
+  the anchor's reading direction (affects `Tooltip`, `Popover`, `Select`,
+  `Combobox`). `left`/`right` sides stay physical.
+- **`Select`, `Tooltip`, `Field`, `FilterBar`, `Tag`:** physical
+  `text-align: left` / `margin-left` / `margin-right` replaced with their
+  logical equivalents (trigger and tooltip text, the required asterisk, the
+  toolbar's end cluster, the tag remove button).
+- **Tests:** new `Drawer.test.tsx` and `useAnchoredPosition.test.ts`;
+  `DataTable.test.tsx`, `PaginationFooter.test.tsx` and `Dropdown.test.tsx`
+  gained alignment, `labels` and direction coverage.
+
 ## 0.3.0
 
 Lands the "mailgail" owner standards (chat composer + table anatomy) as kit

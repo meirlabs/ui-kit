@@ -3,8 +3,9 @@ import { cn } from "../utils/cn";
 
 /* ────────────────────────────────────────────────────────────────────────────
    PaginationFooter — the mailgail table-footer convention: a page-size picker
-   reading "Show N ▾ of X results" on the left, and a "Page x of y"
-   chevron stepper on the right. Deliberately no numbered page buttons (that's
+   reading "Show N ▾ of X results" at the start edge, and a "Page x of y"
+   chevron stepper at the end edge (the row and its chevrons mirror under
+   dir="rtl"; every string is overridable through `labels`). Deliberately no numbered page buttons (that's
    what the plain `<Pagination>` component is for) — page counts under this
    pattern are small by construction, so a stepper is enough; a table that
    needs jump-to-page wants a filter instead.
@@ -12,6 +13,42 @@ import { cn } from "../utils/cn";
    Drop this straight into DataTable's `footer` slot:
      <DataTable ... footer={<PaginationFooter ... />} />
    ──────────────────────────────────────────────────────────────────────────── */
+
+/**
+ * Every visible and accessible string the footer renders. All keys are
+ * optional; anything omitted keeps its English default. Strings that embed
+ * numbers are functions, so word order and plural rules stay with the caller.
+ */
+export interface PaginationFooterLabels {
+  /** Text before the page-size select. Default `"Show"`. Pass `""` to omit it. */
+  show?: string;
+  /**
+   * Text after the page-size select. `noun` is the already singular/plural
+   * form picked from the `noun`/`nounPlural` props. Default
+   * `` `of ${total} ${noun}` ``.
+   */
+  ofTotal?: (total: number, noun: string) => string;
+  /** Accessible name of the page-size select. Default `"Rows per page"`. */
+  rowsPerPage?: string;
+  /** Accessible name of the stepper `<nav>`. Default `"Pagination"`. */
+  pagination?: string;
+  /** Accessible name of the previous-page button. Default `"Previous page"`. */
+  previousPage?: string;
+  /** Accessible name of the next-page button. Default `"Next page"`. */
+  nextPage?: string;
+  /** The stepper label; `page` is 1-based. Default `` `Page ${page} of ${pageCount}` ``. */
+  pageOf?: (page: number, pageCount: number) => string;
+}
+
+const DEFAULT_LABELS: Required<PaginationFooterLabels> = {
+  show: "Show",
+  ofTotal: (total, noun) => `of ${total} ${noun}`,
+  rowsPerPage: "Rows per page",
+  pagination: "Pagination",
+  previousPage: "Previous page",
+  nextPage: "Next page",
+  pageOf: (page, pageCount) => `Page ${page} of ${pageCount}`,
+};
 
 export interface PaginationFooterProps
   extends Omit<ComponentPropsWithoutRef<"div">, "onChange"> {
@@ -29,6 +66,8 @@ export interface PaginationFooterProps
   noun?: string;
   /** Plural noun. Defaults to `${noun}s`. */
   nounPlural?: string;
+  /** Override any of the built-in strings (translation). English by default. */
+  labels?: PaginationFooterLabels;
   className?: string;
 }
 
@@ -86,10 +125,12 @@ export function PaginationFooter({
   pageSizeOptions = DEFAULT_SIZE_OPTIONS,
   noun = "result",
   nounPlural,
+  labels,
   className,
   ...rest
 }: PaginationFooterProps) {
   const sizeId = useId();
+  const t = { ...DEFAULT_LABELS, ...labels };
   const label = total === 1 ? noun : (nounPlural ?? `${noun}s`);
   const safePageCount = Math.max(pageCount, 1);
   const atStart = pageIndex <= 0;
@@ -98,11 +139,11 @@ export function PaginationFooter({
   return (
     <div className={cn("ml-pgf", className)} {...rest}>
       <span className="ml-pgf-size">
-        <span>Show</span>
+        {t.show !== "" && <span>{t.show}</span>}
         <span className="ml-pgf-size-shell">
           <select
             id={sizeId}
-            aria-label="Rows per page"
+            aria-label={t.rowsPerPage}
             value={pageSize}
             disabled={onPageSizeChange == null}
             onChange={(e) => onPageSizeChange?.(Number(e.target.value))}
@@ -115,28 +156,24 @@ export function PaginationFooter({
           </select>
           <ChevronDown />
         </span>
-        <span>
-          of {total} {label}
-        </span>
+        <span>{t.ofTotal(total, label)}</span>
       </span>
 
-      <nav aria-label="Pagination" className="ml-pgf-stepper">
+      <nav aria-label={t.pagination} className="ml-pgf-stepper">
         <button
           type="button"
           className="ml-pgf-arrow"
-          aria-label="Previous page"
+          aria-label={t.previousPage}
           disabled={atStart}
           onClick={() => onPage(pageIndex - 1)}
         >
           <ChevronLeft />
         </button>
-        <span className="ml-pgf-label">
-          Page {pageIndex + 1} of {safePageCount}
-        </span>
+        <span className="ml-pgf-label">{t.pageOf(pageIndex + 1, safePageCount)}</span>
         <button
           type="button"
           className="ml-pgf-arrow"
-          aria-label="Next page"
+          aria-label={t.nextPage}
           disabled={atEnd}
           onClick={() => onPage(pageIndex + 1)}
         >

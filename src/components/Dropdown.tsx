@@ -12,6 +12,7 @@ import {
 } from "react";
 import { createPortal } from "react-dom";
 import { cn } from "../utils/cn";
+import { getDirection } from "../utils/direction";
 
 export interface DropdownItem {
   label: ReactNode;
@@ -39,7 +40,11 @@ export interface DropdownProps
   /** Currently-selected value (rendered with a check + `aria-checked`). */
   active?: string;
   onSelect: (value: string) => void;
-  /** Horizontal alignment of the menu to the trigger. Default `start`. */
+  /**
+   * Which edge of the trigger the menu lines up with. Default `start`.
+   * Follows the trigger's reading direction: `start` is its left edge in LTR
+   * and its right edge in RTL.
+   */
   align?: DropdownAlign;
 }
 
@@ -112,13 +117,20 @@ export function Dropdown({
     const placeTop = spaceBelow < menuH + gap + margin && rect.top > menuH + gap + margin;
     const top = placeTop ? rect.top - menuH - gap : rect.bottom + gap;
 
-    let left = align === "end" ? rect.right - menuW : rect.left;
+    // start/end are inline-axis edges, so they swap under RTL.
+    const rtl = getDirection(triggerEl) === "rtl";
+    let left = (align === "end") !== rtl ? rect.right - menuW : rect.left;
     left = Math.max(margin, Math.min(left, window.innerWidth - menuW - margin));
 
     setCoords({ top, left, minWidth: rect.width, placement: placeTop ? "top" : "bottom" });
   }, [align]);
 
-  // Measure + place once the menu is in the DOM, and keep it anchored.
+  // Measure + place once the menu is in the DOM, and keep it anchored. The
+  // first pass measures the menu before its inline min-width has landed, so it
+  // runs once more when that changes: a menu lined up by its far edge (`end`,
+  // or `start` under RTL) is placed from its width and would otherwise sit off
+  // the trigger on first open.
+  const appliedMinWidth = coords?.minWidth;
   useLayoutEffect(() => {
     if (!open) return;
     position();
@@ -129,7 +141,7 @@ export function Dropdown({
       window.removeEventListener("scroll", onScroll, true);
       window.removeEventListener("resize", onScroll);
     };
-  }, [open, position, items.length]);
+  }, [open, position, items.length, appliedMinWidth]);
 
   // Roving focus: move DOM focus to the active item.
   useEffect(() => {

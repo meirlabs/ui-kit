@@ -1,7 +1,8 @@
 /* @meir-labs/ui-kit — FilterBar
-   Toolbar pattern: left slot for extra controls (e.g. a segmented Toggle),
-   right cluster for search + "Filters" button + actions, and an optional
-   active-filter chip row underneath. */
+   Toolbar pattern: start slot for extra controls (e.g. a segmented Toggle),
+   end cluster for search + "Filters" button + actions, and an optional
+   active-filter chip row underneath. The `-left`/`-right` class names are
+   historical: the slots sit at the start/end edges and mirror under RTL. */
 
 .ml-filterbar-wrap {
   display: flex;
@@ -28,7 +29,7 @@
   display: flex;
   align-items: center;
   gap: var(--ml-space-sm);
-  margin-left: auto;
+  margin-inline-start: auto;
 }
 
 .ml-filterbar-search {

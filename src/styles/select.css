@@ -16,7 +16,7 @@
   font-family: inherit;
   font-size: 14px;
   line-height: 1.5;
-  text-align: left;
+  text-align: start;
   cursor: pointer;
   transition: border-color var(--ml-duration-base) var(--ml-ease),
     background var(--ml-duration-base) var(--ml-ease);

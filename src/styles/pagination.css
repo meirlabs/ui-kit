@@ -70,7 +70,7 @@
   display: inline-flex;
   align-items: center;
   gap: var(--ml-space-sm);
-  margin-left: var(--ml-space-md);
+  margin-inline-start: var(--ml-space-md);
 }
 
 .ml-pg-size label {
@@ -95,8 +95,9 @@
   outline-offset: 2px;
 }
 
-/* ── PaginationFooter: "Show N ▾ results (X total)" left, "Page x of y" +
-   chevrons right — the mailgail table-footer convention (§ README). ── */
+/* ── PaginationFooter: "Show N ▾ of X results" at the start edge, "Page x of
+   y" + chevrons at the end edge — the mailgail table-footer convention
+   (§ README). Logical properties, so it mirrors under dir="rtl". ── */
 .ml-pgf {
   display: flex;
   align-items: center;
@@ -124,7 +125,8 @@
 .ml-pgf-size-shell select {
   appearance: none;
   height: 28px;
-  padding: 0 22px 0 8px;
+  padding-block: 0;
+  padding-inline: 8px 22px;
   border: 1px solid var(--ml-border);
   border-radius: var(--ml-radius-sm);
   background: var(--ml-bg-card);
@@ -141,7 +143,7 @@
 
 .ml-pgf-size-shell svg {
   position: absolute;
-  right: 8px;
+  inset-inline-end: 8px;
   pointer-events: none;
   color: var(--ml-text-muted);
 }
@@ -194,4 +196,11 @@
   text-align: center;
   color: var(--ml-text);
   font-variant-numeric: tabular-nums;
+}
+
+/* Previous/next chevrons point the way the pages run: mirrored under RTL so
+   "previous" still points back toward the start edge. */
+[dir="rtl"] .ml-pg-arrow > svg,
+[dir="rtl"] .ml-pgf-arrow > svg {
+  transform: scaleX(-1);
 }

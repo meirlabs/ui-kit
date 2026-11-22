@@ -7,14 +7,19 @@
   padding: 0;
 }
 
-/* Anchor the panel to the requested edge. */
-.ml-drawer-overlay[data-side="right"] {
-  justify-content: flex-end;
+/* Anchor the panel to the requested edge. `data-side` is always a physical
+   edge (the component resolves `start`/`end` against the reading direction),
+   so left/right are pinned with physical auto margins — flex-start/flex-end
+   would swap sides under dir="rtl". */
+.ml-drawer-overlay[data-side="right"],
+.ml-drawer-overlay[data-side="left"] {
   align-items: stretch;
 }
-.ml-drawer-overlay[data-side="left"] {
-  justify-content: flex-start;
-  align-items: stretch;
+.ml-drawer[data-side="right"] {
+  margin-left: auto;
+}
+.ml-drawer[data-side="left"] {
+  margin-right: auto;
 }
 .ml-drawer-overlay[data-side="top"] {
   align-items: flex-start;

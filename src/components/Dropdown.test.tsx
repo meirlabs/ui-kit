@@ -1,6 +1,6 @@
 import { render, screen, fireEvent, within } from "@testing-library/react";
-import { describe, it, expect, vi } from "vitest";
-import { Dropdown, type DropdownMenuItem } from "./Dropdown";
+import { afterEach, describe, it, expect, vi } from "vitest";
+import { Dropdown, type DropdownAlign, type DropdownMenuItem } from "./Dropdown";
 
 const items: DropdownMenuItem[] = [
   { label: "Edit", value: "edit" },
@@ -84,5 +84,75 @@ describe("Dropdown", () => {
     const archive = screen.getByRole("menuitem", { name: "Archive" });
     fireEvent.click(archive);
     expect(onSelect).not.toHaveBeenCalled();
+  });
+
+  describe("align follows the reading direction", () => {
+    // jsdom has no layout: fake a 100px trigger at x=300..400 and a 160px menu.
+    const TRIGGER = { left: 300, right: 400, top: 100, bottom: 130, width: 100, height: 30 };
+    const MENU_W = 160;
+
+    afterEach(() => {
+      vi.restoreAllMocks();
+      document.documentElement.removeAttribute("dir");
+    });
+
+    function openAt(align: DropdownAlign | undefined, dir?: "rtl") {
+      if (dir) document.documentElement.setAttribute("dir", dir);
+      vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+        ...TRIGGER,
+        x: TRIGGER.left,
+        y: TRIGGER.top,
+        toJSON: () => ({}),
+      });
+      vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockReturnValue(MENU_W);
+      render(
+        <Dropdown
+          trigger={<button>Actions</button>}
+          items={items}
+          onSelect={() => {}}
+          align={align}
+        />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Actions" }));
+      return screen.getByRole("menu").style.left;
+    }
+
+    it("LTR: start (the default) lines up left edges", () => {
+      expect(openAt(undefined)).toBe(`${TRIGGER.left}px`);
+    });
+
+    it("LTR: end lines up right edges", () => {
+      expect(openAt("end")).toBe(`${TRIGGER.right - MENU_W}px`);
+    });
+
+    it("RTL: start lines up right edges", () => {
+      expect(openAt("start", "rtl")).toBe(`${TRIGGER.right - MENU_W}px`);
+    });
+
+    it("RTL: end lines up left edges", () => {
+      expect(openAt("end", "rtl")).toBe(`${TRIGGER.left}px`);
+    });
+
+    it("re-measures once its min-width lands, so the far edge lines up on first open", () => {
+      // The menu is wider until the inline min-width (the trigger's width)
+      // replaces the stylesheet's: 180px on the first pass, 120px after.
+      document.documentElement.setAttribute("dir", "rtl");
+      vi.spyOn(HTMLElement.prototype, "getBoundingClientRect").mockReturnValue({
+        ...TRIGGER,
+        x: TRIGGER.left,
+        y: TRIGGER.top,
+        toJSON: () => ({}),
+      });
+      vi.spyOn(HTMLElement.prototype, "offsetWidth", "get").mockImplementation(
+        function (this: HTMLElement) {
+          return this.style.minWidth ? 120 : 180;
+        },
+      );
+      render(
+        <Dropdown trigger={<button>Actions</button>} items={items} onSelect={() => {}} />,
+      );
+      fireEvent.click(screen.getByRole("button", { name: "Actions" }));
+      expect(screen.getByRole("menu").style.left).toBe(`${TRIGGER.right - 120}px`);
+    });
   });
 });
